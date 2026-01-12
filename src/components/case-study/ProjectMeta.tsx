@@ -1,6 +1,3 @@
-"use client";
-
-import { useTextScramble } from "@/hooks/useTextScramble";
 import { TeamAvatars } from "./TeamAvatars";
 
 interface TeamMember {
@@ -16,21 +13,11 @@ interface ProjectMetaProps {
 }
 
 export function ProjectMeta({ subtitle, timeline, role, team }: ProjectMetaProps) {
-  const { displayText, elementRef } = useTextScramble({
-    text: subtitle,
-    duration: 1200,
-    delay: 300,
-    characters: "▄▀■□▪▫",
-  });
-
   return (
     <div className="bg-white border border-[rgba(0,0,0,0.2)] flex flex-col gap-6 p-6">
-      {/* Subtitle with scramble animation */}
-      <p
-        ref={elementRef}
-        className="text-[28px] sm:text-[32px] leading-[1.4] tracking-[-0.32px] text-[var(--foreground)]"
-      >
-        {displayText}
+      {/* Subtitle */}
+      <p className="text-[28px] sm:text-[32px] leading-[1.4] tracking-[-0.32px] text-[var(--foreground)]">
+        {subtitle}
       </p>
 
       {/* Squiggly Divider */}

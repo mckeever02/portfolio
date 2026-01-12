@@ -33,6 +33,11 @@ export function useTextScramble({
         finalText
           .split("")
           .map((char, index) => {
+            // Preserve spaces and punctuation to maintain word boundaries and width
+            if (char === " " || char === "." || char === "," || char === "'" || char === "-") {
+              return char;
+            }
+            
             // Calculate how many iterations this character needs before resolving
             const charResolveAt = (index + 1) * scrambleIterations;
             
