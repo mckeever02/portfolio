@@ -1,20 +1,36 @@
-After 2 redesigns and 3 rebuilds I think I’ve finally got a portfolio that I’m content with… for now.  Its true how designers says they’re their own worst clients. Here’s some information about what lies under the hood.
+This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
-## Build
-This portfolio is built in Jekyll. I’m using a gulp workflow for browser sync, compiling the css, and concatenating/minifying the JS. You can view it here.
+## Getting Started
 
-## Framework
-The site is built with [Tachyons](http://tachyons.io/)  - an atomic CSS framework that enables for fast prototyping and writing as little CSS as possible.
+First, run the development server:
 
-## Typography
-Headings are typeset in Lyon Display from the [Commercial Type Foundry](https://commercialtype.com/catalog/lyon/lyon_display) and hosted locally.
+```bash
+npm run dev
+# or
+yarn dev
+# or
+pnpm dev
+# or
+bun dev
+```
 
-Paragraph text is set in system fonts so the typeface you see will depend on what platform you’re viewing this on. I’m on a mac, so I see Apple’s system font, San Francisco.
+Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-Why system fonts? Well, for speed mostly, but they also look great so I don’t think I’m sacrificing design for performance.
+You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
-## Hosting
-The site is hosted for free on Github pages. SSL cert is provided via Cloudflare.
+This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
-## Assets
-Images are hosted locally and loaded dynamically using [lazysizes.js](https://github.com/aFarkas/lazysizes). Icons are loaded via an SVG sprite in the document header.  The font face is also hosted locally and loaded dynamically using [FontFaceObserver](https://github.com/bramstein/fontfaceobserver) and uses `localstorage` to cache the font call.
+## Learn More
+
+To learn more about Next.js, take a look at the following resources:
+
+- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
+- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+
+You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+
+## Deploy on Vercel
+
+The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+
+Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
