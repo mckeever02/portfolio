@@ -1,6 +1,6 @@
 "use client";
 
-import { useCountUp } from "@/hooks/useCountUp";
+import { useTextScramble } from "@/hooks/useTextScramble";
 
 interface StatCardProps {
   value: number;
@@ -8,7 +8,12 @@ interface StatCardProps {
 }
 
 export function StatCard({ value, label }: StatCardProps) {
-  const { count, elementRef } = useCountUp({ end: value, duration: 2000 });
+  const { displayText, elementRef } = useTextScramble({
+    text: value.toString(),
+    duration: 800,
+    delay: 100,
+    characters: "▄▀■□▪▫▀▄■□▪▫",
+  });
 
   return (
     <div
@@ -16,8 +21,8 @@ export function StatCard({ value, label }: StatCardProps) {
       className="flex-1 bg-white border border-[var(--border-darker)] p-4 overflow-hidden"
     >
       <div className="flex flex-col gap-2">
-        <span className="text-[28px] font-light text-black">
-          {count}
+        <span className="text-[28px] font-light text-black tabular-nums">
+          {displayText}
         </span>
         <span className="text-xs font-bold tracking-[1.2px] uppercase text-[var(--foreground-secondary)] font-[var(--font-era)]">
           {label}

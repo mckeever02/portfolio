@@ -1,4 +1,7 @@
+"use client";
+
 import Link from "next/link";
+import { motion } from "framer-motion";
 
 interface WorkCardProps {
   title: string;
@@ -29,51 +32,62 @@ export function WorkCard({
     : { href };
 
   return (
-    <CardWrapper
-      {...linkProps}
-      className="group flex flex-col border border-[var(--border)] overflow-hidden transition-all duration-300 hover:border-[var(--border-darker)] hover:shadow-lg"
+    <motion.div
+      whileHover={{ 
+        rotate: -0.5,
+      }}
+      transition={{
+        type: "spring",
+        stiffness: 400,
+        damping: 25,
+      }}
     >
-      {/* Visual Area */}
-      <div
-        className="h-[250px] sm:h-[350px] md:h-[408px] w-full overflow-hidden transition-transform duration-500"
-        style={{ backgroundColor: bgColor }}
+      <CardWrapper
+        {...linkProps}
+        className="group flex flex-col border border-[var(--border-darker)] overflow-hidden bg-white transition-shadow duration-200 hover:shadow-[0_2px_8px_rgba(0,0,0,0.04)]"
       >
-        {imageUrl && (
-          <div
-            className="w-full h-full bg-cover bg-center group-hover:scale-105 transition-transform duration-500"
-            style={{ backgroundImage: `url(${imageUrl})` }}
-          />
-        )}
-      </div>
-
-      {/* Info Area */}
-      <div className="bg-white border-t border-[var(--border)] flex flex-col gap-6 px-6 pt-6 pb-3">
-        {/* Project Info */}
-        <div className="flex flex-col gap-2">
-          <h3 className="text-xl font-bold text-[var(--foreground)]">
-            {title}
-          </h3>
-          <p className="text-lg text-[var(--foreground)]">
-            {description}
-          </p>
+        {/* Visual Area */}
+        <div
+          className="h-[250px] sm:h-[350px] md:h-[408px] w-full overflow-hidden"
+          style={{ backgroundColor: bgColor }}
+        >
+          {imageUrl && (
+            <div
+              className="w-full h-full bg-cover bg-center group-hover:scale-105 transition-transform duration-500"
+              style={{ backgroundImage: `url(${imageUrl})` }}
+            />
+          )}
         </div>
 
-        {/* Project Details */}
-        <div className="flex items-center gap-3">
-          <span className="text-xs font-bold tracking-[1.2px] uppercase text-[var(--foreground-secondary)] font-[var(--font-era)]">
-            {year}
-          </span>
-          <Separator />
-          <span className="text-xs font-bold tracking-[1.2px] uppercase text-[var(--foreground-secondary)] font-[var(--font-era)]">
-            {role}
-          </span>
-          <Separator />
-          <span className="text-xs font-bold tracking-[1.2px] uppercase text-[var(--foreground-secondary)] font-[var(--font-era)]">
-            {company}
-          </span>
+        {/* Info Area */}
+        <div className="bg-white border-t border-[var(--border-darker)] flex flex-col gap-6 px-6 pt-6 pb-3">
+          {/* Project Info */}
+          <div className="flex flex-col gap-2">
+            <h3 className="text-xl font-bold text-[var(--foreground)]">
+              {title}
+            </h3>
+            <p className="text-lg text-[var(--foreground)]">
+              {description}
+            </p>
+          </div>
+
+          {/* Project Details */}
+          <div className="flex items-center gap-3">
+            <span className="text-xs font-bold tracking-[1.2px] uppercase text-[var(--foreground-secondary)] font-[var(--font-era)]">
+              {year}
+            </span>
+            <Separator />
+            <span className="text-xs font-bold tracking-[1.2px] uppercase text-[var(--foreground-secondary)] font-[var(--font-era)]">
+              {role}
+            </span>
+            <Separator />
+            <span className="text-xs font-bold tracking-[1.2px] uppercase text-[var(--foreground-secondary)] font-[var(--font-era)]">
+              {company}
+            </span>
+          </div>
         </div>
-      </div>
-    </CardWrapper>
+      </CardWrapper>
+    </motion.div>
   );
 }
 
