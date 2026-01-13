@@ -1,13 +1,16 @@
 "use client";
 
-import { ProfileHeader } from "@/components/ProfileHeader";
-import { StatusInfo } from "@/components/StatusInfo";
-import { SectionNav } from "@/components/SectionNav";
-import { StatCard } from "@/components/StatCard";
-import { WorkCard } from "@/components/WorkCard";
-import { ProjectCard } from "@/components/ProjectCard";
-import { ImageCarousel } from "@/components/ImageCarousel";
-import { Timeline } from "@/components/Timeline";
+import {
+  ProfileHeader,
+  StatusInfo,
+  SectionNav,
+  StatCard,
+  WorkCard,
+  ProjectCard,
+  ImageCarousel,
+  Timeline,
+  PageTransition,
+} from "@/components";
 import { useActiveSection } from "@/hooks/useActiveSection";
 
 const sections = ["works", "projects", "about"] as const;
@@ -16,7 +19,8 @@ export default function Home() {
   const activeSection = useActiveSection(sections);
 
   return (
-    <div className="min-h-screen bg-[var(--background)]">
+    <PageTransition direction="back">
+      <div className="min-h-screen bg-[var(--background)]">
       <div className="mx-auto max-w-[1280px] grid grid-cols-1 lg:grid-cols-[400px_1fr] gap-8 p-4 md:p-8">
         {/* Fixed Left Sidebar */}
         <aside className="lg:sticky lg:top-8 h-fit flex flex-col gap-10 lg:gap-16 px-1 py-4 lg:py-8">
@@ -91,5 +95,6 @@ export default function Home() {
         </main>
       </div>
     </div>
+    </PageTransition>
   );
 }

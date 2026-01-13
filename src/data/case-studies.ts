@@ -28,7 +28,7 @@ export const caseStudies: Record<string, CaseStudy> = {
     company: "1Password",
     subtitle: "Identity verification in the age of AI fraud and deepfakes",
     heroColor: "#c9e8e3",
-    heroImage: "/images/work/verifier/hero.png",
+    heroImage: "/images/verifier-hero.jpg",
     timeline: "H1 2025",
     role: "Lead Designer",
     team: [

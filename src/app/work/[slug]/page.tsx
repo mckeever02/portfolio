@@ -12,6 +12,7 @@ import {
   TiltedImageGrid,
   QuoteCard,
 } from "@/components/case-study";
+import { PageTransition } from "@/components";
 import { useActiveSection } from "@/hooks/useActiveSection";
 
 interface PageProps {
@@ -30,7 +31,8 @@ export default function CaseStudyPage({ params }: PageProps) {
   const activeSection = useActiveSection(sectionIds);
 
   return (
-    <div className="min-h-screen bg-[var(--background)]">
+    <PageTransition>
+      <div className="min-h-screen bg-[var(--background)]">
       <div className="mx-auto max-w-[1280px] grid grid-cols-1 lg:grid-cols-[400px_1fr] gap-8 p-4 md:p-8">
         {/* Fixed Left Sidebar */}
         <CaseStudySidebar
@@ -64,7 +66,9 @@ export default function CaseStudyPage({ params }: PageProps) {
           <ProblemSection
             id="problem"
             title="The problem"
-            imageSrc="/images/work/verifier/problem.jpg"
+            phoneFrame="/images/iphone-frame.svg"
+            phoneContent="/images/imessage-window.png"
+            bubbleOverlay="/images/bubble.png"
             stat="$1bn"
             headline="Deepfake scams and AI-based fraud amounted to over $1bn in losses in 2025."
             body="Employees can no longer be certain if the colleague they are interacting with is who they say they are."
@@ -131,5 +135,6 @@ export default function CaseStudyPage({ params }: PageProps) {
         </main>
       </div>
     </div>
+    </PageTransition>
   );
 }

@@ -6,3 +6,4 @@ export { WorkCard } from "./WorkCard";
 export { ProjectCard } from "./ProjectCard";
 export { ImageCarousel } from "./ImageCarousel";
 export { Timeline } from "./Timeline";
+export { PageTransition } from "./PageTransition";

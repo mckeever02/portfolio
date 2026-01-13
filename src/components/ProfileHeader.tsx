@@ -7,14 +7,24 @@ export function ProfileHeader() {
   return (
     <div className="flex items-center gap-3">
       <motion.div
-        className="w-[48px] h-[48px] overflow-hidden relative"
-        initial={{ rotate: 0 }}
-        animate={{ rotate: -5 }}
+        className="w-[48px] h-[48px] overflow-hidden relative origin-bottom"
+        initial={{ y: -300, rotate: 0 }}
+        animate={{ 
+          y: [-300, 0, -12, 0, -4, 0],
+          rotate: -5,
+        }}
         transition={{
-          type: "spring",
-          stiffness: 300,
-          damping: 20,
-          delay: 0.3,
+          y: {
+            duration: 1,
+            delay: 1,
+            times: [0, 0.4, 0.55, 0.7, 0.85, 1],
+            ease: ["easeIn", "easeOut", "easeIn", "easeOut", "easeIn", "easeOut"],
+          },
+          rotate: {
+            duration: 0.25,
+            delay: 2.6,
+            ease: "easeOut",
+          },
         }}
       >
         <Image
@@ -28,14 +38,25 @@ export function ProfileHeader() {
       </motion.div>
 
       {/* Name and Title */}
-      <div className="flex flex-col">
+      <motion.div 
+        className="flex flex-col"
+        initial={{ x: -60 }}
+        animate={{ x: 0 }}
+        transition={{
+          type: "spring",
+          stiffness: 400,
+          damping: 25,
+          mass: 0.8,
+          delay: 1.3,
+        }}
+      >
         <h1 className="text-xl font-bold text-[var(--foreground)]">
           Michael McKeever
         </h1>
         <p className="text-base text-[var(--foreground)]">
           Software Designer
         </p>
-      </div>
+      </motion.div>
     </div>
   );
 }
