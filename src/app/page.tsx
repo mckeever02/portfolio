@@ -74,7 +74,7 @@ export default function Home() {
           </section>
 
           {/* About Section */}
-          <section id="about" className="flex flex-col gap-6 scroll-mt-8 overflow-hidden">
+          <section id="about" className="flex flex-col gap-6 scroll-mt-8">
             <h2 className="text-2xl font-bold text-[var(--foreground)]">
               About
             </h2>

@@ -1,0 +1,48 @@
+.TooltipContent {
+  padding: 4px 8px;
+  border-radius: 4px;
+  background-color: var(--foreground);
+  color: var(--background);
+  font-size: 12px;
+  font-weight: 500;
+  z-index: 50;
+  transform-origin: var(--radix-tooltip-content-transform-origin);
+  animation-duration: 150ms;
+  animation-timing-function: ease-out;
+}
+
+.TooltipContent[data-state="delayed-open"] {
+  animation-name: tooltipIn;
+}
+
+.TooltipContent[data-state="closed"] {
+  animation-name: tooltipOut;
+  animation-duration: 100ms;
+  animation-timing-function: ease-in;
+}
+
+.TooltipArrow {
+  fill: var(--foreground);
+}
+
+@keyframes tooltipIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9) translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+@keyframes tooltipOut {
+  from {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: scale(0.9) translateY(4px);
+  }
+}
