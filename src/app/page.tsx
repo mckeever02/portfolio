@@ -51,6 +51,7 @@ export default function Home() {
                 role="Lead Designer"
                 company="1Password"
                 bgColor="#c9e8e3"
+                imageUrl="/images/verifier-hero.jpg"
                 href="/work/verifier"
               />
             </div>

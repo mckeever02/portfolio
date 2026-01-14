@@ -53,7 +53,7 @@ export function WorkCard({
         >
           {imageUrl && (
             <div
-              className="w-full h-full bg-cover bg-center group-hover:scale-105 transition-transform duration-500"
+              className="w-full h-full bg-cover bg-center"
               style={{ backgroundImage: `url(${imageUrl})` }}
             />
           )}

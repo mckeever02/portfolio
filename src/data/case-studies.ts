@@ -41,6 +41,7 @@ export const caseStudies: Record<string, CaseStudy> = {
     ],
     sections: [
       { id: "overview", title: "Overview" },
+      { id: "hackathon", title: "The hackathon" },
       { id: "problem", title: "The problem" },
       { id: "why-1password", title: "Why 1Password?" },
       { id: "usecases", title: "Defining usecases" },

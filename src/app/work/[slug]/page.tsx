@@ -1,19 +1,22 @@
 "use client";
 
 import { notFound } from "next/navigation";
-import { use } from "react";
+import { use, useRef } from "react";
 import { getCaseStudy } from "@/data/case-studies";
 import {
   CaseStudySidebar,
   HeroImage,
   ProjectMeta,
   ContentSection,
-  ProblemSection,
-  TiltedImageGrid,
   QuoteCard,
+  HackathonSection,
+  BodyText,
+  StickyNotesGrid,
 } from "@/components/case-study";
 import { PageTransition } from "@/components";
 import { useActiveSection } from "@/hooks/useActiveSection";
+import Image from "next/image";
+import { motion, useScroll, useTransform } from "framer-motion";
 
 interface PageProps {
   params: Promise<{ slug: string }>;
@@ -30,6 +33,14 @@ export default function CaseStudyPage({ params }: PageProps) {
   const sectionIds = caseStudy.sections.map((s) => s.id);
   const activeSection = useActiveSection(sectionIds);
 
+  // Scroll-based video scaling
+  const videoRef = useRef<HTMLDivElement>(null);
+  const { scrollYProgress } = useScroll({
+    target: videoRef,
+    offset: ["start end", "center center"],
+  });
+  const videoScale = useTransform(scrollYProgress, [0, 1], [0.5, 1]);
+
   return (
     <PageTransition>
       <div className="min-h-screen bg-[var(--background)]">
@@ -45,7 +56,7 @@ export default function CaseStudyPage({ params }: PageProps) {
         {/* Scrollable Right Content */}
         <main className="flex flex-col gap-10 py-4 lg:py-8 min-w-0">
           {/* Hero Image */}
-          <HeroImage bgColor={caseStudy.heroColor} />
+          <HeroImage bgColor={caseStudy.heroColor} imageSrc={caseStudy.heroImage} />
 
           {/* Project Metadata */}
           <ProjectMeta
@@ -57,75 +68,235 @@ export default function CaseStudyPage({ params }: PageProps) {
 
           {/* Overview Section */}
           <ContentSection id="overview" title="Overview">
-            <p className="text-xl leading-relaxed tracking-[-0.2px] text-[var(--foreground)]">
+            <BodyText>
               The 1Password Labs team wanted to explore how 1Password&apos;s verification of trust method and mobile app could be utilised in an employee to employee verification scenario.
-            </p>
+            </BodyText>
           </ContentSection>
 
-          {/* The Problem Section */}
-          <ProblemSection
-            id="problem"
-            title="The problem"
-            phoneFrame="/images/iphone-frame.svg"
-            phoneContent="/images/imessage-window.png"
-            bubbleOverlay="/images/bubble.png"
-            stat="$1bn"
+          {/* Hackathon Section */}
+          <HackathonSection
+            id="hackathon"
+            title="Where it all began... a hackathon project"
+            profiles={[
+              {
+                name: "Danny",
+                role: "Sr PM",
+                image: "/images/work/verifier/danny.jpg",
+                icon: "/images/work/verifier/among-us-icon.png",
+              },
+              {
+                name: "Shiner",
+                role: "CEO",
+                image: "/images/work/verifier/shiner.jpg",
+              },
+            ]}
+            resultImage="/images/work/verifier/deepfake-danny.gif"
+            resultLabel="Deepfake Danny"
             headline="Deepfake scams and AI-based fraud amounted to over $1bn in losses in 2025."
             body="Employees can no longer be certain if the colleague they are interacting with is who they say they are."
+            demoVideo="/images/verifier-hackathon-demo.mp4"
           />
+
+          {/* The Problem Section */}
+          <ContentSection id="problem" title="From hackathon to labs experiment">
+            <BodyText>
+              Our CEO at the time – Jeff Shiner – was so inspired by the hackathon project that he greenlit Verifier as a Labs experiment.
+            </BodyText>
+          </ContentSection>
 
           {/* Why 1Password Section */}
           <ContentSection id="why-1password" title="Why 1Password?">
-            <p className="text-xl leading-relaxed tracking-[-0.2px] text-[var(--foreground)]">
-              1Password is a password manager? What does it have to do with identity verification and assurance?
-            </p>
+            <BodyText>
+              1Password is already the trusted source of truth for people&apos;s identities and secrets. Our research has shown that people trust the 1Password brand – even if they&apos;re not a customer. They trust it to keep their secrets safe and secure.
+            </BodyText>
           </ContentSection>
 
           {/* Defining Usecases Section */}
           <ContentSection id="usecases" title="Defining usecases">
-            <p className="text-xl leading-relaxed tracking-[-0.2px] text-[var(--foreground)] mb-6">
-              I wanted to make sure that the use cases were grounded in real pain points. So I did some workshopping with the team, and some desk research regarding cybersecurity threats and landed on these 4 usecases to design the solution around.
-            </p>
-            <TiltedImageGrid
-              images={[
-                { src: "/images/work/verifier/usecase-1.jpg", alt: "Use case 1" },
-                { src: "/images/work/verifier/usecase-2.jpg", alt: "Use case 2" },
-                { src: "/images/work/verifier/usecase-3.jpg", alt: "Use case 3" },
-                { src: "/images/work/verifier/usecase-4.jpg", alt: "Use case 4" },
+            <BodyText className="mb-2">
+              Research and workshopping with the team on cybersecurity threats and the problem we&apos;re trying to solve led to focusing on these 4 efforts.
+            </BodyText>
+            <StickyNotesGrid
+              notes={[
+                { src: "/images/work/verifier/deepfake-defense-sticky.png", alt: "Deepfake defence" },
+                { src: "/images/work/verifier/social-engineering-sticky.png", alt: "Social engineering" },
+                { src: "/images/work/verifier/high-value-transactions-sticky.png", alt: "High-value transactions" },
+                { src: "/images/work/verifier/trusted-external-support.png", alt: "Trusted external support" },
               ]}
             />
           </ContentSection>
 
+          {/* RSA Challenge Quote */}
+          <section className="flex flex-col items-center gap-4 py-8 scroll-mt-8">
+            {/* Zig-zag divider */}
+            <svg
+              className="w-24 h-3 mb-4"
+              viewBox="0 0 96 12"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M0 6L8 11L16 6L24 11L32 6L40 11L48 6L56 11L64 6L72 11L80 6L88 11L96 6"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                className="text-[var(--foreground)]/30"
+              />
+            </svg>
+            <p className="text-[24px] md:text-[28px] leading-[1.4] tracking-[-0.28px] text-[var(--foreground)] text-center max-w-[640px]">
+              &ldquo;It&apos;s 4 weeks until RSA, can you have something built and demo-able by then?&rdquo;
+            </p>
+            <div className="flex items-center gap-3 mt-2">
+              <div className="w-10 h-10 overflow-hidden rotate-[-5deg] relative">
+                <Image
+                  src="/images/work/verifier/matt-grimes.jpg"
+                  alt="Matt Grimes"
+                  fill
+                  className="object-cover"
+                />
+                <div className="absolute inset-0 bg-[var(--background)] mix-blend-multiply" />
+              </div>
+              <div className="flex flex-col">
+                <span className="text-lg font-bold text-[var(--foreground)]">Matt Grimes</span>
+                <span className="text-sm text-[var(--foreground)]">Sr. Director, End-User Experience</span>
+              </div>
+            </div>
+            {/* Zig-zag divider */}
+            <svg
+              className="w-24 h-3 mt-4"
+              viewBox="0 0 96 12"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M0 6L8 11L16 6L24 11L32 6L40 11L48 6L56 11L64 6L72 11L80 6L88 11L96 6"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                className="text-[var(--foreground)]/30"
+              />
+            </svg>
+            {/* Panic video */}
+            <motion.div
+              ref={videoRef}
+              className="w-full max-w-[400px] mt-4 rounded overflow-hidden"
+              style={{ scale: videoScale }}
+            >
+              <video
+                src="/images/work/verifier/rowoon-panic.mp4"
+                autoPlay
+                loop
+                muted
+                playsInline
+                className="w-full h-auto"
+              />
+            </motion.div>
+          </section>
+
           {/* Wireframing Section */}
           <ContentSection id="wireframing" title="Wireframing the flow">
-            <div className="h-[597px] w-full bg-[var(--foreground)]/5 rounded" />
+            <div className="w-full aspect-[3/4] sm:aspect-[4/3] md:aspect-[16/10] min-h-[400px] rounded overflow-hidden">
+                <BodyText className="mb-2">
+                    Given the tight turnaround, I quickly mocked up wireframes to get alignment from the team and stakeholders on what would be possible for our MVP before transitioning to higher fidelity designs.
+                </BodyText>
+              <iframe
+                src="https://embed.figma.com/proto/PdTOSzIo5vFiRr2UieT0na/Verifier?page-id=3%3A167191&node-id=3-166829&viewport=-4154%2C-16401%2C0.43&scaling=contain&content-scaling=fixed&starting-point-node-id=3%3A166829&embed-host=share"
+                className="w-full h-full border-0"
+                allowFullScreen
+              />
+            </div>
           </ContentSection>
 
+          {/* Pivot Statement */}
+          <section className="flex flex-col items-center gap-4 py-8 scroll-mt-8">
+            {/* Zig-zag divider */}
+            <svg
+              className="w-24 h-3 mb-4"
+              viewBox="0 0 96 12"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M0 6L8 11L16 6L24 11L32 6L40 11L48 6L56 11L64 6L72 11L80 6L88 11L96 6"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                className="text-[var(--foreground)]/30"
+              />
+            </svg>
+            <p className="text-[24px] md:text-[28px] leading-[1.4] tracking-[-0.28px] text-[var(--foreground)] text-center max-w-[640px]">
+              It turns out... 4 weeks was in fact not enough time to build a working MVP. So, we had to pivot.
+            </p>
+            {/* Zig-zag divider */}
+            <svg
+              className="w-24 h-3 mt-4"
+              viewBox="0 0 96 12"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M0 6L8 11L16 6L24 11L32 6L40 11L48 6L56 11L64 6L72 11L80 6L88 11L96 6"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                className="text-[var(--foreground)]/30"
+              />
+            </svg>
+          </section>
+
           {/* The Flow Section */}
-          <ContentSection id="flow" title="The flow">
-            <div className="h-[400px] w-full bg-[var(--foreground)]/5 rounded" />
+          <ContentSection id="flow" title="High fidelity prototype">
+            <BodyText className="mb-2">
+                I created a high fidelity prototype of the flow to show at our RSA booth to security professionals and potential customers. 
+            </BodyText>
+            <div className="w-full aspect-[3/4] sm:aspect-[4/3] md:aspect-[16/10] min-h-[500px] rounded overflow-hidden">
+              <iframe
+                src="https://embed.figma.com/proto/PdTOSzIo5vFiRr2UieT0na/Verifier?page-id=0%3A1&node-id=1-37665&scaling=scale-down&content-scaling=fixed&starting-point-node-id=1%3A37321&embed-host=share"
+                className="w-full h-full border-0"
+                allowFullScreen
+              />
+            </div>
           </ContentSection>
 
           {/* RSA Section */}
           <ContentSection id="rsa" title="RSA San Francisco 2025">
-            <p className="text-xl leading-relaxed tracking-[-0.2px] text-[var(--foreground)] mb-6">
-              Verifier being demoed as part of the lineup of 1Password&apos;s booth at RSA Conference 2025.
-            </p>
+            <BodyText className="mb-6">
+                The demo was well received at RSA, with the use case resonating strongly with CEOs, who are frequent targets of phishing and impersonation attacks. The positive feedback validated continued investment in the project and provided strong momentum for the team.
+            </BodyText>
             <div className="flex flex-col gap-4">
               <div className="flex gap-4">
-                <div className="flex-1 aspect-[4/3] bg-[var(--foreground)]/5 rounded overflow-hidden">
-                  {/* Image placeholder */}
+                <div className="flex-1 aspect-[4/3] rounded overflow-hidden relative">
+                  <Image
+                    src="/images/work/verifier/verifier-rsa-1.jpg"
+                    alt="Verifier demo at RSA booth"
+                    fill
+                    className="object-cover"
+                  />
                 </div>
-                <div className="flex-1 aspect-[4/3] bg-[var(--foreground)]/5 rounded overflow-hidden">
-                  {/* Image placeholder */}
+                <div className="flex-1 aspect-[4/3] rounded overflow-hidden relative">
+                  <Image
+                    src="/images/work/verifier/verifer-rsa-3.jpg"
+                    alt="Verifier prototype on display at RSA"
+                    fill
+                    className="object-cover"
+                  />
                 </div>
               </div>
               <QuoteCard
                 quote="You're right in my sweet spot. Massive value. You should double down on this."
                 attribution="Security Professional at RSA"
               />
-              <div className="w-full aspect-[889/684] bg-[var(--foreground)]/5 rounded overflow-hidden">
-                {/* Large image placeholder */}
+              <div className="w-full aspect-[889/684] rounded overflow-hidden relative">
+                <Image
+                  src="/images/work/verifier/verifier-rsa-2.jpg"
+                  alt="RSA Conference crowd"
+                  fill
+                  className="object-cover"
+                />
               </div>
             </div>
           </ContentSection>

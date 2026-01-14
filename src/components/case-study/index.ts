@@ -8,3 +8,6 @@ export { ContentSection } from "./ContentSection";
 export { ProblemSection } from "./ProblemSection";
 export { TiltedImageGrid } from "./TiltedImageGrid";
 export { QuoteCard } from "./QuoteCard";
+export { HackathonSection } from "./HackathonSection";
+export { BodyText } from "./BodyText";
+export { StickyNotesGrid } from "./StickyNotesGrid";
