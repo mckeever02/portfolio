@@ -11,7 +11,7 @@ interface HeroImageProps {
 export function HeroImage({ bgColor, imageSrc, children }: HeroImageProps) {
   return (
     <div
-      className="relative w-full h-[300px] sm:h-[350px] md:h-[408px] overflow-hidden"
+      className="relative w-full aspect-[1800/1110] overflow-hidden"
       style={{ backgroundColor: bgColor }}
     >
       {imageSrc && (

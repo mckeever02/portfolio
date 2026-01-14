@@ -4,7 +4,7 @@ import { notFound } from "next/navigation";
 import { use, useRef } from "react";
 import { getCaseStudy } from "@/data/case-studies";
 import {
-  CaseStudySidebar,
+  BackButton,
   HeroImage,
   ProjectMeta,
   ContentSection,
@@ -14,7 +14,6 @@ import {
   StickyNotesGrid,
 } from "@/components/case-study";
 import { PageTransition } from "@/components";
-import { useActiveSection } from "@/hooks/useActiveSection";
 import Image from "next/image";
 import { motion, useScroll, useTransform } from "framer-motion";
 
@@ -30,9 +29,6 @@ export default function CaseStudyPage({ params }: PageProps) {
     notFound();
   }
 
-  const sectionIds = caseStudy.sections.map((s) => s.id);
-  const activeSection = useActiveSection(sectionIds);
-
   // Scroll-based video scaling
   const videoRef = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({
@@ -44,27 +40,29 @@ export default function CaseStudyPage({ params }: PageProps) {
   return (
     <PageTransition>
       <div className="min-h-screen bg-[var(--background)]">
-      <div className="mx-auto max-w-[1280px] grid grid-cols-1 lg:grid-cols-[400px_1fr] gap-8 p-4 md:p-8">
-        {/* Fixed Left Sidebar */}
-        <CaseStudySidebar
-          title={caseStudy.title}
-          company={caseStudy.company}
-          sections={caseStudy.sections}
-          activeSection={activeSection}
-        />
+      <div className="p-4 md:p-8">
+        {/* Main Content */}
+        <main className="flex flex-col gap-10 py-4 min-w-0">
+          {/* Back Button */}
+          <div className="mx-auto w-full max-w-[800px]">
+            <BackButton />
+          </div>
+          {/* Hero + Content Wrapper */}
+          <div className="flex flex-col">
+            {/* Hero Image */}
+            <div className="mx-auto w-full max-w-[1000px]">
+              <HeroImage bgColor={caseStudy.heroColor} imageSrc={caseStudy.heroImage} />
+            </div>
 
-        {/* Scrollable Right Content */}
-        <main className="flex flex-col gap-10 py-4 lg:py-8 min-w-0">
-          {/* Hero Image */}
-          <HeroImage bgColor={caseStudy.heroColor} imageSrc={caseStudy.heroImage} />
-
-          {/* Project Metadata */}
-          <ProjectMeta
-            subtitle={caseStudy.subtitle}
-            timeline={caseStudy.timeline}
-            role={caseStudy.role}
-            team={caseStudy.team}
-          />
+            {/* Content Container */}
+            <div className="mx-auto w-full max-w-[800px] flex flex-col gap-10 -mt-[120px] relative z-10">
+            {/* Project Metadata */}
+            <ProjectMeta
+              subtitle={caseStudy.subtitle}
+              timeline={caseStudy.timeline}
+              role={caseStudy.role}
+              team={caseStudy.team}
+            />
 
           {/* Overview Section */}
           <ContentSection id="overview" title="Overview">
@@ -116,6 +114,10 @@ export default function CaseStudyPage({ params }: PageProps) {
             <BodyText className="mb-2">
               Research and workshopping with the team on cybersecurity threats and the problem we&apos;re trying to solve led to focusing on these 4 efforts.
             </BodyText>
+          </ContentSection>
+          </div>
+          {/* Sticky Notes Grid (wider) */}
+          <div className="mx-auto w-full max-w-[1000px]">
             <StickyNotesGrid
               notes={[
                 { src: "/images/work/verifier/deepfake-defense-sticky.png", alt: "Deepfake defence" },
@@ -124,7 +126,8 @@ export default function CaseStudyPage({ params }: PageProps) {
                 { src: "/images/work/verifier/trusted-external-support.png", alt: "Trusted external support" },
               ]}
             />
-          </ContentSection>
+          </div>
+          <div className="mx-auto w-full max-w-[800px] flex flex-col gap-10">
 
           {/* RSA Challenge Quote */}
           <section className="flex flex-col items-center gap-4 py-8 scroll-mt-8">
@@ -197,70 +200,44 @@ export default function CaseStudyPage({ params }: PageProps) {
 
           {/* Wireframing Section */}
           <ContentSection id="wireframing" title="Wireframing the flow">
-            <div className="w-full aspect-[3/4] sm:aspect-[4/3] md:aspect-[16/10] min-h-[400px] rounded overflow-hidden">
-                <BodyText className="mb-2">
-                    Given the tight turnaround, I quickly mocked up wireframes to get alignment from the team and stakeholders on what would be possible for our MVP before transitioning to higher fidelity designs.
-                </BodyText>
-              <iframe
-                src="https://embed.figma.com/proto/PdTOSzIo5vFiRr2UieT0na/Verifier?page-id=3%3A167191&node-id=3-166829&viewport=-4154%2C-16401%2C0.43&scaling=contain&content-scaling=fixed&starting-point-node-id=3%3A166829&embed-host=share"
-                className="w-full h-full border-0"
-                allowFullScreen
-              />
-            </div>
+            <BodyText className="mb-4">
+              Given the tight turnaround, I quickly mocked up wireframes to get alignment from the team and stakeholders on what would be possible for our MVP before transitioning to higher fidelity designs.
+            </BodyText>
           </ContentSection>
+          </div>
+          {/* Figma Embed - Wireframes (wider) */}
+          <div className="mx-auto w-full max-w-[1200px] aspect-[3/4] sm:aspect-[4/3] md:aspect-[16/10] min-h-[400px] rounded overflow-hidden mb-10">
+            <iframe
+              src="https://embed.figma.com/proto/PdTOSzIo5vFiRr2UieT0na/Verifier?page-id=3%3A167191&node-id=3-166829&viewport=-4154%2C-16401%2C0.43&scaling=contain&content-scaling=fixed&starting-point-node-id=3%3A166829&embed-host=share"
+              className="w-full h-full border-0"
+              allowFullScreen
+            />
+          </div>
+          <div className="mx-auto w-full max-w-[800px] flex flex-col gap-10">
 
           {/* Pivot Statement */}
           <section className="flex flex-col items-center gap-4 py-8 scroll-mt-8">
-            {/* Zig-zag divider */}
-            <svg
-              className="w-24 h-3 mb-4"
-              viewBox="0 0 96 12"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d="M0 6L8 11L16 6L24 11L32 6L40 11L48 6L56 11L64 6L72 11L80 6L88 11L96 6"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                className="text-[var(--foreground)]/30"
-              />
-            </svg>
             <p className="text-[24px] md:text-[28px] leading-[1.4] tracking-[-0.28px] text-[var(--foreground)] text-center max-w-[640px]">
               It turns out... 4 weeks was in fact not enough time to build a working MVP. So, we had to pivot.
             </p>
-            {/* Zig-zag divider */}
-            <svg
-              className="w-24 h-3 mt-4"
-              viewBox="0 0 96 12"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d="M0 6L8 11L16 6L24 11L32 6L40 11L48 6L56 11L64 6L72 11L80 6L88 11L96 6"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                className="text-[var(--foreground)]/30"
-              />
-            </svg>
           </section>
 
           {/* The Flow Section */}
           <ContentSection id="flow" title="High fidelity prototype">
-            <BodyText className="mb-2">
-                I created a high fidelity prototype of the flow to show at our RSA booth to security professionals and potential customers. 
+            <BodyText className="mb-4">
+              I created a high fidelity prototype of the flow to show at our RSA booth to security professionals and potential customers. 
             </BodyText>
-            <div className="w-full aspect-[3/4] sm:aspect-[4/3] md:aspect-[16/10] min-h-[500px] rounded overflow-hidden">
-              <iframe
-                src="https://embed.figma.com/proto/PdTOSzIo5vFiRr2UieT0na/Verifier?page-id=0%3A1&node-id=1-37665&scaling=scale-down&content-scaling=fixed&starting-point-node-id=1%3A37321&embed-host=share"
-                className="w-full h-full border-0"
-                allowFullScreen
-              />
-            </div>
           </ContentSection>
+          </div>
+          {/* Figma Embed - High Fidelity (full width) */}
+          <div className="w-full aspect-[3/4] sm:aspect-[4/3] md:aspect-[16/10] min-h-[500px] rounded overflow-hidden mb-10">
+            <iframe
+              src="https://embed.figma.com/proto/PdTOSzIo5vFiRr2UieT0na/Verifier?page-id=0%3A1&node-id=1-37665&scaling=contain&content-scaling=fixed&starting-point-node-id=1%3A37321&embed-host=share"
+              className="w-full h-full border-0"
+              allowFullScreen
+            />
+          </div>
+          <div className="mx-auto w-full max-w-[800px] flex flex-col gap-10">
 
           {/* RSA Section */}
           <ContentSection id="rsa" title="RSA San Francisco 2025">
@@ -301,8 +278,10 @@ export default function CaseStudyPage({ params }: PageProps) {
             </div>
           </ContentSection>
 
-          {/* Bottom spacer */}
-          <div className="h-[200px]" />
+            {/* Bottom spacer */}
+            <div className="h-[200px]" />
+            </div>
+          </div>
         </main>
       </div>
     </div>

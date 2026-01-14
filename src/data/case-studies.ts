@@ -32,12 +32,12 @@ export const caseStudies: Record<string, CaseStudy> = {
     timeline: "H1 2025",
     role: "Lead Designer",
     team: [
-      { name: "Michael", avatar: "/images/work/verifier/team/michael.png" },
-      { name: "Team Member 2", avatar: "/images/work/verifier/team/member2.png" },
-      { name: "Team Member 3", avatar: "/images/work/verifier/team/member3.png" },
-      { name: "Team Member 4", avatar: "/images/work/verifier/team/member4.png" },
-      { name: "Team Member 5", avatar: "/images/work/verifier/team/member5.png" },
-      { name: "Team Member 6", avatar: "/images/work/verifier/team/member6.png" },
+      { name: "Michael", avatar: "/images/michael-mckeever.jpg" },
+      { name: "Danny", avatar: "/images/work/verifier/danny.jpg" },
+      { name: "Gennadiy", avatar: "/images/work/verifier/gennadiy.jpg" },
+      { name: "Ben", avatar: "/images/work/verifier/ben.jpg" },
+      { name: "Mitch", avatar: "/images/work/verifier/mitch.jpg" },
+      { name: "Shiner", avatar: "/images/work/verifier/shiner.jpg" },
     ],
     sections: [
       { id: "overview", title: "Overview" },

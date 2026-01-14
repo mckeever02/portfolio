@@ -104,15 +104,20 @@ export function HackathonSection({
 
       {/* Demo video */}
       {demoVideo && (
-        <div className="w-full aspect-video relative mt-4 rounded-lg overflow-hidden">
-          <video
-            src={demoVideo}
-            autoPlay
-            loop
-            muted
-            playsInline
-            className="w-full h-full object-cover"
-          />
+        <div className="flex flex-col gap-2 mt-4">
+          <div className="w-full aspect-[2704/1724] relative rounded-lg overflow-hidden">
+            <video
+              src={demoVideo}
+              autoPlay
+              loop
+              muted
+              playsInline
+              className="w-full h-full object-contain"
+            />
+          </div>
+          <p className="text-sm text-[var(--foreground)]/60 text-center">
+            A rough prototype of Verifier from the Hack Day
+          </p>
         </div>
       )}
 
