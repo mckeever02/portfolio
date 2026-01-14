@@ -10,7 +10,7 @@ export function StatusInfo() {
           href="https://1password.com"
           target="_blank"
           rel="noopener noreferrer"
-          className="text-base text-[var(--foreground)] wavy-underline hover:opacity-80 transition-opacity"
+          className="text-base text-[var(--foreground)] hover:opacity-80 transition-opacity"
         >
           AI at 1Password
         </a>
@@ -25,7 +25,7 @@ export function StatusInfo() {
           href="https://maps.google.com/?q=Belfast,Northern+Ireland"
           target="_blank"
           rel="noopener noreferrer"
-          className="text-base text-[var(--foreground)] wavy-underline hover:opacity-80 transition-opacity"
+          className="text-base text-[var(--foreground)] hover:opacity-80 transition-opacity"
         >
           Belfast, N.Ireland
         </a>

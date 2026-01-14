@@ -140,19 +140,7 @@ export function ImageCarousel() {
       onMouseLeave={handleMouseLeave}
       style={{ cursor: getCursor() }}
     >
-      {/* Left gradient fade */}
-      <div 
-        className="absolute left-0 top-0 bottom-0 w-12 sm:w-16 z-10 pointer-events-none"
-        style={{ background: "linear-gradient(to right, var(--background) 0%, transparent 100%)" }}
-      />
-      
-      {/* Right gradient fade */}
-      <div 
-        className="absolute right-0 top-0 bottom-0 w-12 sm:w-16 z-10 pointer-events-none"
-        style={{ background: "linear-gradient(to left, var(--background) 0%, transparent 100%)" }}
-      />
-
-      {/* Scrolling Container */}
+{/* Scrolling Container */}
       <div 
         ref={scrollRef}
         className="overflow-x-scroll [&::-webkit-scrollbar]:hidden"
