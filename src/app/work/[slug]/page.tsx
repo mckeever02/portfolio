@@ -2,7 +2,7 @@
 
 import { notFound } from "next/navigation";
 import { use, useRef } from "react";
-import { getCaseStudy } from "@/data/case-studies";
+import { getCaseStudy, CaseStudy } from "@/data/case-studies";
 import {
   BackButton,
   HeroImage,
@@ -21,14 +21,8 @@ interface PageProps {
   params: Promise<{ slug: string }>;
 }
 
-export default function CaseStudyPage({ params }: PageProps) {
-  const { slug } = use(params);
-  const caseStudy = getCaseStudy(slug);
-
-  if (!caseStudy) {
-    notFound();
-  }
-
+// Extracted content component so useScroll hooks only run when content is rendered
+function CaseStudyContent({ caseStudy }: { caseStudy: CaseStudy }) {
   // Scroll-based video scaling
   const videoRef = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({
@@ -37,7 +31,7 @@ export default function CaseStudyPage({ params }: PageProps) {
   });
   const videoScale = useTransform(scrollYProgress, [0, 1], [0.5, 1]);
 
-  const content = (
+  return (
     <PageTransition>
       <div className="min-h-screen bg-[var(--background)]">
       <div className="p-4 md:p-8">
@@ -287,10 +281,23 @@ export default function CaseStudyPage({ params }: PageProps) {
     </div>
     </PageTransition>
   );
+}
 
-  if (caseStudy.protected) {
-    return <PasswordGate slug={slug}>{content}</PasswordGate>;
+export default function CaseStudyPage({ params }: PageProps) {
+  const { slug } = use(params);
+  const caseStudy = getCaseStudy(slug);
+
+  if (!caseStudy) {
+    notFound();
   }
 
-  return content;
+  if (caseStudy.protected) {
+    return (
+      <PasswordGate slug={slug}>
+        <CaseStudyContent caseStudy={caseStudy} />
+      </PasswordGate>
+    );
+  }
+
+  return <CaseStudyContent caseStudy={caseStudy} />;
 }
