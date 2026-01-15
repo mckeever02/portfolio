@@ -43,16 +43,49 @@ export default function Home() {
             <h2 className="text-2xl font-bold text-[var(--foreground)]">
               Selected Works
             </h2>
-            <div className="flex flex-col">
+            <div className="flex flex-col gap-6">
               <WorkCard
-                title="1Password Verifier"
-                description="0 → 1 design for an identity verification system"
+                title="Verifier"
+                description="0 → 1 design for a verification system to combat deepfakes and AI fraud"
                 year="2025"
-                role="Lead Designer"
+                role="Design Lead"
                 company="1Password"
                 bgColor="#c9e8e3"
                 imageUrl="/images/verifier-hero.jpg"
                 href="/work/verifier"
+              />
+              <WorkCard
+                title="Account Management"
+                description="Bringing long-anticipated account functionality to 1Password's desktop and mobile apps."
+                year="2022"
+                role="Design Lead"
+                company="1Password"
+                bgColor="#1a1a1a"
+                videoUrl="/images/1password-account-management.mp4"
+                href="https://1password.com/blog/manage-accounts-in-the-1password-app"
+                externalLink
+              />
+              <WorkCard
+                title="1Password 8 for mobile"
+                description="Teamed up with 2 other designers to design and ship 1Password 8 to millions."
+                year="2020"
+                role="Product Design"
+                company="1Password"
+                bgColor="#0a2540"
+                videoUrl="/images/1p8-mobile.mp4"
+                href="https://1password.com/blog/1password-8-ios-android"
+                externalLink
+              />
+              <WorkCard
+                title="Sweepr"
+                description="Self-service customer support solution for leading UK ISPs"
+                year="2019"
+                role="Product Design & frontend development"
+                company="Sweepr"
+                bgColor="#6c47ff"
+                videoUrl="/images/sweepr-splash.mp4"
+                href="https://v3.mckvr.design/case-studies/multimodal-design-system"
+                externalLink
               />
             </div>
           </section>
@@ -62,13 +95,24 @@ export default function Home() {
             <h2 className="text-2xl font-bold text-[var(--foreground)]">
               Side projects
             </h2>
-            <div className="flex flex-col">
+            <div className="flex flex-col gap-6">
               <ProjectCard
                 title="Pilgrim"
-                description="0 → 1 design for an identity verification system"
-                year="2025"
+                description="Virtual mentors for those feeling lost. An experiment in designing and building for Generative AI."
+                year="2024"
                 bgColor="#000000"
-                href="/side-project/pilgrim"
+                videoUrl="/images/pilgrim.mp4"
+                href="https://pilgrim.click"
+                externalLink
+              />
+              <ProjectCard
+                title="Headway"
+                description="A Chrome extension that replaces the default new tab page with a simple, customizable todo app."
+                year="2023"
+                bgColor="#f5f0e8"
+                imageUrl="/images/headway-splash.jpg"
+                href="https://chromewebstore.google.com/detail/headway-%E2%80%94-new-tab-todo-li/nnmkipmghijjolehhibjjmmlpdgnkpgi"
+                externalLink
               />
             </div>
           </section>
@@ -84,8 +128,12 @@ export default function Home() {
 
             {/* Bio */}
             <p className="text-lg leading-relaxed text-[var(--foreground)]">
-              As a product designer hailing from the vibrant city of Belfast, Northern Ireland, I have a knack for transforming ideas into tangible, user-friendly products. With a background in software design, I thrive on the challenge of marrying functionality with aesthetics. My passion lies in crafting experiences that not only meet user needs but also bring a smile to their faces. When I&apos;m not sketching out the next big thing, you can find me exploring the local coffee scene or attempting to perfect my scone recipe—because what&apos;s design without a little bit of deliciousness?
+                I’m a product designer with over 11 years of experience designing and shipping products used by millions of people. I enjoy working at both ends of the spectrum—building new products from the ground up and improving existing ones through continuous iteration and research.
             </p>
+
+              <p className="text-lg leading-relaxed text-[var(--foreground)]">
+                At 1Password, I lead design for AI, shaping security features for AI Agents and guiding how AI is integrated into the product in a thoughtful, security-first way.
+              </p>
 
             {/* Timeline */}
             <Timeline />

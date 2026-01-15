@@ -3,7 +3,7 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   title: "Michael McKeever - Software Designer",
-  description: "Product design portfolio of Michael McKeever, a software designer based in Belfast, Northern Ireland.",
+  description: "Product design portfolio of Michael McKeever, a product designer based in Belfast, Northern Ireland.",
 };
 
 export default function RootLayout({

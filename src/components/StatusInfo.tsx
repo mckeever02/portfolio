@@ -6,14 +6,9 @@ export function StatusInfo() {
         <span className="text-xs font-bold tracking-[1.2px] uppercase font-[var(--font-era)] text-[var(--foreground)]">
           Status
         </span>
-        <a
-          href="https://1password.com"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="text-base text-[var(--foreground)] hover:opacity-80 transition-opacity"
-        >
+        <span className="text-base text-[var(--foreground)]">
           AI at 1Password
-        </a>
+        </span>
       </div>
 
       {/* Location */}
@@ -21,14 +16,9 @@ export function StatusInfo() {
         <span className="text-xs font-bold tracking-[1.2px] uppercase font-[var(--font-era)] text-[var(--foreground)]">
           Location
         </span>
-        <a
-          href="https://maps.google.com/?q=Belfast,Northern+Ireland"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="text-base text-[var(--foreground)] hover:opacity-80 transition-opacity"
-        >
+        <span className="text-base text-[var(--foreground)]">
           Belfast, N.Ireland
-        </a>
+        </span>
       </div>
     </div>
   );
