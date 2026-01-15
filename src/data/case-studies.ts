@@ -19,6 +19,7 @@ export interface CaseStudy {
   role: string;
   team: TeamMember[];
   sections: CaseStudySection[];
+  protected?: boolean;
 }
 
 export const caseStudies: Record<string, CaseStudy> = {
@@ -49,6 +50,7 @@ export const caseStudies: Record<string, CaseStudy> = {
       { id: "flow", title: "The flow" },
       { id: "rsa", title: "RSA San Francisco 2025" },
     ],
+    protected: true,
   },
 };
 

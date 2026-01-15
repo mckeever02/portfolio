@@ -13,7 +13,7 @@ import {
   BodyText,
   StickyNotesGrid,
 } from "@/components/case-study";
-import { PageTransition } from "@/components";
+import { PageTransition, PasswordGate } from "@/components";
 import Image from "next/image";
 import { motion, useScroll, useTransform } from "framer-motion";
 
@@ -37,7 +37,7 @@ export default function CaseStudyPage({ params }: PageProps) {
   });
   const videoScale = useTransform(scrollYProgress, [0, 1], [0.5, 1]);
 
-  return (
+  const content = (
     <PageTransition>
       <div className="min-h-screen bg-[var(--background)]">
       <div className="p-4 md:p-8">
@@ -287,4 +287,10 @@ export default function CaseStudyPage({ params }: PageProps) {
     </div>
     </PageTransition>
   );
+
+  if (caseStudy.protected) {
+    return <PasswordGate slug={slug}>{content}</PasswordGate>;
+  }
+
+  return content;
 }
