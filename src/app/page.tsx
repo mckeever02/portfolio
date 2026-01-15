@@ -21,7 +21,7 @@ export default function Home() {
   return (
     <PageTransition direction="back">
       <div className="min-h-screen bg-[var(--background)]">
-      <div className="mx-auto max-w-[1280px] grid grid-cols-1 lg:grid-cols-[400px_1fr] gap-8 p-4 md:p-8">
+      <div className="mx-auto max-w-[1280px] grid grid-cols-1 md:grid-cols-[300px_1fr] gap-8 lg:gap-24 xl:gap-32 p-4 lg:p-8">
         {/* Fixed Left Sidebar */}
         <aside className="lg:sticky lg:top-8 h-fit flex flex-col gap-10 lg:gap-16 px-1 py-4 lg:py-8">
           <ProfileHeader />
@@ -32,11 +32,11 @@ export default function Home() {
         {/* Scrollable Right Content */}
         <main className="flex flex-col gap-10 py-4 lg:py-8 min-w-0">
           {/* Stats Row */}
-          <div className="flex flex-col sm:flex-row gap-4 md:gap-8">
+          {/* <div className="flex flex-col sm:flex-row gap-4 md:gap-8">
             <StatCard value={11} label="Years experience" />
             <StatCard value={456} label="Github commits" />
             <StatCard value={14} label="Side projects" />
-          </div>
+          </div> */}
 
           {/* Selected Works Section */}
           <section id="works" className="flex flex-col gap-6 scroll-mt-8">

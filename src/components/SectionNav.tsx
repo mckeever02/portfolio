@@ -23,15 +23,15 @@ export function SectionNav({ activeSection }: SectionNavProps) {
   };
 
   return (
-    <div className="relative hidden lg:flex flex-col gap-8 w-[384px]">
+    <div className="relative hidden lg:flex flex-col gap-8">
       {/* Vertical Track */}
       <div className="absolute left-[-12px] top-0 bottom-0 w-[2px] bg-[rgba(33,32,28,0.1)] rounded-[1px]">
         {/* Active Indicator */}
         <motion.div
-          className="absolute left-0 w-[2px] h-[18px] bg-[var(--foreground)] rounded-full"
+          className="absolute left-0 w-[2px] h-[24px] bg-[var(--foreground)] rounded-full"
           initial={false}
           animate={{
-            top: activeIndex * (18 + 32) + (18 - 18) / 2, // item height + gap
+            top: activeIndex * (24 + 32), // line-height (24px) + gap-8 (32px)
           }}
           transition={{
             type: "spring",
