@@ -55,7 +55,7 @@ export default function CaseStudyPage({ params }: PageProps) {
             </div>
 
             {/* Content Container */}
-            <div className="mx-auto w-full max-w-[800px] flex flex-col gap-10 -mt-[120px] relative z-10">
+            <div className="mx-auto w-full max-w-[800px] flex flex-col gap-10 md:-mt-[120px] relative z-10">
             {/* Project Metadata */}
             <ProjectMeta
               subtitle={caseStudy.subtitle}
@@ -206,9 +206,9 @@ export default function CaseStudyPage({ params }: PageProps) {
           </ContentSection>
           </div>
           {/* Figma Embed - Wireframes (wider) */}
-          <div className="mx-auto w-full max-w-[1200px] aspect-[3/4] sm:aspect-[4/3] md:aspect-[16/10] min-h-[400px] rounded overflow-hidden mb-10">
+          <div className="mx-auto w-full max-w-[375px] sm:max-w-[400px] aspect-[375/812] rounded overflow-hidden mb-10">
             <iframe
-              src="https://embed.figma.com/proto/PdTOSzIo5vFiRr2UieT0na/Verifier?page-id=3%3A167191&node-id=3-166829&viewport=-4154%2C-16401%2C0.43&scaling=contain&content-scaling=fixed&starting-point-node-id=3%3A166829&embed-host=share"
+              src="https://embed.figma.com/proto/PdTOSzIo5vFiRr2UieT0na/Verifier?page-id=3%3A167191&node-id=3-166829&scaling=scale-down-width&content-scaling=responsive&starting-point-node-id=3%3A166829&embed-host=share"
               className="w-full h-full border-0"
               allowFullScreen
             />
@@ -230,7 +230,7 @@ export default function CaseStudyPage({ params }: PageProps) {
           </ContentSection>
           </div>
           {/* Figma Embed - High Fidelity (full width) */}
-          <div className="w-full aspect-[3/4] sm:aspect-[4/3] md:aspect-[16/10] min-h-[500px] rounded overflow-hidden mb-10">
+          <div className="w-full aspect-[4/3] md:aspect-[16/10] md:min-h-[500px] rounded overflow-hidden mb-10">
             <iframe
               src="https://embed.figma.com/proto/PdTOSzIo5vFiRr2UieT0na/Verifier?page-id=0%3A1&node-id=1-37665&scaling=contain&content-scaling=fixed&starting-point-node-id=1%3A37321&embed-host=share"
               className="w-full h-full border-0"

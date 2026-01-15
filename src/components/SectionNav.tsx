@@ -23,7 +23,7 @@ export function SectionNav({ activeSection }: SectionNavProps) {
   };
 
   return (
-    <div className="relative flex flex-col gap-8 w-[384px]">
+    <div className="relative hidden lg:flex flex-col gap-8 w-[384px]">
       {/* Vertical Track */}
       <div className="absolute left-[-12px] top-0 bottom-0 w-[2px] bg-[rgba(33,32,28,0.1)] rounded-[1px]">
         {/* Active Indicator */}
@@ -42,7 +42,7 @@ export function SectionNav({ activeSection }: SectionNavProps) {
       </div>
 
       {/* Nav Items */}
-      {navItems.map((item, index) => (
+      {navItems.map((item) => (
         <button
           key={item.id}
           onClick={() => handleClick(item.id)}

@@ -34,7 +34,7 @@ export function StickyNotesGrid({ notes }: StickyNotesGridProps) {
   return (
     <div 
       ref={containerRef}
-      className="grid grid-cols-2 md:grid-cols-4 gap-4 py-24"
+      className="grid grid-cols-2 md:grid-cols-4 gap-4 py-12 md:py-24"
     >
       {notes.map((note, index) => (
         <motion.div

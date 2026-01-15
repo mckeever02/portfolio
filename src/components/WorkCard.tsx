@@ -37,10 +37,10 @@ export function WorkCard({
       videoUrl={videoUrl}
       externalLink={externalLink}
       details={
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3 min-w-0 whitespace-nowrap overflow-hidden">
           <CardDetailText>{year}</CardDetailText>
           <CardDetailSeparator />
-          <CardDetailText>{role}</CardDetailText>
+          <span className="truncate text-xs font-bold tracking-[1.2px] uppercase text-[var(--foreground-secondary)] font-[var(--font-era)]">{role}</span>
           <CardDetailSeparator />
           <CardDetailText>{company}</CardDetailText>
         </div>

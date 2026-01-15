@@ -1,3 +1,4 @@
+import { ReactNode } from "react";
 import { TeamAvatars } from "./TeamAvatars";
 
 interface TeamMember {
@@ -12,15 +13,24 @@ interface ProjectMetaProps {
   team: TeamMember[];
 }
 
+function MetaItem({ label, children }: { label: string; children: ReactNode }) {
+  return (
+    <div className="sm:flex-1 flex flex-col gap-2 min-w-0">
+      <span className="text-xs font-bold tracking-[1.2px] uppercase text-[var(--foreground-secondary)] font-[var(--font-era)]">
+        {label}
+      </span>
+      {children}
+    </div>
+  );
+}
+
 export function ProjectMeta({ subtitle, timeline, role, team }: ProjectMetaProps) {
   return (
     <div className="bg-white border border-[rgba(0,0,0,0.2)] flex flex-col gap-6 p-6">
-      {/* Subtitle */}
-      <p className="text-[28px] sm:text-[32px] leading-[1.4] tracking-[-0.32px] text-[var(--foreground)]">
+      <h1 className="text-[24px] sm:text-[32px] leading-[1.4] tracking-[-0.32px] text-[var(--foreground)]">
         {subtitle}
-      </p>
+      </h1>
 
-      {/* Zig-zag Divider */}
       <svg
         className="w-full h-2"
         viewBox="0 0 768 8"
@@ -37,31 +47,16 @@ export function ProjectMeta({ subtitle, timeline, role, team }: ProjectMetaProps
         />
       </svg>
 
-      {/* Stats Row */}
       <div className="flex gap-8">
-        {/* Timeline */}
-        <div className="flex-1 flex flex-col gap-2 min-w-0 overflow-hidden">
-          <span className="text-xs font-bold tracking-[1.2px] uppercase text-[var(--foreground-secondary)] font-[var(--font-era)]">
-            Timeline
-          </span>
+        <MetaItem label="Timeline">
           <span className="text-base text-black">{timeline}</span>
-        </div>
-
-        {/* Team */}
-        <div className="flex-1 flex flex-col gap-[10px] min-w-0">
-          <span className="text-xs font-bold tracking-[1.2px] uppercase text-[var(--foreground-secondary)] font-[var(--font-era)]">
-            Team
-          </span>
+        </MetaItem>
+        <MetaItem label="Team">
           <TeamAvatars team={team} />
-        </div>
-
-        {/* Role */}
-        <div className="flex-1 flex flex-col gap-2 min-w-0 overflow-hidden">
-          <span className="text-xs font-bold tracking-[1.2px] uppercase text-[var(--foreground-secondary)] font-[var(--font-era)]">
-            Role
-          </span>
+        </MetaItem>
+        <MetaItem label="Role">
           <span className="text-base text-black">{role}</span>
-        </div>
+        </MetaItem>
       </div>
     </div>
   );

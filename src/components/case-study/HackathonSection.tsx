@@ -76,11 +76,11 @@ export function HackathonSection({
         </div>
 
         {/* Equals sign */}
-        <span className="text-4xl font-light text-[var(--foreground)] self-center mb-[52px]">=</span>
+        <span className="text-4xl font-light text-[var(--foreground)] self-center md:mb-[52px]">=</span>
 
         {/* Result */}
-        <div className="flex flex-col items-center gap-4">
-          <div className="relative w-[250px] md:w-[346px] aspect-[346/196] border-[5px] border-[rgba(0,0,0,0.5)] overflow-hidden">
+        <div className="flex flex-col items-center gap-4 w-full md:w-auto px-8 md:px-0">
+          <div className="relative w-full md:w-[346px] aspect-[346/196] border-[5px] border-[rgba(0,0,0,0.5)] overflow-hidden">
             <Image
               src={resultImage}
               alt={resultLabel}

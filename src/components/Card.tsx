@@ -64,7 +64,7 @@ export function Card({
       >
         {/* Visual Area */}
         <div
-          className="h-[280px] sm:h-[400px] md:h-[480px] w-full overflow-hidden relative"
+          className="aspect-video w-full overflow-hidden relative"
           style={{ backgroundColor: bgColor }}
         >
           {videoUrl ? (
@@ -96,7 +96,7 @@ export function Card({
             <h3 className="text-xl font-bold text-[var(--foreground)]">
               {title}
             </h3>
-            <p className="text-lg text-[var(--foreground)]">
+            <p className="text-base sm:text-lg text-[var(--foreground)]">
               {description}
             </p>
           </div>
@@ -111,7 +111,7 @@ export function Card({
 
 export function CardDetailSeparator() {
   return (
-    <svg width="3" height="3" viewBox="0 0 3 3" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <svg className="shrink-0" width="3" height="3" viewBox="0 0 3 3" fill="none" xmlns="http://www.w3.org/2000/svg">
       <circle cx="3" cy="3" r="2.5" fill="currentColor" className="text-[var(--foreground-secondary)]" />
     </svg>
   );
@@ -119,7 +119,7 @@ export function CardDetailSeparator() {
 
 export function CardDetailText({ children }: { children: ReactNode }) {
   return (
-    <span className="text-xs font-bold tracking-[1.2px] uppercase text-[var(--foreground-secondary)] font-[var(--font-era)]">
+    <span className="shrink-0 text-xs font-bold tracking-[1.2px] uppercase text-[var(--foreground-secondary)] font-[var(--font-era)]">
       {children}
     </span>
   );
