@@ -13,6 +13,7 @@ interface WorkCardProps {
   imageUrl?: string;
   videoUrl?: string;
   externalLink?: boolean;
+  comingSoon?: boolean;
 }
 
 export function WorkCard({
@@ -26,6 +27,7 @@ export function WorkCard({
   imageUrl,
   videoUrl,
   externalLink = false,
+  comingSoon = false,
 }: WorkCardProps) {
   return (
     <Card
@@ -36,6 +38,7 @@ export function WorkCard({
       imageUrl={imageUrl}
       videoUrl={videoUrl}
       externalLink={externalLink}
+      comingSoon={comingSoon}
       details={
         <div className="flex items-center gap-3 min-w-0 whitespace-nowrap overflow-hidden">
           <CardDetailText>{year}</CardDetailText>
