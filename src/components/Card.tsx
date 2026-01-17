@@ -28,13 +28,6 @@ export function Card({
   comingSoon = false,
   details,
 }: CardProps) {
-  const CardWrapper = comingSoon ? "div" : externalLink ? "a" : Link;
-  const linkProps = comingSoon
-    ? {}
-    : externalLink
-    ? { href, target: "_blank", rel: "noopener noreferrer" }
-    : { href };
-
   const containerRef = useRef<HTMLDivElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const isInView = useInView(containerRef, { amount: 0.3 });
@@ -110,54 +103,85 @@ export function Card({
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
     >
-      <CardWrapper
-        {...linkProps}
-        className="group flex flex-col border border-[var(--border-darker)] overflow-hidden bg-white transition-shadow duration-200 hover:shadow-[0_2px_8px_rgba(0,0,0,0.04)]"
-        style={{ cursor: isHovered ? "none" : comingSoon ? "default" : "pointer" }}
-      >
-        {/* Visual Area */}
-        <div
-          className="aspect-video w-full overflow-hidden relative"
-          style={{ backgroundColor: bgColor }}
-        >
-          {videoUrl ? (
-            <video
-              ref={videoRef}
-              src={videoUrl}
-              loop
-              muted
-              playsInline
-              preload="none"
-              className="w-full h-full object-cover"
-            />
-          ) : imageUrl ? (
-            <Image
-              src={imageUrl}
-              alt={title}
-              fill
-              sizes="(max-width: 640px) 100vw, (max-width: 1024px) 80vw, 800px"
-              className="object-cover"
-              loading="lazy"
-            />
-          ) : null}
-        </div>
+      {(() => {
+        const cardClassName = "group flex flex-col border border-[var(--border-darker)] overflow-hidden bg-white transition-shadow duration-200 hover:shadow-[0_2px_8px_rgba(0,0,0,0.04)]";
+        const cardStyle = { cursor: isHovered ? "none" : comingSoon ? "default" : "pointer" } as const;
+        
+        const cardContent = (
+          <>
+            {/* Visual Area */}
+            <div
+              className="aspect-video w-full overflow-hidden relative"
+              style={{ backgroundColor: bgColor }}
+            >
+              {videoUrl ? (
+                <video
+                  ref={videoRef}
+                  src={videoUrl}
+                  loop
+                  muted
+                  playsInline
+                  preload="none"
+                  className="w-full h-full object-cover"
+                />
+              ) : imageUrl ? (
+                <Image
+                  src={imageUrl}
+                  alt={title}
+                  fill
+                  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 80vw, 800px"
+                  className="object-cover"
+                  loading="lazy"
+                />
+              ) : null}
+            </div>
 
-        {/* Info Area */}
-        <div className="bg-white border-t border-[var(--border-darker)] flex flex-col gap-6 px-6 pt-6 pb-3">
-          {/* Project Info */}
-          <div className="flex flex-col gap-2">
-            <h3 className="text-xl font-bold text-[var(--foreground)]">
-              {title}
-            </h3>
-            <p className="text-base sm:text-lg text-[var(--foreground)]">
-              {description}
-            </p>
-          </div>
+            {/* Info Area */}
+            <div className="bg-white border-t border-[var(--border-darker)] flex flex-col gap-6 px-6 pt-6 pb-3">
+              {/* Project Info */}
+              <div className="flex flex-col gap-2">
+                <h3 className="text-xl font-bold text-[var(--foreground)]">
+                  {title}
+                </h3>
+                <p className="text-base sm:text-lg text-[var(--foreground)]">
+                  {description}
+                </p>
+              </div>
 
-          {/* Project Details */}
-          {details}
-        </div>
-      </CardWrapper>
+              {/* Project Details */}
+              {details}
+            </div>
+          </>
+        );
+
+        if (comingSoon) {
+          return (
+            <div className={cardClassName} style={cardStyle}>
+              {cardContent}
+            </div>
+          );
+        }
+        
+        if (externalLink) {
+          return (
+            <a
+              href={href}
+              target="_blank"
+              rel="noopener noreferrer"
+              className={cardClassName}
+              style={cardStyle}
+            >
+              {cardContent}
+            </a>
+          );
+        }
+        
+        return (
+          <Link href={href} className={cardClassName} style={cardStyle}>
+            {cardContent}
+          </Link>
+        );
+      })()}
 
       {/* Cursor-following circle */}
       <motion.div
