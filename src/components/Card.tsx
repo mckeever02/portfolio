@@ -13,6 +13,7 @@ interface CardProps {
   imageUrl?: string;
   videoUrl?: string;
   externalLink?: boolean;
+  comingSoon?: boolean;
   details: ReactNode;
 }
 
@@ -24,10 +25,13 @@ export function Card({
   imageUrl,
   videoUrl,
   externalLink = false,
+  comingSoon = false,
   details,
 }: CardProps) {
-  const CardWrapper = externalLink ? "a" : Link;
-  const linkProps = externalLink
+  const CardWrapper = comingSoon ? "div" : externalLink ? "a" : Link;
+  const linkProps = comingSoon
+    ? {}
+    : externalLink
     ? { href, target: "_blank", rel: "noopener noreferrer" }
     : { href };
 
@@ -93,7 +97,7 @@ export function Card({
     <motion.div
       ref={containerRef}
       className="relative"
-      style={{ cursor: isHovered ? "none" : "auto" }}
+      style={{ cursor: isHovered ? "none" : comingSoon ? "default" : "auto" }}
       whileHover={{ 
         rotate: -0.5,
       }}
@@ -109,7 +113,7 @@ export function Card({
       <CardWrapper
         {...linkProps}
         className="group flex flex-col border border-[var(--border-darker)] overflow-hidden bg-white transition-shadow duration-200 hover:shadow-[0_2px_8px_rgba(0,0,0,0.04)]"
-        style={{ cursor: isHovered ? "none" : "pointer" }}
+        style={{ cursor: isHovered ? "none" : comingSoon ? "default" : "pointer" }}
       >
         {/* Visual Area */}
         <div
@@ -157,7 +161,9 @@ export function Card({
 
       {/* Cursor-following circle */}
       <motion.div
-        className="absolute top-0 left-0 w-14 h-14 rounded-full bg-[var(--foreground)] flex items-center justify-center pointer-events-none z-10"
+        className={`absolute top-0 left-0 rounded-full bg-[var(--foreground)] flex items-center justify-center pointer-events-none z-10 ${
+          comingSoon ? "w-24 h-24" : "w-14 h-14"
+        }`}
         style={{
           x: cursorX,
           y: cursorY,
@@ -172,7 +178,12 @@ export function Card({
           damping: 25,
         }}
       >
-        {externalLink ? (
+        {comingSoon ? (
+          // Coming soon text
+          <span className="text-[var(--background)] text-xs font-bold tracking-wide uppercase text-center leading-tight">
+            Coming<br />soon
+          </span>
+        ) : externalLink ? (
           // External link arrow (diagonal)
           <svg
             width="20"

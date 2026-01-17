@@ -45,6 +45,28 @@ export default function Home() {
             </h2>
             <div className="flex flex-col gap-6">
               <WorkCard
+                title="Autofill for AI Agents"
+                description="Led the design for a brand new experience that allows AI agents to authentic and act online using 1Password."
+                year="2025"
+                role="Design Lead"
+                company="1Password"
+                bgColor="#0a2540"
+                imageUrl="/images/agentic-autofill-hero.jpg"
+                href="https://www.youtube.com/watch?v=c3tqMe2_UwQ"
+                externalLink
+              />
+              <WorkCard
+                title="1Password Sentinel"
+                description="Designed and championed an agentic vision to make 1Password security as simple as a conversation."
+                year="2025"
+                role="Design Lead"
+                company="1Password"
+                bgColor="#2a1f5c"
+                videoUrl="/images/sentinel-hero.mp4?v=2"
+                href="/work/sentinel"
+                comingSoon
+              />
+              <WorkCard
                 title="Verifier"
                 description="0 → 1 design for a verification system to combat deepfakes and AI fraud"
                 year="2025"
@@ -67,8 +89,8 @@ export default function Home() {
               />
               <WorkCard
                 title="1Password 8 for mobile"
-                description="Teamed up with 2 other designers to design and ship 1Password 8 to millions."
-                year="2020"
+                description="Co-designed the next-generation 1Password mobile experience to millions of customers worldwide."
+                year="2021"
                 role="Product Design"
                 company="1Password"
                 bgColor="#367BD9"
