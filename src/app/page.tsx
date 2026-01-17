@@ -60,7 +60,7 @@ export default function Home() {
                 year="2022"
                 role="Design Lead"
                 company="1Password"
-                bgColor="#1a1a1a"
+                bgColor="#0B185A"
                 videoUrl="/images/1password-account-management.mp4"
                 href="https://1password.com/blog/manage-accounts-in-the-1password-app"
                 externalLink
@@ -71,7 +71,7 @@ export default function Home() {
                 year="2020"
                 role="Product Design"
                 company="1Password"
-                bgColor="#0a2540"
+                bgColor="#367BD9"
                 videoUrl="/images/1p8-mobile.mp4"
                 href="https://1password.com/blog/1password-8-ios-android"
                 externalLink
@@ -82,7 +82,7 @@ export default function Home() {
                 year="2019"
                 role="Product Design & frontend development"
                 company="Sweepr"
-                bgColor="#6c47ff"
+                bgColor="#8FC2A5"
                 videoUrl="/images/sweepr-splash.mp4"
                 href="https://v3.mckvr.design/case-studies/multimodal-design-system"
                 externalLink
@@ -99,7 +99,7 @@ export default function Home() {
               <ProjectCard
                 title="Pilgrim"
                 description="Virtual mentors for those feeling lost. An experiment in designing and building for Generative AI."
-                year="2024"
+                year="2025"
                 bgColor="#000000"
                 videoUrl="/images/pilgrim.mp4"
                 href="https://pilgrim.click"
@@ -112,6 +112,15 @@ export default function Home() {
                 bgColor="#f5f0e8"
                 imageUrl="/images/headway-splash.jpg"
                 href="https://chromewebstore.google.com/detail/headway-%E2%80%94-new-tab-todo-li/nnmkipmghijjolehhibjjmmlpdgnkpgi"
+                externalLink
+              />
+              <ProjectCard
+                title="Mailtolink"
+                description="A weekend project that turned into the most popular mailto link generator. Acquired in 2022."
+                year="2019"
+                bgColor="#c8f0e8"
+                imageUrl="/images/mailtolink.jpg"
+                href="https://mailtolink.me"
                 externalLink
               />
             </div>
