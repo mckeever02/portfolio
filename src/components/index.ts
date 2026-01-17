@@ -1,6 +1,7 @@
 export { ProfileHeader } from "./ProfileHeader";
 export { StatusInfo } from "./StatusInfo";
 export { SectionNav } from "./SectionNav";
+export { SocialLinks } from "./SocialLinks";
 export { StatCard } from "./StatCard";
 export { WorkCard } from "./WorkCard";
 export { ProjectCard } from "./ProjectCard";

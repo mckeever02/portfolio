@@ -28,7 +28,7 @@ export const caseStudies: Record<string, CaseStudy> = {
     title: "Sentinel",
     company: "1Password",
     subtitle: "AI-powered admin copilot for 1Password",
-    heroColor: "#2a1f5c",
+    heroColor: "#000000",
     heroImage: "/images/sentinel-hero.mp4",
     timeline: "2025",
     role: "Design Lead",

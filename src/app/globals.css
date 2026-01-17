@@ -74,6 +74,17 @@ body {
   min-height: 100vh;
 }
 
+/* Text selection highlight */
+::selection {
+  background: var(--foreground);
+  color: var(--background);
+}
+
+::-moz-selection {
+  background: var(--foreground);
+  color: var(--background);
+}
+
 /* Scrollbar Styling */
 ::-webkit-scrollbar {
   width: 8px;

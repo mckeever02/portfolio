@@ -4,6 +4,7 @@ import {
   ProfileHeader,
   StatusInfo,
   SectionNav,
+  SocialLinks,
   StatCard,
   WorkCard,
   ProjectCard,
@@ -23,10 +24,14 @@ export default function Home() {
       <div className="min-h-screen bg-[var(--background)]">
       <div className="mx-auto max-w-[1280px] grid grid-cols-1 md:grid-cols-[300px_1fr] gap-8 lg:gap-24 xl:gap-32 p-4 lg:p-8">
         {/* Fixed Left Sidebar */}
-        <aside className="lg:sticky lg:top-8 h-fit flex flex-col gap-10 lg:gap-16 px-1 py-4 lg:py-8">
+        <aside className="md:sticky md:top-4 lg:top-8 h-fit flex flex-col gap-10 md:gap-16 px-1 py-4 lg:py-8">
           <ProfileHeader />
           <StatusInfo />
           <SectionNav activeSection={activeSection} />
+          {/* Social links - hidden on mobile, shown in sidebar on desktop */}
+          <div className="hidden md:block">
+            <SocialLinks />
+          </div>
         </aside>
 
         {/* Scrollable Right Content */}
@@ -46,22 +51,22 @@ export default function Home() {
             <div className="flex flex-col gap-6">
               <WorkCard
                 title="Autofill for AI Agents"
-                description="Led the design for a brand new experience that allows AI agents to authentic and act online using 1Password."
+                description="Led the design for a brand new experience that allows AI agents to authenticate and act online using 1Password."
                 year="2025"
                 role="Design Lead"
                 company="1Password"
-                bgColor="#0a2540"
+                bgColor="#DD4825"
                 imageUrl="/images/agentic-autofill-hero.jpg"
                 href="https://www.youtube.com/watch?v=c3tqMe2_UwQ"
                 externalLink
               />
               <WorkCard
-                title="1Password Sentinel"
+                title="1Password Sentinel: Copilot for Admins"
                 description="Designed and championed an agentic vision to make 1Password security as simple as a conversation."
                 year="2025"
                 role="Design Lead"
                 company="1Password"
-                bgColor="#2a1f5c"
+                bgColor="#000000"
                 videoUrl="/images/sentinel-hero.mp4?v=2"
                 href="/work/sentinel"
                 comingSoon
@@ -169,6 +174,11 @@ export default function Home() {
             {/* Timeline */}
             <Timeline />
           </section>
+
+          {/* Social links - shown at bottom on mobile, hidden on desktop */}
+          <div className="lg:hidden pt-8 border-t border-[var(--border)]">
+            <SocialLinks />
+          </div>
 
           {/* Bottom spacer */}
           <div className="h-[200px]" />
