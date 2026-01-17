@@ -4,6 +4,7 @@ import {
   ProfileHeader,
   StatusInfo,
   SectionNav,
+  SocialLinks,
   StatCard,
   WorkCard,
   ProjectCard,
@@ -27,6 +28,10 @@ export default function Home() {
           <ProfileHeader />
           <StatusInfo />
           <SectionNav activeSection={activeSection} />
+          {/* Social links - hidden on mobile, shown in sidebar on desktop */}
+          <div className="hidden lg:block">
+            <SocialLinks />
+          </div>
         </aside>
 
         {/* Scrollable Right Content */}
@@ -50,7 +55,7 @@ export default function Home() {
                 year="2025"
                 role="Design Lead"
                 company="1Password"
-                bgColor="#0a2540"
+                bgColor="#DD4825"
                 imageUrl="/images/agentic-autofill-hero.jpg"
                 href="https://www.youtube.com/watch?v=c3tqMe2_UwQ"
                 externalLink
@@ -61,7 +66,7 @@ export default function Home() {
                 year="2025"
                 role="Design Lead"
                 company="1Password"
-                bgColor="#2a1f5c"
+                bgColor="#000000"
                 videoUrl="/images/sentinel-hero.mp4?v=2"
                 href="/work/sentinel"
                 comingSoon
@@ -169,6 +174,11 @@ export default function Home() {
             {/* Timeline */}
             <Timeline />
           </section>
+
+          {/* Social links - shown at bottom on mobile, hidden on desktop */}
+          <div className="lg:hidden pt-8 border-t border-[var(--border)]">
+            <SocialLinks />
+          </div>
 
           {/* Bottom spacer */}
           <div className="h-[200px]" />
