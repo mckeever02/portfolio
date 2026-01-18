@@ -64,7 +64,12 @@ export function Card({
     if (!videoRef.current) return;
     
     if (isInView) {
-      videoRef.current.play();
+      const playPromise = videoRef.current.play();
+      if (playPromise !== undefined) {
+        playPromise.catch(() => {
+          // Ignore AbortError when play is interrupted by pause
+        });
+      }
     } else {
       videoRef.current.pause();
     }
