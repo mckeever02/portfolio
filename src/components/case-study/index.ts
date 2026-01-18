@@ -1,4 +1,5 @@
 export { BackButton } from "./BackButton";
+export { CaseStudyLayout, NarrowContent, WideContent, FullWidthContent } from "./CaseStudyLayout";
 export { CaseStudyNav } from "./CaseStudyNav";
 export { CaseStudySidebar } from "./CaseStudySidebar";
 export { HeroImage } from "./HeroImage";
