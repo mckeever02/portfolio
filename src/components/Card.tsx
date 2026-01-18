@@ -183,9 +183,9 @@ export function Card({
         );
       })()}
 
-      {/* Cursor-following circle */}
+      {/* Cursor-following circle (hidden on touch devices) */}
       <motion.div
-        className={`absolute top-0 left-0 rounded-full bg-[var(--foreground)] flex items-center justify-center pointer-events-none z-10 ${
+        className={`cursor-circle absolute top-0 left-0 rounded-full bg-[var(--foreground)] flex items-center justify-center pointer-events-none z-10 ${
           comingSoon ? "w-24 h-24" : "w-14 h-14"
         }`}
         style={{

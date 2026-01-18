@@ -132,48 +132,34 @@ export function ImageCarousel() {
   };
 
   return (
-    <div 
-      ref={containerRef}
-      className="relative w-full max-w-full"
-      onMouseMove={handleMouseMove}
-      onMouseEnter={handleMouseEnter}
-      onMouseLeave={handleMouseLeave}
-      style={{ cursor: getCursor() }}
-    >
-{/* Scrolling Container */}
-      <div 
-        ref={scrollRef}
-        className="overflow-x-scroll [&::-webkit-scrollbar]:hidden"
-        style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
-      >
-        <div className="flex gap-6 w-max">
-          {duplicatedImages.map((image, index) => (
-            <div
-              key={index}
-              className="group relative flex-shrink-0 w-[300px] sm:w-[378px] h-[225px] sm:h-[285px] bg-white overflow-hidden"
+    <div className="marquee-container relative w-full max-w-full overflow-hidden">
+      {/* Scrolling Track */}
+      <div className="marquee-track flex gap-6 w-max">
+        {duplicatedImages.map((image, index) => (
+          <div
+            key={index}
+            className="group relative flex-shrink-0 w-[338px] sm:w-[426px] h-[253px] sm:h-[320px] bg-white overflow-hidden"
+          >
+            <Image
+              src={image.src}
+              alt={image.alt}
+              width={426}
+              height={320}
+              className="w-full h-full object-cover pointer-events-none"
+              draggable={false}
+            />
+            {/* Caption that slides up on hover */}
+            <div 
+              className="absolute left-2 bottom-2 flex items-center gap-1 bg-white border border-foreground px-2 py-1.5 translate-y-[calc(100%+8px)] opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500"
+              style={{ transitionTimingFunction: "cubic-bezier(0.34, 1.56, 0.64, 1)" }}
             >
-              <Image
-                src={image.src}
-                alt={image.alt}
-                width={378}
-                height={285}
-                className="w-full h-full object-cover pointer-events-none"
-                style={{ filter: "none" }}
-                draggable={false}
-              />
-              {/* Caption that slides up on hover */}
-              <div 
-                className="absolute left-2 bottom-2 flex items-center gap-1 bg-white border border-foreground px-2 py-1.5 translate-y-[calc(100%+8px)] opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500"
-                style={{ transitionTimingFunction: "cubic-bezier(0.34, 1.56, 0.64, 1)" }}
-              >
-                <LocationIcon />
-                <span className="text-sm text-foreground whitespace-nowrap">
-                  {image.location}
-                </span>
-              </div>
+              <LocationIcon />
+              <span className="text-sm text-foreground whitespace-nowrap">
+                {image.location}
+              </span>
             </div>
-          ))}
-        </div>
+          </div>
+        ))}
       </div>
     </div>
   );

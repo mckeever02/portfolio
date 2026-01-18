@@ -149,6 +149,16 @@ body {
   animation-play-state: paused;
 }
 
+/* Hide hover effects on touch devices */
+@media (hover: none) {
+  .carousel-caption {
+    display: none;
+  }
+  .cursor-circle {
+    display: none !important;
+  }
+}
+
 /* Wavy underline for status links */
 .wavy-underline {
   text-decoration: underline;
