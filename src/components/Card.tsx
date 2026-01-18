@@ -104,7 +104,7 @@ export function Card({
       onMouseLeave={handleMouseLeave}
     >
       {(() => {
-        const cardClassName = "group flex flex-col border border-[var(--border-darker)] overflow-hidden bg-white transition-shadow duration-200 hover:shadow-[0_2px_8px_rgba(0,0,0,0.04)]";
+        const cardClassName = "group flex flex-col border border-[var(--border-darker)] hover:border-[var(--border-hover)] overflow-hidden bg-[var(--card-background)] transition-all duration-200 hover:shadow-[0_2px_8px_rgba(0,0,0,0.04)]";
         const cardStyle = { cursor: isHovered ? "none" : comingSoon ? "default" : "pointer" } as const;
         
         const cardContent = (
@@ -137,7 +137,7 @@ export function Card({
             </div>
 
             {/* Info Area */}
-            <div className="bg-white border-t border-[var(--border-darker)] flex flex-col gap-6 px-6 pt-6 pb-3">
+            <div className="bg-[var(--card-background)] border-t border-[var(--border-darker)] flex flex-col gap-6 px-6 pt-6 pb-3">
               {/* Project Info */}
               <div className="flex flex-col gap-2">
                 <h3 className="text-xl font-bold text-[var(--foreground)]">
