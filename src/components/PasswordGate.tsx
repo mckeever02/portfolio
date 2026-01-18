@@ -56,9 +56,9 @@ export function PasswordGate({ children, slug }: PasswordGateProps) {
             <ASCIIText
               text="locked"
               asciiFontSize={8}
-              textFontSize={40}
+              textFontSize={32}
               textColor="#fdf9f3"
-              planeBaseHeight={10}
+              planeBaseHeight={8}
               enableWaves={true}
             />
           </div>
