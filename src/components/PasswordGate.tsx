@@ -54,11 +54,11 @@ export function PasswordGate({ children, slug }: PasswordGateProps) {
         <div className="flex flex-col gap-2 text-center">
           <div className="w-full h-[270px] mb-4">
             <ASCIIText
-              text="locked"
-              asciiFontSize={8}
-              textFontSize={32}
+              text="🔒"
+              asciiFontSize={4}
+              textFontSize={42}
               textColor="#fdf9f3"
-              planeBaseHeight={8}
+              planeBaseHeight={12}
               enableWaves={true}
             />
           </div>

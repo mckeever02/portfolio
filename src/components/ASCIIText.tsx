@@ -506,9 +506,9 @@ interface ASCIITextProps {
 }
 
 export function ASCIIText({
-  text = "LOCKED",
+  text = "🔒",
   asciiFontSize = 8,
-  textFontSize = 200,
+  textFontSize = 100,
   textColor = "#fdf9f3",
   planeBaseHeight = 8,
   enableWaves = true,
