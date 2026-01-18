@@ -148,9 +148,9 @@ export function ImageCarousel() {
               className="w-full h-full object-cover pointer-events-none"
               draggable={false}
             />
-            {/* Caption that slides up on hover */}
+            {/* Caption that slides up on hover (hidden on touch devices) */}
             <div 
-              className="absolute left-2 bottom-2 flex items-center gap-1 bg-white border border-foreground px-2 py-1.5 translate-y-[calc(100%+8px)] opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500"
+              className="carousel-caption absolute left-2 bottom-2 flex items-center gap-1 bg-white border border-foreground px-2 py-1.5 translate-y-[calc(100%+8px)] opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500"
               style={{ transitionTimingFunction: "cubic-bezier(0.34, 1.56, 0.64, 1)" }}
             >
               <LocationIcon />
