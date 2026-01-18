@@ -23,15 +23,15 @@ export function SectionNav({ activeSection }: SectionNavProps) {
   };
 
   return (
-    <div className="relative hidden lg:flex flex-col gap-8">
+    <div className="relative hidden md:flex flex-col gap-8 w-3/4">
       {/* Vertical Track */}
-      <div className="absolute left-[-12px] top-0 bottom-0 w-[2px] bg-[rgba(33,32,28,0.1)] rounded-[1px]">
+      <div className="absolute left-[-13px] top-0 bottom-0 w-[4px] bg-[var(--nav-track)] rounded-full overflow-clip">
         {/* Active Indicator */}
         <motion.div
-          className="absolute left-0 w-[2px] h-[24px] bg-[var(--foreground)] rounded-full"
+          className="absolute left-[1px] w-[2px] h-[18px] bg-[var(--nav-indicator)] rounded-full"
           initial={false}
           animate={{
-            top: activeIndex * (24 + 32), // line-height (24px) + gap-8 (32px)
+            top: activeIndex * (24 + 32) + 3, // line-height (24px) + gap-8 (32px) + offset to center
           }}
           transition={{
             type: "spring",
@@ -46,7 +46,7 @@ export function SectionNav({ activeSection }: SectionNavProps) {
         <button
           key={item.id}
           onClick={() => handleClick(item.id)}
-          className={`text-left text-base transition-colors duration-200 ${
+          className={`text-left text-base transition-colors duration-200 cursor-pointer ${
             activeSection === item.id
               ? "text-[var(--foreground)]"
               : "text-[var(--foreground-secondary)] hover:text-[var(--foreground)]"

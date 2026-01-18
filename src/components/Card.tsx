@@ -64,7 +64,12 @@ export function Card({
     if (!videoRef.current) return;
     
     if (isInView) {
-      videoRef.current.play();
+      const playPromise = videoRef.current.play();
+      if (playPromise !== undefined) {
+        playPromise.catch(() => {
+          // Ignore AbortError when play is interrupted by pause
+        });
+      }
     } else {
       videoRef.current.pause();
     }
@@ -104,7 +109,7 @@ export function Card({
       onMouseLeave={handleMouseLeave}
     >
       {(() => {
-        const cardClassName = "group flex flex-col border border-[var(--border-darker)] overflow-hidden bg-white transition-shadow duration-200 hover:shadow-[0_2px_8px_rgba(0,0,0,0.04)]";
+        const cardClassName = "group flex flex-col border border-[var(--border-darker)] hover:border-[var(--border-hover)] overflow-hidden bg-[var(--card-background)] transition-all duration-200 hover:shadow-[0_2px_8px_rgba(0,0,0,0.04)]";
         const cardStyle = { cursor: isHovered ? "none" : comingSoon ? "default" : "pointer" } as const;
         
         const cardContent = (
@@ -137,7 +142,7 @@ export function Card({
             </div>
 
             {/* Info Area */}
-            <div className="bg-white border-t border-[var(--border-darker)] flex flex-col gap-6 px-6 pt-6 pb-3">
+            <div className="bg-[var(--card-background)] border-t border-[var(--border-darker)] flex flex-col gap-6 px-6 pt-6 pb-3">
               {/* Project Info */}
               <div className="flex flex-col gap-2">
                 <h3 className="text-xl font-bold text-[var(--foreground)]">
@@ -183,9 +188,9 @@ export function Card({
         );
       })()}
 
-      {/* Cursor-following circle */}
+      {/* Cursor-following circle (hidden on touch devices) */}
       <motion.div
-        className={`absolute top-0 left-0 rounded-full bg-[var(--foreground)] flex items-center justify-center pointer-events-none z-10 ${
+        className={`cursor-circle absolute top-0 left-0 rounded-full bg-[var(--foreground)] flex items-center justify-center pointer-events-none z-10 ${
           comingSoon ? "w-24 h-24" : "w-14 h-14"
         }`}
         style={{
