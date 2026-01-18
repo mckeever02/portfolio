@@ -4,26 +4,27 @@ import Link from "next/link";
 
 export function BackButton() {
   return (
-    <Link
-      href="/"
-      className="inline-flex items-center gap-2 p-2 text-[var(--foreground)] hover:opacity-70 transition-opacity"
-    >
-      <svg
-        width="16"
-        height="16"
-        viewBox="0 0 16 16"
-        fill="none"
-        xmlns="http://www.w3.org/2000/svg"
-      >
-        <path
-          d="M10 12L6 8L10 4"
+    <Link href="/" className="back-button group relative inline-block">
+      {/* Tilted shadow - animates in on hover */}
+      <div className="back-button-shadow absolute inset-0 bg-black border border-black" />
+      {/* Main button - lifts slightly on hover */}
+      <div className="back-button-face relative flex items-center gap-2 px-2 py-2 bg-[var(--background)] border border-transparent">
+        <svg
+          width="20"
+          height="20"
+          viewBox="0 0 24 24"
+          fill="none"
           stroke="currentColor"
-          strokeWidth="1.5"
+          strokeWidth="2"
           strokeLinecap="round"
           strokeLinejoin="round"
-        />
-      </svg>
-      <span className="text-base">Back</span>
+          className="back-button-arrow"
+        >
+          <path d="M19 12H5" />
+          <path d="M12 19l-7-7 7-7" />
+        </svg>
+        <span className="text-xl text-[var(--foreground)]">Back</span>
+      </div>
     </Link>
   );
 }

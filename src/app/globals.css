@@ -254,3 +254,42 @@ body {
 .group:has(.wavy-link:hover) .icon-tilt {
   transform: rotate(-8deg);
 }
+
+/* Back button animations */
+.back-button-shadow {
+  opacity: 0;
+  transition: opacity 200ms ease-out;
+}
+
+.back-button:hover .back-button-shadow {
+  opacity: 1;
+}
+
+.back-button-face {
+  transition: transform 200ms ease-out, border-color 200ms ease-out;
+}
+
+.back-button:hover .back-button-face {
+  transform: translate(-4px, -4px) rotate(2deg);
+  background-color: var(--card-background);
+  border-color: black;
+}
+
+.back-button-arrow {
+  transition: transform 200ms ease-out;
+}
+
+.back-button:hover .back-button-arrow {
+  transform: translateX(-2px);
+}
+
+@media (prefers-color-scheme: dark) {
+  .back-button-shadow {
+    background: var(--foreground);
+    border-color: var(--foreground);
+  }
+
+  .back-button:hover .back-button-face {
+    border-color: var(--foreground);
+  }
+}
