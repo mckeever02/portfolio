@@ -76,13 +76,13 @@ body {
 
 /* Text selection highlight */
 ::selection {
-  background: var(--foreground);
-  color: var(--background);
+  background-color: var(--foreground) !important;
+  color: var(--background) !important;
 }
 
 ::-moz-selection {
-  background: var(--foreground);
-  color: var(--background);
+  background-color: var(--foreground) !important;
+  color: var(--background) !important;
 }
 
 /* Scrollbar Styling */
