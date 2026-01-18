@@ -11,3 +11,4 @@ export { PageTransition } from "./PageTransition";
 export { FuzzyText } from "./FuzzyText";
 export { PasswordGate } from "./PasswordGate";
 export { ASCIIText } from "./ASCIIText";
+export { Button } from "./Button";
