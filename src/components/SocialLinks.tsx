@@ -120,8 +120,8 @@ const links = [
 ];
 
 const iconVariants = {
-  rest: { scale: 1 },
-  hover: { scale: 1.1 },
+  rest: { rotate: 0 },
+  hover: { rotate: -6 },
 };
 
 const appendedIconVariants = {
