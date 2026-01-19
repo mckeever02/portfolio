@@ -7,6 +7,7 @@ import {
   ContentSection,
   BodyText,
 } from "@/components/case-study";
+import Image from "next/image";
 
 export default function SentinelPage() {
   const caseStudy = getCaseStudy("sentinel");
@@ -25,6 +26,16 @@ export default function SentinelPage() {
           </BodyText>
         </ContentSection>
       </NarrowContent>
+
+      {/* Sentinel Image */}
+      <div className="mx-auto w-full max-w-[1100px] relative rounded-lg overflow-hidden shadow-md aspect-[3040/1928]">
+        <Image
+          src="/images/sentinel.jpg"
+          alt="Sentinel AI-powered admin copilot"
+          fill
+          className="object-fit"
+        />
+      </div>
     </CaseStudyLayout>
   );
 }
