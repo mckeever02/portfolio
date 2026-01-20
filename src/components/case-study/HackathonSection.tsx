@@ -105,7 +105,7 @@ export function HackathonSection({
       {/* Demo video */}
       {demoVideo && (
         <div className="flex flex-col gap-2 mt-4">
-          <div className="w-full aspect-[2704/1724] relative rounded-lg overflow-hidden">
+          <div className="w-full aspect-[2704/1724] relative overflow-hidden">
             <video
               src={demoVideo}
               autoPlay
@@ -123,7 +123,7 @@ export function HackathonSection({
 
       {/* Demo image (fallback) */}
       {demoImage && !demoVideo && (
-        <div className="w-full aspect-[2704/1724] relative mt-4 rounded overflow-hidden">
+        <div className="w-full aspect-[2704/1724] relative mt-4 overflow-hidden">
           <Image
             src={demoImage}
             alt="Hackathon demo"

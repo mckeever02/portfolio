@@ -1,29 +1,27 @@
 "use client";
 
-import Link from "next/link";
+import { Button } from "../Button";
+
+const ArrowLeftIcon = () => (
+  <svg
+    width="20"
+    height="20"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <path d="M19 12H5" />
+    <path d="M12 19l-7-7 7-7" />
+  </svg>
+);
 
 export function BackButton() {
   return (
-    <Link
-      href="/"
-      className="inline-flex items-center gap-2 p-2 text-[var(--foreground)] hover:opacity-70 transition-opacity"
-    >
-      <svg
-        width="16"
-        height="16"
-        viewBox="0 0 16 16"
-        fill="none"
-        xmlns="http://www.w3.org/2000/svg"
-      >
-        <path
-          d="M10 12L6 8L10 4"
-          stroke="currentColor"
-          strokeWidth="1.5"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        />
-      </svg>
-      <span className="text-base">Back</span>
-    </Link>
+    <Button href="/" iconBefore={<ArrowLeftIcon />}>
+      Back
+    </Button>
   );
 }

@@ -147,7 +147,6 @@ function VerifierContent({ caseStudy }: { caseStudy: CaseStudy }) {
                 fill
                 className="object-cover"
               />
-              <div className="absolute inset-0 bg-[var(--background)] mix-blend-multiply" />
             </div>
             <div className="flex flex-col">
               <span className="text-lg font-bold text-[var(--foreground)]">Matt Grimes</span>
@@ -183,7 +182,7 @@ function VerifierContent({ caseStudy }: { caseStudy: CaseStudy }) {
       </NarrowContent>
 
       {/* Figma Embed - Wireframes */}
-      <div className="mx-auto w-full max-w-[375px] sm:max-w-[400px] aspect-[375/812] rounded overflow-hidden">
+      <div className="mx-auto w-full max-w-[375px] sm:max-w-[400px] aspect-[375/812] overflow-hidden">
         <iframe
           src="https://embed.figma.com/proto/PdTOSzIo5vFiRr2UieT0na/Verifier?page-id=3%3A167191&node-id=3-166829&scaling=scale-down-width&content-scaling=responsive&starting-point-node-id=3%3A166829&embed-host=share"
           className="w-full h-full border-0"
@@ -208,7 +207,7 @@ function VerifierContent({ caseStudy }: { caseStudy: CaseStudy }) {
       </NarrowContent>
 
       {/* Figma Embed - High Fidelity (full width) */}
-      <FullWidthContent className="aspect-[4/3] md:aspect-[16/10] md:min-h-[500px] rounded overflow-hidden">
+      <FullWidthContent className="aspect-[4/3] md:aspect-[16/10] md:min-h-[500px] overflow-hidden">
         <iframe
           src="https://embed.figma.com/proto/PdTOSzIo5vFiRr2UieT0na/Verifier?page-id=0%3A1&node-id=1-37665&scaling=contain&content-scaling=fixed&starting-point-node-id=1%3A37321&embed-host=share"
           className="w-full h-full border-0"
@@ -224,7 +223,7 @@ function VerifierContent({ caseStudy }: { caseStudy: CaseStudy }) {
           </BodyText>
           <div className="flex flex-col gap-4">
             <div className="flex gap-4">
-              <div className="flex-1 aspect-[4/3] rounded overflow-hidden relative">
+              <div className="flex-1 aspect-[4/3] overflow-hidden relative">
                 <Image
                   src="/images/work/verifier/verifier-rsa-1.jpg"
                   alt="Verifier demo at RSA booth"
@@ -232,7 +231,7 @@ function VerifierContent({ caseStudy }: { caseStudy: CaseStudy }) {
                   className="object-cover"
                 />
               </div>
-              <div className="flex-1 aspect-[4/3] rounded overflow-hidden relative">
+              <div className="flex-1 aspect-[4/3] overflow-hidden relative">
                 <Image
                   src="/images/work/verifier/verifer-rsa-3.jpg"
                   alt="Verifier prototype on display at RSA"
@@ -245,7 +244,7 @@ function VerifierContent({ caseStudy }: { caseStudy: CaseStudy }) {
               quote="You're right in my sweet spot. Massive value. You should double down on this."
               attribution="Security Professional at RSA"
             />
-            <div className="w-full aspect-[889/684] rounded overflow-hidden relative">
+            <div className="w-full aspect-[889/684] overflow-hidden relative">
               <Image
                 src="/images/work/verifier/verifier-rsa-2.jpg"
                 alt="RSA Conference crowd"

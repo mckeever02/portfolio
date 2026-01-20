@@ -44,9 +44,9 @@ export function ProfileHeader() {
         animate={{ x: 0 }}
         transition={{
           type: "spring",
-          stiffness: 400,
-          damping: 25,
-          mass: 0.8,
+          stiffness: 450,
+          damping: 20,
+          mass: 0.5,
           delay: 1.3,
         }}
       >

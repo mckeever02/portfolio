@@ -40,7 +40,10 @@
   --foreground-secondary: rgba(33, 32, 28, 0.7);
   --border: rgba(0, 0, 0, 0.1);
   --border-darker: rgba(0, 0, 0, 0.2);
+  --border-hover: rgba(0, 0, 0, 0.3);
   --card-background: #ffffff;
+  --nav-track: #e6e0d8;
+  --nav-indicator: #21201c;
   --max-width: 1280px;
   
   /* Fonts - GT Cinetype and GT Era Display with system fallbacks */
@@ -59,6 +62,21 @@
   --font-era: var(--font-era);
 }
 
+/* Dark mode - triggered by system preference */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #181715;
+    --foreground: #E7E6E3;
+    --foreground-secondary: rgba(231, 230, 227, 0.7);
+    --border: rgba(255, 255, 255, 0.06);
+    --border-darker: rgba(255, 255, 255, 0.06);
+    --border-hover: rgba(255, 255, 255, 0.1);
+    --card-background: #1F1E1B;
+    --nav-track: rgba(0, 0, 0, 0.3);
+    --nav-indicator: #E7E6E3;
+  }
+}
+
 * {
   box-sizing: border-box;
 }
@@ -72,6 +90,17 @@ body {
   color: var(--foreground);
   font-family: var(--font-cinetype);
   min-height: 100vh;
+}
+
+/* Text selection highlight */
+::selection {
+  background-color: var(--foreground) !important;
+  color: var(--background) !important;
+}
+
+::-moz-selection {
+  background-color: var(--foreground) !important;
+  color: var(--background) !important;
 }
 
 /* Scrollbar Styling */
@@ -93,6 +122,15 @@ body {
   background: rgba(33, 32, 28, 0.3);
 }
 
+@media (prefers-color-scheme: dark) {
+  ::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.2);
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.3);
+  }
+}
+
 /* Auto-scroll animation for carousel */
 @keyframes scroll-x {
   0% {
@@ -109,6 +147,16 @@ body {
 
 .animate-scroll-x:hover {
   animation-play-state: paused;
+}
+
+/* Hide hover effects on touch devices */
+@media (hover: none) {
+  .carousel-caption {
+    display: none;
+  }
+  .cursor-circle {
+    display: none !important;
+  }
 }
 
 /* Wavy underline for status links */
@@ -182,6 +230,20 @@ body {
 .wavy-link:hover::after {
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 8 5'%3E%3Cpath d='M0 2.5 Q2 0 4 2.5 T8 2.5' stroke='rgba(33,32,28,1)' fill='none' stroke-width='1'/%3E%3C/svg%3E");
   animation: wave 400ms linear infinite;
+}
+
+@media (prefers-color-scheme: dark) {
+  .wavy-underline {
+    text-decoration-color: rgba(231, 230, 227, 0.5);
+  }
+
+  .wavy-link::after {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 8 5'%3E%3Cpath d='M0 2.5 Q2 0 4 2.5 T8 2.5' stroke='rgba(231,230,227,0.5)' fill='none' stroke-width='1'/%3E%3C/svg%3E");
+  }
+
+  .wavy-link:hover::after {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 8 5'%3E%3Cpath d='M0 2.5 Q2 0 4 2.5 T8 2.5' stroke='rgba(231,230,227,1)' fill='none' stroke-width='1'/%3E%3C/svg%3E");
+  }
 }
 
 /* Bouncy tilt for timeline icons */

@@ -60,7 +60,7 @@ export function Timeline() {
             {/* Icon Column */}
             <div className="flex flex-col items-center">
               {/* Icon */}
-              <div className="w-8 h-8 my-1 rounded border border-[rgba(0,0,0,0.2)] overflow-hidden bg-white flex-shrink-0 icon-tilt">
+              <div className="w-8 h-8 my-1 rounded border border-[var(--border-darker)] overflow-hidden bg-[var(--card-background)] flex-shrink-0 icon-tilt">
                 <Image
                   src={item.icon}
                   alt={item.company}
@@ -71,7 +71,7 @@ export function Timeline() {
               </div>
               {/* Divider (not on last item) */}
               {index < timelineItems.length - 1 && (
-                <div className="w-[2px] flex-1 min-h-[24px] bg-[rgba(33,32,28,0.2)] rounded-sm" />
+                <div className="w-[2px] flex-1 min-h-[24px] bg-[var(--nav-track)] rounded-sm" />
               )}
             </div>
 

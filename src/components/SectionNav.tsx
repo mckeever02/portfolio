@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, useEffect, useRef } from "react";
 import { motion } from "framer-motion";
 
 interface SectionNavProps {
@@ -13,47 +14,81 @@ const navItems = [
 ];
 
 export function SectionNav({ activeSection }: SectionNavProps) {
+  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
+  const [clickedIndex, setClickedIndex] = useState<number | null>(null);
+  const isNavigatingRef = useRef(false);
   const activeIndex = navItems.findIndex((item) => item.id === activeSection);
+  
+  // Clear clickedIndex once scroll reaches the target section
+  useEffect(() => {
+    if (clickedIndex !== null && activeIndex === clickedIndex && !isNavigatingRef.current) {
+      setClickedIndex(null);
+    }
+  }, [activeIndex, clickedIndex]);
 
-  const handleClick = (id: string) => {
+  // Use clicked index while scrolling to target, otherwise use active index
+  const indicatorIndex = clickedIndex !== null ? clickedIndex : activeIndex;
+
+  const handleClick = (id: string, index: number) => {
+    setClickedIndex(index);
+    isNavigatingRef.current = true;
+    
     const element = document.getElementById(id);
     if (element) {
       element.scrollIntoView({ behavior: "smooth" });
     }
+    
+    // Clear navigation lock after smooth scroll completes
+    setTimeout(() => {
+      isNavigatingRef.current = false;
+      setClickedIndex(null);
+    }, 800);
   };
 
   return (
-    <div className="relative hidden lg:flex flex-col gap-8">
-      {/* Vertical Track */}
-      <div className="absolute left-[-12px] top-0 bottom-0 w-[2px] bg-[rgba(33,32,28,0.1)] rounded-[1px]">
-        {/* Active Indicator */}
-        <motion.div
-          className="absolute left-0 w-[2px] h-[24px] bg-[var(--foreground)] rounded-full"
+    <div 
+      className="relative hidden md:flex flex-col gap-8 w-3/4"
+      onMouseLeave={() => setHoveredIndex(null)}
+    >
+      {/* Active Indicator */}
+      <motion.div
+        className="absolute left-[-12px] w-[2.5px] h-[14px] bg-[var(--nav-indicator)] rounded-full"
+        initial={false}
+        animate={{
+          top: indicatorIndex * (24 + 32) + 5, // line-height (24px) + gap-8 (32px) + offset to center
+        }}
+        transition={{
+          type: "spring",
+          stiffness: 500,
+          damping: 28,
+          mass: 0.8,
+        }}
+      />
+
+      {/* Nav Items */}
+      {navItems.map((item, index) => (
+        <motion.button
+          key={item.id}
+          onClick={() => handleClick(item.id, index)}
+          onMouseEnter={() => setHoveredIndex(index)}
+          className={`text-left text-base cursor-pointer transition-none ${
+            (clickedIndex !== null ? index === clickedIndex : activeSection === item.id)
+              ? "text-[var(--foreground)]"
+              : "text-[var(--foreground-secondary)]"
+          }`}
           initial={false}
           animate={{
-            top: activeIndex * (24 + 32), // line-height (24px) + gap-8 (32px)
+            x: hoveredIndex === index ? 4 : 0,
           }}
           transition={{
             type: "spring",
-            stiffness: 300,
-            damping: 30,
+            stiffness: 500,
+            damping: 28,
+            mass: 0.8,
           }}
-        />
-      </div>
-
-      {/* Nav Items */}
-      {navItems.map((item) => (
-        <button
-          key={item.id}
-          onClick={() => handleClick(item.id)}
-          className={`text-left text-base transition-colors duration-200 ${
-            activeSection === item.id
-              ? "text-[var(--foreground)]"
-              : "text-[var(--foreground-secondary)] hover:text-[var(--foreground)]"
-          }`}
         >
           {item.label}
-        </button>
+        </motion.button>
       ))}
     </div>
   );

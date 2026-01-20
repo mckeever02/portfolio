@@ -1,6 +1,7 @@
 export { ProfileHeader } from "./ProfileHeader";
 export { StatusInfo } from "./StatusInfo";
 export { SectionNav } from "./SectionNav";
+export { SocialLinks } from "./SocialLinks";
 export { StatCard } from "./StatCard";
 export { WorkCard } from "./WorkCard";
 export { ProjectCard } from "./ProjectCard";
@@ -10,3 +11,7 @@ export { PageTransition } from "./PageTransition";
 export { PasswordGate } from "./PasswordGate";
 export { LightboxImage } from "./Lightbox";
 export { SpotlightCard } from "./SpotlightCard";
+export { FuzzyText } from "./FuzzyText";
+export { PasswordGate } from "./PasswordGate";
+export { ASCIIText } from "./ASCIIText";
+export { Button } from "./Button";
