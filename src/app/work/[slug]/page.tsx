@@ -33,7 +33,7 @@ function ScrollScaleVideo({ src }: { src: string }) {
   return (
     <motion.div
       ref={videoRef}
-      className="w-full max-w-[400px] mt-4 rounded overflow-hidden"
+      className="w-full max-w-[400px] mt-4 overflow-hidden"
       style={{ scale: videoScale }}
     >
       <video

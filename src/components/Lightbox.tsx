@@ -1,0 +1,46 @@
+"use client";
+
+import Image from "next/image";
+import Zoom from "react-medium-image-zoom";
+import "react-medium-image-zoom/dist/styles.css";
+
+interface LightboxImageProps {
+  src: string;
+  alt: string;
+  className?: string;
+  aspectRatio?: string;
+  maxWidth?: string;
+}
+
+export function LightboxImage({
+  src,
+  alt,
+  className = "",
+  aspectRatio = "16/9",
+  maxWidth = "1100px",
+}: LightboxImageProps) {
+  return (
+    <div
+      className={`mx-auto w-full ${className}`}
+      style={{ maxWidth }}
+    >
+      <Zoom
+        zoomMargin={40}
+        classDialog="lightbox-dialog"
+      >
+        <div
+          className="relative rounded-lg overflow-hidden border border-black/10 w-full"
+          style={{ aspectRatio }}
+        >
+          <Image
+            src={src}
+            alt={alt}
+            fill
+            className="object-cover"
+            sizes={`(max-width: 768px) 100vw, ${maxWidth}`}
+          />
+        </div>
+      </Zoom>
+    </div>
+  );
+}

@@ -8,3 +8,5 @@ export { ImageCarousel } from "./ImageCarousel";
 export { Timeline } from "./Timeline";
 export { PageTransition } from "./PageTransition";
 export { PasswordGate } from "./PasswordGate";
+export { LightboxImage } from "./Lightbox";
+export { SpotlightCard } from "./SpotlightCard";
