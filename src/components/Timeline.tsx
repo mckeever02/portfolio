@@ -63,7 +63,7 @@ export function Timeline() {
               <div className="w-8 h-8 my-1 rounded border border-[var(--border-darker)] overflow-hidden bg-[var(--card-background)] flex-shrink-0 icon-tilt">
                 <Image
                   src={item.icon}
-                  alt={item.company}
+                  alt={`${item.company} logo`}
                   width={32}
                   height={32}
                   className="w-full h-full object-cover"

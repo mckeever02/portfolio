@@ -71,7 +71,7 @@ export function SectionNav({ activeSection }: SectionNavProps) {
           key={item.id}
           onClick={() => handleClick(item.id, index)}
           onMouseEnter={() => setHoveredIndex(index)}
-          className={`text-left text-base cursor-pointer transition-none ${
+          className={`text-left text-base cursor-pointer transition-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--foreground)] focus-visible:outline-offset-2 ${
             (clickedIndex !== null ? index === clickedIndex : activeSection === item.id)
               ? "text-[var(--foreground)]"
               : "text-[var(--foreground-secondary)]"

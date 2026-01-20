@@ -34,7 +34,7 @@ export function ProfileHeader() {
           height={48}
           className="w-full h-full object-cover"
         />
-        <div className="absolute inset-0 bg-[#f2ede6] mix-blend-multiply" />
+        <div aria-hidden="true" className="absolute inset-0 bg-[#f2ede6] mix-blend-multiply" />
       </motion.div>
 
       {/* Name and Title */}
