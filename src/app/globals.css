@@ -255,45 +255,57 @@ body {
   transform: rotate(-8deg);
 }
 
-/* Tilt button animations */
-.tilt-button-shadow {
-  opacity: 0;
-  transition: opacity 200ms ease-out;
+/* React Medium Image Zoom - Custom Styles */
+[data-rmiz] {
+  cursor: zoom-in;
 }
 
-.tilt-button:hover .tilt-button-shadow {
-  opacity: 1;
+[data-rmiz-modal-overlay="visible"] {
+  background-color: rgba(0, 0, 0, 0.92) !important;
+  backdrop-filter: blur(8px);
 }
 
-.tilt-button-face {
-  transition: transform 200ms ease-out, border-color 200ms ease-out, background-color 200ms ease-out;
+[data-rmiz-modal-img] {
+  border-radius: 8px;
 }
 
-.tilt-button:hover .tilt-button-face {
-  transform: translate(-4px, -4px) rotate(2deg);
+[data-rmiz-btn-unzoom] {
+  background-color: rgba(255, 255, 255, 0.1) !important;
+  border-radius: 50%;
+  color: white !important;
+  transition: background-color 0.2s ease;
+}
+
+[data-rmiz-btn-unzoom]:hover {
+  background-color: rgba(255, 255, 255, 0.2) !important;
+}
+
+/* SpotlightCard Component */
+.card-spotlight {
+  position: relative;
+  border: 1px solid var(--border-darker);
   background-color: var(--card-background);
-  border-color: black;
+  padding: 1.5rem;
+  overflow: hidden;
+  --mouse-x: 50%;
+  --mouse-y: 50%;
+  --spotlight-color: rgba(33, 32, 28, 0.08);
 }
 
-.tilt-button-icon {
-  transition: transform 200ms ease-out;
+.card-spotlight::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: radial-gradient(circle at var(--mouse-x) var(--mouse-y), var(--spotlight-color), transparent 80%);
+  opacity: 0;
+  transition: opacity 0.5s ease;
+  pointer-events: none;
 }
 
-.tilt-button:hover .tilt-button-icon:first-child {
-  transform: translateX(-2px);
-}
-
-.tilt-button:hover .tilt-button-icon:last-child {
-  transform: translateX(2px);
-}
-
-@media (prefers-color-scheme: dark) {
-  .tilt-button-shadow {
-    background: var(--foreground);
-    border-color: var(--foreground);
-  }
-
-  .tilt-button:hover .tilt-button-face {
-    border-color: var(--foreground);
-  }
+.card-spotlight:hover::before,
+.card-spotlight:focus-within::before {
+  opacity: 1;
 }
