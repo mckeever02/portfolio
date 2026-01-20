@@ -153,10 +153,10 @@ export function SocialLinks() {
               href={link.href!}
               target="_blank"
               rel="noopener noreferrer"
-              className="group flex items-center justify-between w-3/4 text-base text-[var(--foreground)] py-2 -ml-1 pl-1"
+              className="group flex items-center justify-between w-3/4 text-base text-[var(--foreground)] py-2 -ml-1 pl-1 focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--foreground)] focus-visible:outline-offset-2"
             >
               <div className="flex items-center gap-2">
-                <motion.div variants={iconVariants} transition={springTransition}>
+                <motion.div variants={iconVariants} transition={springTransition} aria-hidden="true">
                   <link.icon />
                 </motion.div>
                 <span>{link.label}</span>
@@ -171,7 +171,7 @@ export function SocialLinks() {
               className="group flex items-center justify-between w-3/4 text-base text-[var(--foreground)] cursor-pointer py-2 -ml-1 pl-1"
             >
               <div className="flex items-center gap-2">
-                <motion.div variants={iconVariants} transition={springTransition}>
+                <motion.div variants={iconVariants} transition={springTransition} aria-hidden="true">
                   <link.icon />
                 </motion.div>
                 <span>{copied ? "Copied!" : link.label}</span>

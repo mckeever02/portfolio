@@ -123,6 +123,7 @@ export function Card({
                 <video
                   ref={videoRef}
                   src={videoUrl}
+                  aria-label={`Video preview for ${title}`}
                   loop
                   muted
                   playsInline
