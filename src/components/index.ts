@@ -12,6 +12,5 @@ export { PasswordGate } from "./PasswordGate";
 export { LightboxImage } from "./Lightbox";
 export { SpotlightCard } from "./SpotlightCard";
 export { FuzzyText } from "./FuzzyText";
-export { PasswordGate } from "./PasswordGate";
 export { ASCIIText } from "./ASCIIText";
 export { Button } from "./Button";
