@@ -11,6 +11,7 @@ export { PageTransition } from "./PageTransition";
 export { PasswordGate } from "./PasswordGate";
 export { LightboxImage } from "./Lightbox";
 export { SpotlightCard } from "./SpotlightCard";
+export { FlipCard, CardFace } from "./FlipCard";
 export { FuzzyText } from "./FuzzyText";
 export { ASCIIText } from "./ASCIIText";
 export { Button } from "./Button";
