@@ -5,11 +5,13 @@ import {
   CaseStudyLayout,
   NarrowContent,
   WideContent,
+  FullWidthContent,
   ContentSection,
   BodyText,
 } from "@/components/case-study";
 import { LightboxImage } from "@/components/Lightbox";
 import { FlipCard, CardFace } from "@/components/FlipCard";
+import { SpotlightEffect } from "@/components/SpotlightEffect";
 
 const adminReasons = [
   {
@@ -97,7 +99,7 @@ export default function SentinelPage() {
         aspectRatio="2880/1768"
       />
 
-      <NarrowContent>
+      <NarrowContent className="mt-16">
         <ContentSection id="why-admins" title="Why do Admins go to the Admin console?">
           <BodyText>
             Understanding admin motivations and their pain points helped me identify where an AI copilot could provide the most value.
@@ -105,7 +107,7 @@ export default function SentinelPage() {
         </ContentSection>
       </NarrowContent>
 
-      <WideContent>
+      <WideContent className="mt-0">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           {adminReasons.map((reason) => (
             <FlipCard
@@ -143,6 +145,37 @@ export default function SentinelPage() {
           Findings based on moderated interviews with B2B admins for 1Password Teams and Business accounts.
         </p>
       </WideContent>
+
+      <NarrowContent className="mt-16">
+        <ContentSection id="insights" title="Key insights">
+          <BodyText>
+            I identified and shared two key insights from the research to get buy-in from Product and create a shared understanding of the problem.
+          </BodyText>
+        </ContentSection>
+      </NarrowContent>
+
+      <FullWidthContent className="mt-0">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-12 md:px-12">
+          <SpotlightEffect 
+            className="bg-white p-10 md:p-12 border border-black/20"
+            spotlightColor="rgba(169, 155, 234, 0.25)"
+          >
+            <span className="text-[var(--foreground)] font-bold tracking-wide bg-[#190C69] text-white py-1 px-2 font-bold uppercase -skew-x-8 transform relative inline-block">Unclear data</span>
+            <p className="text-[var(--foreground)] text-2xl md:text-3xl mt-6 leading-relaxed relative z-10">
+              Admins need faster, clearer answers to their <span className="underline decoration-[#A99BEA] decoration-4 underline-offset-1">data questions</span>. Current insights and reports <span className="underline decoration-[#A99BEA] decoration-4 underline-offset-1">lack depth and clarity</span>.
+            </p>
+          </SpotlightEffect>
+          <SpotlightEffect 
+            className="bg-white p-10 md:p-12 border border-black/20"
+            spotlightColor="rgba(249, 218, 239, 0.4)"
+          >
+            <span className="text-[var(--foreground)] font-bold tracking-wide bg-[#611046] text-white py-1 px-2 font-bold uppercase -skew-x-8 transform relative inline-block">Hard labour</span>
+            <p className="text-[var(--foreground)] text-2xl md:text-3xl mt-6 leading-relaxed relative z-10">
+              Manual work like account recovery and user management <span className="underline decoration-[#F9DAEF] decoration-4 underline-offset-1">overloads admins</span>. They want more efficient methods such as <span className="underline decoration-[#F9DAEF] decoration-4 underline-offset-1">automation</span>.
+            </p>
+          </SpotlightEffect>
+        </div>
+      </FullWidthContent>
     </CaseStudyLayout>
   );
 }
