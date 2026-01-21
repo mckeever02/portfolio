@@ -255,6 +255,35 @@ body {
   transform: rotate(-8deg);
 }
 
+/* Colored squiggly underlines */
+.squiggly {
+  position: relative;
+  text-decoration: none;
+}
+
+.squiggly::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 6px;
+  background-repeat: repeat-x;
+  background-size: 10px 6px;
+}
+
+.squiggly-purple::after {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 6'%3E%3Cpath d='M0 3 Q2.5 0 5 3 T10 3' stroke='%23A99BEA' fill='none' stroke-width='2'/%3E%3C/svg%3E");
+}
+
+.squiggly-orange::after {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 6'%3E%3Cpath d='M0 3 Q2.5 0 5 3 T10 3' stroke='%23F97316' fill='none' stroke-width='2'/%3E%3C/svg%3E");
+}
+
+.squiggly-blue::after {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 6'%3E%3Cpath d='M0 3 Q2.5 0 5 3 T10 3' stroke='%2338BDF8' fill='none' stroke-width='2'/%3E%3C/svg%3E");
+}
+
 /* React Medium Image Zoom - Custom Styles */
 [data-rmiz] {
   cursor: zoom-in;
