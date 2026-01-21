@@ -176,6 +176,64 @@ export default function SentinelPage() {
           </SpotlightEffect>
         </div>
       </FullWidthContent>
+
+      <NarrowContent className="mt-16">
+        <ContentSection id="benefits" title="What benefits do Admins see when adding AI to 1Password?">
+          <BodyText>
+            Through discussions with admins and stakeholders, I identified the key benefits that an AI copilot could bring to the admin experience.
+          </BodyText>
+        </ContentSection>
+      </NarrowContent>
+
+      <NarrowContent className="mt-0 max-w-xl">
+        <div className="grid grid-cols-1 gap-4">
+          <div className="bg-white p-3 border border-black/20 flex flex-row gap-4">
+            <div 
+              className="h-48 w-48 flex flex-row items-center justify-center bg-black/5"
+            >
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="rgb(16, 185, 129)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M12 2v4" />
+                <path d="m16.2 7.8 2.9-2.9" />
+                <path d="M18 12h4" />
+                <path d="m16.2 16.2 2.9 2.9" />
+                <path d="M12 18v4" />
+                <path d="m4.9 19.1 2.9-2.9" />
+                <path d="M2 12h4" />
+                <path d="m4.9 4.9 2.9 2.9" />
+              </svg>
+            </div>
+            <div className="flex flex-col py-4">
+                <h3 className="text-xl font-bold mb-4 text-[var(--foreground)] leading-tight">Automating tasks</h3>
+                <p className="text-[var(--foreground)] text-xl">Save time and effort by automating repetitive administrative workflows.</p>
+            </div>
+          </div>
+          <div className="card-spotlight">
+            <div 
+              className="rounded-lg flex items-center justify-center mb-4 shrink-0 bg-blue-500/10"
+              style={{ width: 40, height: 40, minWidth: 40, minHeight: 40 }}
+            >
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="rgb(59, 130, 246)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z" />
+                <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z" />
+              </svg>
+            </div>
+            <h3 className="text-xl font-bold mb-2 text-[var(--foreground)] leading-tight">Actionable insights</h3>
+            <p className="text-[var(--foreground)] text-lg">Help customers spot risks and opportunities quickly with clear, actionable recommendations.</p>
+          </div>
+          <div className="card-spotlight">
+            <div 
+              className="rounded-lg flex items-center justify-center mb-4 shrink-0 bg-purple-500/10"
+              style={{ width: 40, height: 40, minWidth: 40, minHeight: 40 }}
+            >
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="rgb(168, 85, 247)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+              </svg>
+            </div>
+            <h3 className="text-xl font-bold mb-2 text-[var(--foreground)] leading-tight">Natural language</h3>
+            <p className="text-[var(--foreground)] text-lg">Enable users to accomplish tasks without having to learn complex interfaces.</p>
+          </div>
+        </div>
+      </NarrowContent>
     </CaseStudyLayout>
   );
 }
