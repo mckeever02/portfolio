@@ -89,14 +89,16 @@ function SolutionSection() {
   const [imageFocus, setImageFocus] = useState<ImageFocus>(null);
 
   return (
-    <FullWidthContent className="mt-16">
+    <FullWidthContent className="mt-0">
+      <div className="md:px-12">
       <div className="grid grid-cols-1 bg-white border border-black/20 lg:grid-cols-2 items-center">
         <div className="p-12">
-          <ContentSection id="exploration" title="The solution">
+          <section id="exploration" className="flex flex-col gap-6 scroll-mt-8">
+            <span className="font-bold tracking-wide py-1 px-2 uppercase -skew-x-8 transform inline-block w-fit bg-[#e8e4df] text-black">The solution</span>
             <p className="text-[var(--foreground)] text-2xl md:text-3xl lg:text-4xl leading-relaxed">
               An AI Agent which can{" "}
               <span
-                className="squiggly squiggly-blue cursor-pointer"
+                className="highlight-expand highlight-expand-blue"
                 onMouseEnter={() => setImageFocus("insights")}
                 onMouseLeave={() => setImageFocus(null)}
               >
@@ -104,7 +106,7 @@ function SolutionSection() {
               </span>
               ,{" "}
               <span
-                className="squiggly squiggly-purple cursor-pointer"
+                className="highlight-expand highlight-expand-purple"
                 onMouseEnter={() => setImageFocus("tasks")}
                 onMouseLeave={() => setImageFocus(null)}
               >
@@ -112,7 +114,7 @@ function SolutionSection() {
               </span>{" "}
               and{" "}
               <span
-                className="squiggly squiggly-brown cursor-pointer"
+                className="highlight-expand highlight-expand-brown"
                 onMouseEnter={() => setImageFocus("support")}
                 onMouseLeave={() => setImageFocus(null)}
               >
@@ -120,7 +122,7 @@ function SolutionSection() {
               </span>
               .
             </p>
-          </ContentSection>
+          </section>
         </div>
 
         <div className="mesh-gradient p-6 pl-0 overflow-hidden">
@@ -134,15 +136,9 @@ function SolutionSection() {
                 transform: imageFocus ? imageTransforms[imageFocus] : "scale(1) translate(0%, 0%)",
                 }}
             />
-            {/* Hover area for "Gain insights" section - top right of image */}
-            <div 
-              className="absolute top-0 right-0 w-[50%] h-[40%] cursor-zoom-in z-10"
-              onMouseEnter={() => setImageFocus("insights")}
-              onMouseLeave={() => setImageFocus(null)}
-              aria-label="Gain insights section"
-            />
             </div>
         </div>
+      </div>
       </div>
     </FullWidthContent>
   );
