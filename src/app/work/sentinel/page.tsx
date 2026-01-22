@@ -80,62 +80,71 @@ const WarningIcon = (
 type ImageFocus = "insights" | "tasks" | "support" | null;
 
 const imageTransforms: Record<NonNullable<ImageFocus>, string> = {
-  insights: "scale(2) translate(25%, 10%)",
-  tasks: "scale(2) translate(0%, 10%)",
-  support: "scale(2) translate(-25%, 10%)",
+  insights: "scale(2) translate(-25%, 10%)",
+  tasks: "scale(2) translate(-25%, -5%)",
+  support: "scale(2) translate(-25%, -15%)",
 };
 
 function SolutionSection() {
   const [imageFocus, setImageFocus] = useState<ImageFocus>(null);
 
   return (
-    <>
-      <NarrowContent className="mt-16">
-        <ContentSection id="exploration" title="The solution">
-          <p className="text-[var(--foreground)] text-3xl md:text-4xl leading-relaxed">
-            An AI Agent which can{" "}
-            <span
-              className="squiggly squiggly-purple cursor-pointer"
+    <FullWidthContent className="mt-16">
+      <div className="grid grid-cols-1 bg-white border border-black/20 lg:grid-cols-2 items-center">
+        <div className="p-12">
+          <ContentSection id="exploration" title="The solution">
+            <p className="text-[var(--foreground)] text-2xl md:text-3xl lg:text-4xl leading-relaxed">
+              An AI Agent which can{" "}
+              <span
+                className="squiggly squiggly-blue cursor-pointer"
+                onMouseEnter={() => setImageFocus("insights")}
+                onMouseLeave={() => setImageFocus(null)}
+              >
+                generate insights
+              </span>
+              ,{" "}
+              <span
+                className="squiggly squiggly-purple cursor-pointer"
+                onMouseEnter={() => setImageFocus("tasks")}
+                onMouseLeave={() => setImageFocus(null)}
+              >
+                automate tasks
+              </span>{" "}
+              and{" "}
+              <span
+                className="squiggly squiggly-brown cursor-pointer"
+                onMouseEnter={() => setImageFocus("support")}
+                onMouseLeave={() => setImageFocus(null)}
+              >
+                provide support
+              </span>
+              .
+            </p>
+          </ContentSection>
+        </div>
+
+        <div className="mesh-gradient p-6 pl-0 overflow-hidden">
+            <div className="relative w-full aspect-[2760/3045] overflow-hidden rounded-r shadow-2xl">
+            <Image
+                src="/images/work/sentinel/sentinel-tasks-cropped.png"
+                alt="Sentinel AI task automation interface"
+                fill
+                className="object-cover transition-transform duration-700 ease-out"
+                style={{
+                transform: imageFocus ? imageTransforms[imageFocus] : "scale(1) translate(0%, 0%)",
+                }}
+            />
+            {/* Hover area for "Gain insights" section - top right of image */}
+            <div 
+              className="absolute top-0 right-0 w-[50%] h-[40%] cursor-zoom-in z-10"
               onMouseEnter={() => setImageFocus("insights")}
               onMouseLeave={() => setImageFocus(null)}
-            >
-              generate insights
-            </span>
-            ,{" "}
-            <span
-              className="squiggly squiggly-orange cursor-pointer"
-              onMouseEnter={() => setImageFocus("tasks")}
-              onMouseLeave={() => setImageFocus(null)}
-            >
-              automate tasks
-            </span>{" "}
-            and{" "}
-            <span
-              className="squiggly squiggly-blue cursor-pointer"
-              onMouseEnter={() => setImageFocus("support")}
-              onMouseLeave={() => setImageFocus(null)}
-            >
-              provide support
-            </span>
-            .
-          </p>
-        </ContentSection>
-      </NarrowContent>
-
-      <FullWidthContent className="mt-8">
-        <div className="relative w-full aspect-[16/9] overflow-hidden rounded-lg">
-          <Image
-            src="/images/sentinel-tasks.png"
-            alt="Sentinel AI task automation interface"
-            fill
-            className="object-cover transition-transform duration-700 ease-out"
-            style={{
-              transform: imageFocus ? imageTransforms[imageFocus] : "scale(1) translate(0%, 0%)",
-            }}
-          />
+              aria-label="Gain insights section"
+            />
+            </div>
         </div>
-      </FullWidthContent>
-    </>
+      </div>
+    </FullWidthContent>
   );
 }
 
