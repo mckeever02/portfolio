@@ -17,17 +17,6 @@ const cardTypeLabels: Record<CardType, string> = {
   task: "Task",
 };
 
-// Animation variants for skeleton to content transition
-const fadeIn = {
-  hidden: { opacity: 0 },
-  visible: { opacity: 1, transition: { duration: 0.4 } },
-};
-
-const shimmerToContent = {
-  skeleton: { opacity: 1 },
-  loaded: { opacity: 1, transition: { duration: 0.3 } },
-};
-
 // Skeleton base with shimmer
 function SkeletonBox({ className = "" }: { className?: string }) {
   return <div className={`skeleton-shimmer rounded ${className}`} />;
@@ -573,166 +562,26 @@ const cardConfigs: Record<Exclude<CardType, "skeleton">, CardConfig> = {
 };
 
 // ===============================
-// SKELETON STRUCTURES BY CARD TYPE
+// UNIVERSAL SKELETON
 // ===============================
 
-const skeletonBodies: Record<Exclude<CardType, "skeleton">, React.ReactNode> = {
-  "item-list": (
-    <div className="flex flex-col p-2">
-      {[0, 1, 2, 3].map((i) => (
-        <div key={i} className="flex items-center gap-2 px-2 py-1">
-          <SkeletonBox className="w-6 h-6 rounded-[4px] shrink-0" />
-          <div className="flex flex-col gap-[1px] flex-1">
-            <SkeletonBox className="h-[17px] w-20" />
-            <SkeletonBox className="h-[14px] w-36" />
-          </div>
-        </div>
-      ))}
-    </div>
-  ),
-  "item-sharing": (
-    <div className="max-h-[300px] overflow-y-auto">
-      {/* Located in section skeleton */}
-      <div className="px-4 pb-3">
-        <SkeletonBox className="h-[14px] w-16 mb-2" />
-        <div className="flex items-center gap-2 px-2 py-1">
-          <SkeletonBox className="w-6 h-6 rounded-[4px] shrink-0" />
-          <div className="flex flex-col gap-[1px] flex-1">
-            <SkeletonBox className="h-[17px] w-16" />
-            <SkeletonBox className="h-[14px] w-12" />
-          </div>
-        </div>
-      </div>
-
-      {/* Divider */}
-      <div className="h-px bg-[rgba(0,0,0,0.08)] mx-4" />
-
-      {/* People section skeleton */}
-      <div className="px-4 pt-3 pb-2">
-        <SkeletonBox className="h-[14px] w-32 mb-2" />
-        <div className="space-y-0">
-          {[0, 1, 2, 3, 4].map((i) => (
-            <div key={i} className="flex items-center gap-2 px-2 py-1.5">
-              <SkeletonBox className="w-6 h-6 rounded-full shrink-0" />
-              <SkeletonBox className="h-[17px] w-24 flex-1" />
-              {i === 0 && <SkeletonBox className="h-[22px] w-10 rounded-full" />}
-            </div>
-          ))}
-        </div>
-      </div>
-    </div>
-  ),
-  watchtower: (
-    <div className="max-h-[300px] overflow-y-auto">
-      {/* Description paragraph skeleton */}
-      <div className="px-4 py-2">
-        <div className="flex flex-col gap-1">
-          <SkeletonBox className="h-[18px] w-full" />
-          <SkeletonBox className="h-[18px] w-full" />
-          <SkeletonBox className="h-[18px] w-full" />
-          <SkeletonBox className="h-[18px] w-3/4" />
-        </div>
-      </div>
-
-      {/* Affected data section skeleton */}
-      <div className="pt-3 pb-2 px-4">
-        <SkeletonBox className="h-[14px] w-20" />
-      </div>
-      <div className="flex flex-wrap gap-2 px-4 py-2">
-        <SkeletonBox className="h-[18px] w-24 rounded-full" />
-        <SkeletonBox className="h-[18px] w-20 rounded-full" />
-        <SkeletonBox className="h-[18px] w-20 rounded-full" />
-        <SkeletonBox className="h-[18px] w-20 rounded-full" />
-      </div>
-
-      {/* Affected users section skeleton */}
-      <div className="pt-3 pb-2 px-4">
-        <SkeletonBox className="h-[14px] w-24" />
-      </div>
-      <div className="px-2 pb-2">
-        <div className="flex items-center gap-2 px-2 py-1">
-          <SkeletonBox className="w-6 h-6 rounded-full shrink-0" />
-          <div className="flex flex-col gap-[1px] flex-1">
-            <SkeletonBox className="h-[17px] w-24" />
-            <SkeletonBox className="h-[14px] w-40" />
-          </div>
-        </div>
-      </div>
-
-      {/* Footer skeleton */}
-      <div className="flex justify-end p-4">
-        <SkeletonBox className="h-[28px] w-24 rounded-[8px]" />
-      </div>
-    </div>
-  ),
-  task: (
-    <div className="max-h-[300px] overflow-y-auto">
-      {/* Step 1 skeleton */}
-      <div className="flex gap-2 items-center pl-4 pr-3 py-2">
-        <div className="w-8 h-8 shrink-0 flex items-center justify-center">
-          <SkeletonBox className="w-6 h-6 rounded-full" />
-        </div>
-        <div className="flex-1 flex flex-col gap-1">
-          <SkeletonBox className="h-[18px] w-full" />
-          <SkeletonBox className="h-[18px] w-3/4" />
-        </div>
-      </div>
-
-      {/* Connector 1 skeleton */}
-      <div className="h-4 pl-4 pr-3">
-        <div className="w-8 h-full flex items-center justify-center">
-          <SkeletonBox className="w-[2px] h-full rounded-full" />
-        </div>
-      </div>
-
-      {/* Step 2 skeleton */}
-      <div className="flex gap-2 items-center pl-4 pr-3 py-2">
-        <div className="w-8 h-8 shrink-0 flex items-center justify-center">
-          <SkeletonBox className="w-6 h-6 rounded-full" />
-        </div>
-        <SkeletonBox className="h-[18px] w-3/4 flex-1" />
-      </div>
-
-      {/* Connector 2 skeleton */}
-      <div className="h-4 pl-4 pr-3">
-        <div className="w-8 h-full flex items-center justify-center">
-          <SkeletonBox className="w-[2px] h-full rounded-full" />
-        </div>
-      </div>
-
-      {/* Step 3 skeleton */}
-      <div className="flex gap-2 items-center pl-4 pr-3 py-2">
-        <div className="w-8 h-8 shrink-0 flex items-center justify-center">
-          <SkeletonBox className="w-6 h-6 rounded-full" />
-        </div>
-        <SkeletonBox className="h-[18px] w-4/5 flex-1" />
-      </div>
-
-      {/* Footer skeleton */}
-      <div className="flex gap-2 justify-end p-4">
-        <SkeletonBox className="h-[28px] w-16 rounded-[8px]" />
-        <SkeletonBox className="h-[28px] w-20 rounded-[8px]" />
-      </div>
-    </div>
-  ),
-};
-
-// Default skeleton for generic loading state
-const defaultSkeletonBody = (
-  <div className="flex flex-col p-2">
+// Universal skeleton body used for all card types
+const UniversalSkeleton = () => (
+  <div className="p-4 space-y-3 overflow-hidden">
+    {/* Row items - versatile for lists, steps, or content */}
     {[0, 1, 2].map((i) => (
-      <div key={i} className="flex items-center gap-2 px-2 py-1">
-        <SkeletonBox className="w-6 h-6 rounded-[4px] shrink-0" />
-        <div className="flex flex-col gap-[1px] flex-1">
-          <SkeletonBox className="h-[17px] w-20" />
-          <SkeletonBox className="h-[14px] w-36" />
+      <div key={i} className="flex items-center gap-3">
+        <SkeletonBox className="w-6 h-6 rounded-full shrink-0" />
+        <div className="flex flex-col gap-1 flex-1 min-w-0">
+          <SkeletonBox className="h-4 w-3/4" />
+          <SkeletonBox className="h-3 w-1/2" />
         </div>
       </div>
     ))}
-    <div className="flex gap-1.5 px-2 pt-2">
-      <SkeletonBox className="h-[22px] w-16 rounded-full" />
-      <SkeletonBox className="h-[22px] w-20 rounded-full" />
-      <SkeletonBox className="h-[22px] w-14 rounded-full" />
+    {/* Footer area */}
+    <div className="flex gap-2 pt-1">
+      <SkeletonBox className="h-7 w-20 rounded-lg shrink-0" />
+      <SkeletonBox className="h-7 w-24 rounded-lg shrink-0" />
     </div>
   </div>
 );
@@ -769,7 +618,6 @@ export function SummaryCardDemo() {
 
   // Get current config (or null for skeleton-only state)
   const config = selectedType !== "skeleton" ? cardConfigs[selectedType] : null;
-  const skeletonBody = pendingType !== "skeleton" ? skeletonBodies[pendingType] : defaultSkeletonBody;
 
   // Determine what to show
   const showSkeleton = isLoading || selectedType === "skeleton";
@@ -872,11 +720,11 @@ export function SummaryCardDemo() {
             </TransitionElement>
           </div>
 
-          {/* Body - Figma: max-h-300px, overflow-y-auto */}
-          <div className="max-h-[300px] overflow-y-auto">
+          {/* Body - Figma: max-h-300px, overflow-y-auto (only when content loaded) */}
+          <div className={`max-h-[300px] ${showSkeleton ? 'overflow-hidden' : 'overflow-y-auto'}`}>
             <TransitionElement
               isLoading={showSkeleton}
-              skeleton={skeletonBody}
+              skeleton={<UniversalSkeleton />}
               delay={0.2}
             >
               {config && config.body}
