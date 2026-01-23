@@ -606,7 +606,7 @@ export default function SentinelPage() {
             />
             {/* Transparent overlay with background blur */}
             <div className="absolute inset-0 flex items-start justify-center pt-[15%] bg-[var(--background)]/50 backdrop-blur-[5px]">
-              <div className="px-8 md:px-16 lg:px-24 max-w-4xl">
+              <div className="w-full px-8 md:px-16 lg:px-24 max-w-4xl">
                 <TextCarousel
                   items={[
                     { quote: "I like this as a concept. It feels familiar as well. A lot of companies are doing it this way so that's a good thing. It means I can give this to my team and they'll just know what to do with minimal instruction.", attribution: "Rafi · Snyk" },
@@ -623,6 +623,60 @@ export default function SentinelPage() {
             </div>
           </div>
       </FullWidthContent>
+
+      {/* AI Hesitations Section */}
+      <NarrowContent className="mt-16">
+        <ContentSection id="ai-hesitations" title="What hesitations do Admins have about AI?">
+          <BodyText>
+            While admins were excited about the potential of AI, they also expressed concerns that needed to be addressed in the design.
+          </BodyText>
+        </ContentSection>
+      </NarrowContent>
+
+      <WideContent className="mt-0">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="bg-white p-6 border border-black/20">
+            <div 
+              className="rounded-lg flex items-center justify-center mb-4 shrink-0 bg-red-500/10"
+              style={{ width: 40, height: 40, minWidth: 40, minHeight: 40 }}
+            >
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="rgb(239, 68, 68)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+                <path d="M12 8v4" />
+                <path d="M12 16h.01" />
+              </svg>
+            </div>
+            <h3 className="text-lg font-bold mb-2 text-[var(--foreground)] leading-tight">Trust & accuracy</h3>
+            <p className="text-[var(--foreground)]/70 text-base">Concerns about AI making mistakes or providing incorrect information in security-critical contexts.</p>
+          </div>
+          <div className="bg-white p-6 border border-black/20">
+            <div 
+              className="rounded-lg flex items-center justify-center mb-4 shrink-0 bg-amber-500/10"
+              style={{ width: 40, height: 40, minWidth: 40, minHeight: 40 }}
+            >
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="rgb(245, 158, 11)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <circle cx="12" cy="12" r="10" />
+                <path d="M12 6v6l4 2" />
+              </svg>
+            </div>
+            <h3 className="text-lg font-bold mb-2 text-[var(--foreground)] leading-tight">Control & oversight</h3>
+            <p className="text-[var(--foreground)]/70 text-base">Need to maintain visibility and approval over AI-initiated actions, especially for sensitive operations.</p>
+          </div>
+          <div className="bg-white p-6 border border-black/20">
+            <div 
+              className="rounded-lg flex items-center justify-center mb-4 shrink-0 bg-purple-500/10"
+              style={{ width: 40, height: 40, minWidth: 40, minHeight: 40 }}
+            >
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="rgb(168, 85, 247)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <rect width="18" height="11" x="3" y="11" rx="2" ry="2" />
+                <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+              </svg>
+            </div>
+            <h3 className="text-lg font-bold mb-2 text-[var(--foreground)] leading-tight">Data privacy</h3>
+            <p className="text-[var(--foreground)]/70 text-base">Questions about how AI accesses and processes sensitive organizational data.</p>
+          </div>
+        </div>
+      </WideContent>
     </CaseStudyLayout>
   );
 }
