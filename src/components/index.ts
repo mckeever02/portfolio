@@ -6,7 +6,7 @@ export { StatCard } from "./StatCard";
 export { WorkCard } from "./WorkCard";
 export { ProjectCard } from "./ProjectCard";
 export { ImageCarousel } from "./ImageCarousel";
-export { TextCarousel, Highlight } from "./TextCarousel";
+export { TextCarousel } from "./TextCarousel";
 export { Timeline } from "./Timeline";
 export { PageTransition } from "./PageTransition";
 export { PasswordGate } from "./PasswordGate";
@@ -17,3 +17,17 @@ export { FlipCard, CardFace } from "./FlipCard";
 export { FuzzyText } from "./FuzzyText";
 export { ASCIIText } from "./ASCIIText";
 export { Button } from "./Button";
+export { SummaryCardDemo } from "./SummaryCardDemo";
+export {
+  Skeleton,
+  SkeletonRect,
+  SkeletonCircle,
+  SkeletonLine,
+  SkeletonPill,
+  SkeletonAvatar,
+  SkeletonCardHeader,
+  SkeletonListRow,
+  SkeletonSectionTitle,
+  SkeletonButton,
+  SkeletonStep,
+} from "./Skeleton";

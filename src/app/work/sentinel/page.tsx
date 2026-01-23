@@ -15,6 +15,7 @@ import Image from "next/image";
 import { FlipCard, CardFace } from "@/components/FlipCard";
 import { SpotlightEffect } from "@/components/SpotlightEffect";
 import { TextCarousel } from "@/components/TextCarousel";
+import { SummaryCardDemo } from "@/components/SummaryCardDemo";
 import { motion, AnimatePresence } from "framer-motion";
 
 type StickyNote = { src: string; alt: string; rotation: number; delay: number; position: { top?: string; bottom?: string; left: string; translateX: string; translateY: string } };
@@ -750,55 +751,9 @@ export default function SentinelPage() {
         </div>
       </WideContent>
 
-      {/* Example Skeleton Card */}
-      <WideContent className="mt-8 flex justify-center">
-          <div className="bg-white border border-black/20 rounded-xl p-6 max-w-md overflow-hidden">
-            {/* Skeleton Header */}
-            <div className="flex items-start justify-between mb-6">
-              <div className="flex items-center gap-3">
-                <div className="w-12 h-12 rounded-lg skeleton-shimmer" />
-                <div className="space-y-2">
-                  <div className="h-5 w-24 rounded skeleton-shimmer" />
-                  <div className="h-4 w-32 rounded skeleton-shimmer" />
-                </div>
-              </div>
-              <div className="flex items-center gap-2">
-                <div className="w-6 h-6 rounded skeleton-shimmer" />
-                <div className="w-6 h-6 rounded skeleton-shimmer" />
-              </div>
-            </div>
-
-            {/* Skeleton Body Text */}
-            <div className="space-y-3 mb-6">
-              <div className="h-4 w-full rounded skeleton-shimmer" />
-              <div className="h-4 w-full rounded skeleton-shimmer" />
-              <div className="h-4 w-full rounded skeleton-shimmer" />
-              <div className="h-4 w-3/4 rounded skeleton-shimmer" />
-            </div>
-
-            {/* Skeleton Section */}
-            <div className="mb-6">
-              <div className="h-4 w-24 rounded skeleton-shimmer mb-3" />
-              <div className="flex flex-wrap gap-2">
-                <div className="h-8 w-28 rounded-full skeleton-shimmer" />
-                <div className="h-8 w-24 rounded-full skeleton-shimmer" />
-                <div className="h-8 w-26 rounded-full skeleton-shimmer" />
-                <div className="h-8 w-24 rounded-full skeleton-shimmer" />
-              </div>
-            </div>
-
-            {/* Skeleton User */}
-            <div>
-              <div className="h-4 w-28 rounded skeleton-shimmer mb-3" />
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-lg skeleton-shimmer" />
-                <div className="space-y-2">
-                  <div className="h-4 w-28 rounded skeleton-shimmer" />
-                  <div className="h-3 w-40 rounded skeleton-shimmer" />
-                </div>
-              </div>
-            </div>
-          </div>
+      {/* Interactive Summary Card Demo */}
+      <WideContent className="mt-8">
+        <SummaryCardDemo />
       </WideContent>
     </CaseStudyLayout>
   );
