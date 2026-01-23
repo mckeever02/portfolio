@@ -6,6 +6,7 @@ export { StatCard } from "./StatCard";
 export { WorkCard } from "./WorkCard";
 export { ProjectCard } from "./ProjectCard";
 export { ImageCarousel } from "./ImageCarousel";
+export { TextCarousel, Highlight } from "./TextCarousel";
 export { Timeline } from "./Timeline";
 export { PageTransition } from "./PageTransition";
 export { PasswordGate } from "./PasswordGate";

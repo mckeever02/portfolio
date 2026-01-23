@@ -14,6 +14,7 @@ import { LightboxImage } from "@/components/Lightbox";
 import Image from "next/image";
 import { FlipCard, CardFace } from "@/components/FlipCard";
 import { SpotlightEffect } from "@/components/SpotlightEffect";
+import { TextCarousel } from "@/components/TextCarousel";
 import { motion, AnimatePresence } from "framer-motion";
 
 type StickyNote = { src: string; alt: string; rotation: number; delay: number; position: { top?: string; bottom?: string; left: string; translateX: string; translateY: string } };
@@ -595,8 +596,7 @@ export default function SentinelPage() {
       </NarrowContent>
 
       {/* Full Width Sentinel Interface Image */}
-      <FullWidthContent className="mt-16">
-        <div className="mesh-gradient p-6 overflow-hidden">
+      <FullWidthContent className="mt-0">
           <div className="relative w-full aspect-[3154/2030] overflow-hidden rounded-lg shadow-2xl border border-black/10">
             <Image
               src="/images/work/sentinel/sentinel-research-testing.png"
@@ -604,8 +604,24 @@ export default function SentinelPage() {
               fill
               className="object-cover"
             />
+            {/* Transparent overlay with background blur */}
+            <div className="absolute inset-0 flex items-start justify-center pt-[15%] bg-[var(--background)]/50 backdrop-blur-[5px]">
+              <div className="px-8 md:px-16 lg:px-24 max-w-4xl">
+                <TextCarousel
+                  items={[
+                    { quote: "I like this as a concept. It feels familiar as well. A lot of companies are doing it this way so that's a good thing. It means I can give this to my team and they'll just know what to do with minimal instruction.", attribution: "Rafi · Snyk" },
+                    { quote: "It feels like you have a teammate. You don't have to think of everything yourself. Yeah, it's cool. It's cool. I like that.", attribution: "Seb · IntentHQ" },
+                    { quote: "I'm very excited about 'Run tasks'. That's an extra resource that I have working for me now.", attribution: "Seb · IntentHQ" },
+                    { quote: "Yeah, it's fantastic – seeing the list of actions that you have there, these are perfect examples of what people want to explore.", attribution: "Tibor · OpenTable" },
+                  ]}
+                  autoplay
+                  loop
+                  interval={6000}
+                  className="max-w-3xl"
+                />
+              </div>
+            </div>
           </div>
-        </div>
       </FullWidthContent>
     </CaseStudyLayout>
   );
