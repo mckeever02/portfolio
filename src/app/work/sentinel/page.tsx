@@ -14,6 +14,45 @@ import { LightboxImage } from "@/components/Lightbox";
 import Image from "next/image";
 import { FlipCard, CardFace } from "@/components/FlipCard";
 import { SpotlightEffect } from "@/components/SpotlightEffect";
+import { motion, AnimatePresence } from "framer-motion";
+
+type StickyNote = { src: string; alt: string; rotation: number; delay: number; position: { top?: string; bottom?: string; left: string; translateX: string; translateY: string } };
+
+function QuoteCard({ children, attribution }: { children: React.ReactNode; attribution: string }) {
+  return (
+    <div className="bg-white border p-8 md:p-10 border-black/20 relative overflow-hidden h-full">
+      <div className="absolute top-0 left-0 w-48 h-48 bg-[#A99BEA]/10 rounded-full blur-3xl -translate-x-1/2 -translate-y-1/2" />
+      <div className="relative z-10">
+        <svg className="w-8 h-8 text-black/20 mb-4" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z" />
+        </svg>
+        <p className="text-[var(--foreground)] text-xl md:text-2xl leading-relaxed mb-6">
+          {children}
+        </p>
+        <p className="text-black/60 uppercase font-bold tracking-wider text-sm">
+          {attribution}
+        </p>
+      </div>
+    </div>
+  );
+}
+
+function Highlight({ children }: { children: React.ReactNode }) {
+  return <span className="bg-[#e8e4df] px-1 -skew-x-6 inline-block transform">{children}</span>;
+}
+
+const stickyNotes: Record<string, StickyNote[]> = {
+  insights: [
+    { src: "/images/work/sentinel/generate-insights-sticky.png", alt: "Generate insights", rotation: -4, delay: 0, position: { bottom: "2%", left: "50%", translateX: "-50%", translateY: "0%" } },
+  ],
+  tasks: [
+    { src: "/images/work/sentinel/automate-tasks-sticky.png", alt: "Automate tasks", rotation: 3, delay: 0, position: { top: "5%", left: "50%", translateX: "-50%", translateY: "0%" } },
+  ],
+  support: [
+    { src: "/images/work/sentinel/support-sticky.png", alt: "Provide support", rotation: -2, delay: 0, position: { top: "30%", left: "25%", translateX: "-50%", translateY: "-50%" } },
+    { src: "/images/work/sentinel/support-sticky-2.png", alt: "Provide support 2", rotation: 3, delay: 0.35, position: { top: "35%", left: "75%", translateX: "-50%", translateY: "-50%" } },
+  ],
+};
 
 const adminReasons = [
   {
@@ -125,8 +164,8 @@ function SolutionSection() {
           </section>
         </div>
 
-        <div className="mesh-gradient p-6 pl-0 overflow-hidden">
-            <div className="relative w-full aspect-[2760/3045] overflow-hidden rounded-r shadow-2xl">
+        <div className="mesh-gradient p-6 pl-0 overflow-hidden relative">
+            <div className="relative w-full aspect-[2760/3045] overflow-hidden rounded-lg rounded-l-none shadow-2xl border border-black/10 border-l-0">
             <Image
                 src="/images/work/sentinel/sentinel-tasks-cropped.png"
                 alt="Sentinel AI task automation interface"
@@ -137,6 +176,59 @@ function SolutionSection() {
                 }}
             />
             </div>
+            
+            {/* Sticky notes that pop in on hover */}
+            <AnimatePresence mode="popLayout">
+              {imageFocus && stickyNotes[imageFocus].map((sticky, index) => (
+                <motion.div
+                  key={`${imageFocus}-${index}`}
+                  className="absolute w-[40%] aspect-square pointer-events-none"
+                  style={{
+                    top: sticky.position.top,
+                    bottom: sticky.position.bottom,
+                    left: sticky.position.left,
+                  }}
+                  initial={{ 
+                    opacity: 0, 
+                    scale: 0.7, 
+                    x: sticky.position.translateX, 
+                    y: sticky.position.translateY, 
+                    rotate: -8 
+                  }}
+                  animate={{ 
+                    opacity: 1, 
+                    scale: 1, 
+                    x: sticky.position.translateX, 
+                    y: sticky.position.translateY, 
+                    rotate: sticky.rotation,
+                    transition: {
+                      duration: 0.3,
+                      delay: 0.5 + sticky.delay,
+                      ease: [0.175, 0.885, 0.32, 1.275],
+                    }
+                  }}
+                  exit={{ 
+                    opacity: 0, 
+                    scale: 0.7, 
+                    x: sticky.position.translateX, 
+                    y: sticky.position.translateY, 
+                    rotate: -8,
+                    transition: {
+                      duration: 0.15,
+                      delay: 0,
+                      ease: "easeOut",
+                    }
+                  }}
+                >
+                  <Image
+                    src={sticky.src}
+                    alt={sticky.alt}
+                    fill
+                    className="object-contain drop-shadow-2xl"
+                  />
+                </motion.div>
+              ))}
+            </AnimatePresence>
         </div>
       </div>
       </div>
@@ -231,7 +323,7 @@ export default function SentinelPage() {
           >
             <span className="text-[var(--foreground)] font-bold tracking-wide bg-[#190C69] text-white py-1 px-2 font-bold uppercase -skew-x-8 transform relative inline-block">Unclear data</span>
             <p className="text-[var(--foreground)] text-2xl md:text-3xl mt-6 leading-relaxed relative z-10">
-              Admins need faster, clearer answers to their <span className="underline decoration-[#A99BEA] decoration-4 underline-offset-1">data questions</span>. Current insights and reports <span className="underline decoration-[#A99BEA] decoration-4 underline-offset-1">lack depth and clarity</span>.
+              Admins need faster, clearer answers to their <span className="bg-[#A99BEA]/25 px-1 -skew-x-6 inline-block transform">data questions</span>. Current insights and reports <span className="bg-[#A99BEA]/25 px-1 -skew-x-6 inline-block transform">lack depth and clarity</span>.
             </p>
           </SpotlightEffect>
           <SpotlightEffect 
@@ -240,9 +332,21 @@ export default function SentinelPage() {
           >
             <span className="text-[var(--foreground)] font-bold tracking-wide bg-[#611046] text-white py-1 px-2 font-bold uppercase -skew-x-8 transform relative inline-block">Hard labour</span>
             <p className="text-[var(--foreground)] text-2xl md:text-3xl mt-6 leading-relaxed relative z-10">
-              Manual work like account recovery and user management <span className="underline decoration-[#F9DAEF] decoration-4 underline-offset-1">overloads admins</span>. They want more efficient methods such as <span className="underline decoration-[#F9DAEF] decoration-4 underline-offset-1">automation</span>.
+              Manual work like account recovery and user management <span className="bg-[#F9DAEF]/40 px-1 -skew-x-6 inline-block transform">overloads admins</span>. They want more efficient methods such as <span className="bg-[#F9DAEF]/40 px-1 -skew-x-6 inline-block transform">automation</span>.
             </p>
           </SpotlightEffect>
+        </div>
+      </FullWidthContent>
+
+      {/* Quote Section */}
+      <FullWidthContent className="mt-0 md:px-12">
+        <div className="grid grid-cols-1 md:grid-cols-[3fr_2fr] gap-6">
+          <QuoteCard attribution="IT Manager at a Mid-market SaaS company">
+            We&apos;re meant to be an AI first company going forward. They would like it to <Highlight>enhance our day-to-day</Highlight>, take out the chaff, remove the thing. They&apos;re not looking to replace people and everything else.
+          </QuoteCard>
+          <QuoteCard attribution="InfoSec Manager at an SMB">
+            What I am looking for is <Highlight>automation.</Highlight> <br />The automation piece means your life is going to get easier. Do this and there&apos;s less work for you.
+          </QuoteCard>
         </div>
       </FullWidthContent>
 
@@ -430,6 +534,79 @@ export default function SentinelPage() {
           </div>
         </div>
       </NarrowContent>
+
+      {/* Proof of Concept Section */}
+      <NarrowContent className="mt-16">
+        <ContentSection id="proof-of-concept" title="Building a proof of concept">
+          <BodyText>
+            I vibe-coded a proof of concept to help validate the idea and demonstrate the potential capabilities.
+          </BodyText>
+        </ContentSection>
+      </NarrowContent>
+
+      <WideContent className="mt-0">
+        <div className="relative w-full overflow-hidden border border-black/20">
+          <video
+            src="/images/work/sentinel/xam-assistant-concept.mp4"
+            controls
+            playsInline
+            className="w-full h-auto"
+          />
+        </div>
+      </WideContent>
+
+      <NarrowContent className="mt-8">
+        <div className="relative w-full max-w-[800px] mx-auto" style={{ aspectRatio: '2178/1962' }}>
+          <Image
+            src="/images/work/sentinel/sentinel-concept-diagram.png"
+            alt="Sentinel concept diagram"
+            fill
+            className="object-contain"
+          />
+        </div>
+      </NarrowContent>
+
+      {/* Zig-zag divider */}
+      <div className="flex justify-center py-16">
+        <svg
+          className="w-24 h-3"
+          viewBox="0 0 96 12"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M0 6L8 11L16 6L24 11L32 6L40 11L48 6L56 11L64 6L72 11L80 6L88 11L96 6"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            className="text-[var(--foreground)]/30"
+          />
+        </svg>
+      </div>
+
+      {/* User Testing Section */}
+      <NarrowContent>
+        <ContentSection id="user-testing" title="User testing">
+          <BodyText>
+            To validate our designs and ensure the AI assistant met real user needs, we conducted moderated usability testing sessions with administrators from various organization sizes.
+          </BodyText>
+        </ContentSection>
+      </NarrowContent>
+
+      {/* Full Width Sentinel Interface Image */}
+      <FullWidthContent className="mt-16">
+        <div className="mesh-gradient p-6 overflow-hidden">
+          <div className="relative w-full aspect-[3154/2030] overflow-hidden rounded-lg shadow-2xl border border-black/10">
+            <Image
+              src="/images/work/sentinel/sentinel-research-testing.png"
+              alt="Sentinel AI task automation interface"
+              fill
+              className="object-cover"
+            />
+          </div>
+        </div>
+      </FullWidthContent>
     </CaseStudyLayout>
   );
 }
