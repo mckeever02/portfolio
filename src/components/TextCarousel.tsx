@@ -27,9 +27,10 @@ function QuoteMark() {
 interface ProgressButtonProps {
   progress: number;
   onClick: () => void;
+  isAnimating: boolean;
 }
 
-function ProgressButton({ progress, onClick }: ProgressButtonProps) {
+function ProgressButton({ progress, onClick, isAnimating }: ProgressButtonProps) {
   const size = 54;
   const strokeWidth = 2;
   const radius = (size - strokeWidth) / 2;
@@ -39,7 +40,7 @@ function ProgressButton({ progress, onClick }: ProgressButtonProps) {
   return (
     <button
       onClick={onClick}
-      className="absolute bottom-0 left-1/2 -translate-x-1/2 flex items-center justify-center transition-transform hover:scale-105 active:scale-95"
+      className="absolute bottom-0 left-1/2 -translate-x-1/2 flex items-center justify-center transition-transform hover:scale-105 active:scale-95 overflow-hidden"
       style={{ width: size, height: size }}
       aria-label="Next quote"
     >
@@ -75,8 +76,8 @@ function ProgressButton({ progress, onClick }: ProgressButtonProps) {
           }}
         />
       </svg>
-      {/* Down arrow */}
-      <svg
+      {/* Down arrow with animation */}
+      <motion.svg
         width="24"
         height="24"
         viewBox="0 0 24 24"
@@ -86,10 +87,19 @@ function ProgressButton({ progress, onClick }: ProgressButtonProps) {
         strokeLinecap="round"
         strokeLinejoin="round"
         className="text-black"
+        animate={isAnimating ? {
+          y: [0, 40, -40, 0],
+          opacity: [1, 0, 0, 1],
+        } : { y: 0, opacity: 1 }}
+        transition={{
+          duration: 0.5,
+          times: [0, 0.3, 0.3, 1],
+          ease: "easeInOut",
+        }}
       >
         <path d="M12 5v14" />
         <path d="m19 12-7 7-7-7" />
-      </svg>
+      </motion.svg>
     </button>
   );
 }
@@ -104,6 +114,7 @@ export function TextCarousel({
 }: TextCarouselProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [progress, setProgress] = useState(0);
+  const [isArrowAnimating, setIsArrowAnimating] = useState(false);
   const animationRef = useRef<number | null>(null);
   const startTimeRef = useRef<number>(Date.now());
 
@@ -151,7 +162,10 @@ export function TextCarousel({
   }, [autoplay, interval, items.length, loop]);
 
   const handleManualNext = () => {
+    setIsArrowAnimating(true);
     goToNext();
+    // Reset animation state after animation completes
+    setTimeout(() => setIsArrowAnimating(false), 500);
   };
 
   return (
@@ -163,9 +177,9 @@ export function TextCarousel({
         <AnimatePresence mode="wait">
           <motion.div
             key={currentIndex}
-            initial={{ opacity: 0, y: 30, filter: "blur(8px)" }}
+            initial={{ opacity: 0, y: -30, filter: "blur(8px)" }}
             animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-            exit={{ opacity: 0, y: -30, filter: "blur(8px)" }}
+            exit={{ opacity: 0, y: 30, filter: "blur(8px)" }}
             transition={{
               duration: 0.6,
               ease: [0.32, 0.72, 0, 1],
@@ -182,6 +196,7 @@ export function TextCarousel({
       <ProgressButton 
         progress={progress} 
         onClick={handleManualNext}
+        isAnimating={isArrowAnimating}
       />
     </div>
   );

@@ -626,9 +626,9 @@ export default function SentinelPage() {
 
       {/* AI Hesitations Section */}
       <NarrowContent className="mt-16">
-        <ContentSection id="ai-hesitations" title="What hesitations do Admins have about AI?">
+        <ContentSection id="ai-hesitations" title="AI Hesitations?">
           <BodyText>
-            While admins were excited about the potential of AI, they also expressed concerns that needed to be addressed in the design.
+            Of course it's not all sunshine and rainbows. During the research we also asked candidates questions around their hesitations and concerns about AI to get a sense of where AI could be a friction point for admins.
           </BodyText>
         </ContentSection>
       </NarrowContent>
@@ -677,6 +677,17 @@ export default function SentinelPage() {
           </div>
         </div>
       </WideContent>
+
+      <FullWidthContent className="mt-0 md:px-12">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <QuoteCard attribution="Systems Engineer at a Mid-sized company">
+            It just seems like [a breach] can happen to anybody and it&apos;s kind of bound to happen at some point. So, it just feels like it&apos;s somewhat inevitable that you can&apos;t avoid it.
+          </QuoteCard>
+          <QuoteCard attribution="IT Engineer at an SMB">
+            Introducing AI in that area where I put my password for my email would make me feel like there is another set of eyes there that can read the data.
+          </QuoteCard>
+        </div>
+      </FullWidthContent>
     </CaseStudyLayout>
   );
 }
