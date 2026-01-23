@@ -688,6 +688,118 @@ export default function SentinelPage() {
           </QuoteCard>
         </div>
       </FullWidthContent>
+
+      {/* Agentic-driven UI Section */}
+      <NarrowContent className="mt-16">
+        <ContentSection id="agentic-ui" title="Agentic-driven UI">
+          <BodyText>
+            A key challenge was designing UI that could adapt to unpredictable AI responses. Rather than creating fixed layouts, I developed a system of modular building block components that the agent could dynamically compose based on context.
+          </BodyText>
+        </ContentSection>
+      </NarrowContent>
+
+      <WideContent className="mt-0">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="bg-white p-6 border border-black/20">
+            <div 
+              className="rounded-lg flex items-center justify-center mb-4 shrink-0 bg-blue-500/10"
+              style={{ width: 40, height: 40, minWidth: 40, minHeight: 40 }}
+            >
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="rgb(59, 130, 246)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <rect x="3" y="3" width="7" height="7" />
+                <rect x="14" y="3" width="7" height="7" />
+                <rect x="14" y="14" width="7" height="7" />
+                <rect x="3" y="14" width="7" height="7" />
+              </svg>
+            </div>
+            <h3 className="text-lg font-bold mb-2 text-[var(--foreground)] leading-tight">Composable blocks</h3>
+            <p className="text-[var(--foreground)]/70 text-base">Small, reusable UI components that can be combined in different ways to present information, actions, and feedback.</p>
+          </div>
+          <div className="bg-white p-6 border border-black/20">
+            <div 
+              className="rounded-lg flex items-center justify-center mb-4 shrink-0 bg-emerald-500/10"
+              style={{ width: 40, height: 40, minWidth: 40, minHeight: 40 }}
+            >
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="rgb(16, 185, 129)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <circle cx="12" cy="12" r="3" />
+                <path d="M12 1v6" />
+                <path d="M12 17v6" />
+                <path d="M4.22 4.22l4.24 4.24" />
+                <path d="M15.54 15.54l4.24 4.24" />
+                <path d="M1 12h6" />
+                <path d="M17 12h6" />
+                <path d="M4.22 19.78l4.24-4.24" />
+                <path d="M15.54 8.46l4.24-4.24" />
+              </svg>
+            </div>
+            <h3 className="text-lg font-bold mb-2 text-[var(--foreground)] leading-tight">Agent decides</h3>
+            <p className="text-[var(--foreground)]/70 text-base">The AI agent determines which components to render based on the user&apos;s query and the type of response needed.</p>
+          </div>
+          <div className="bg-white p-6 border border-black/20">
+            <div 
+              className="rounded-lg flex items-center justify-center mb-4 shrink-0 bg-purple-500/10"
+              style={{ width: 40, height: 40, minWidth: 40, minHeight: 40 }}
+            >
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="rgb(168, 85, 247)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z" />
+              </svg>
+            </div>
+            <h3 className="text-lg font-bold mb-2 text-[var(--foreground)] leading-tight">Flexible rendering</h3>
+            <p className="text-[var(--foreground)]/70 text-base">Components adapt to show tables, charts, action buttons, or confirmation dialogs depending on the task at hand.</p>
+          </div>
+        </div>
+      </WideContent>
+
+      {/* Example Skeleton Card */}
+      <WideContent className="mt-8 flex justify-center">
+          <div className="bg-white border border-black/20 rounded-xl p-6 max-w-md overflow-hidden">
+            {/* Skeleton Header */}
+            <div className="flex items-start justify-between mb-6">
+              <div className="flex items-center gap-3">
+                <div className="w-12 h-12 rounded-lg skeleton-shimmer" />
+                <div className="space-y-2">
+                  <div className="h-5 w-24 rounded skeleton-shimmer" />
+                  <div className="h-4 w-32 rounded skeleton-shimmer" />
+                </div>
+              </div>
+              <div className="flex items-center gap-2">
+                <div className="w-6 h-6 rounded skeleton-shimmer" />
+                <div className="w-6 h-6 rounded skeleton-shimmer" />
+              </div>
+            </div>
+
+            {/* Skeleton Body Text */}
+            <div className="space-y-3 mb-6">
+              <div className="h-4 w-full rounded skeleton-shimmer" />
+              <div className="h-4 w-full rounded skeleton-shimmer" />
+              <div className="h-4 w-full rounded skeleton-shimmer" />
+              <div className="h-4 w-3/4 rounded skeleton-shimmer" />
+            </div>
+
+            {/* Skeleton Section */}
+            <div className="mb-6">
+              <div className="h-4 w-24 rounded skeleton-shimmer mb-3" />
+              <div className="flex flex-wrap gap-2">
+                <div className="h-8 w-28 rounded-full skeleton-shimmer" />
+                <div className="h-8 w-24 rounded-full skeleton-shimmer" />
+                <div className="h-8 w-26 rounded-full skeleton-shimmer" />
+                <div className="h-8 w-24 rounded-full skeleton-shimmer" />
+              </div>
+            </div>
+
+            {/* Skeleton User */}
+            <div>
+              <div className="h-4 w-28 rounded skeleton-shimmer mb-3" />
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-lg skeleton-shimmer" />
+                <div className="space-y-2">
+                  <div className="h-4 w-28 rounded skeleton-shimmer" />
+                  <div className="h-3 w-40 rounded skeleton-shimmer" />
+                </div>
+              </div>
+            </div>
+          </div>
+      </WideContent>
     </CaseStudyLayout>
   );
 }
