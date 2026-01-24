@@ -1,11 +1,79 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { motion, AnimatePresence, useMotionValue, useAnimationFrame, useTransform } from "framer-motion";
 import Image from "next/image";
 import { Inter } from "next/font/google";
 
 const inter = Inter({ subsets: ["latin"] });
+
+// ===============================
+// TEXT TYPE COMPONENT (from React Bits https://github.com/davidhdev/react-bits)
+// ===============================
+
+interface TextTypeProps {
+  text: string;
+  className?: string;
+  showCursor?: boolean;
+  cursorCharacter?: string;
+  typingSpeed?: number;
+  initialDelay?: number;
+  onComplete?: () => void;
+}
+
+function TextType({
+  text,
+  className = '',
+  showCursor = false,
+  cursorCharacter = '|',
+  typingSpeed = 30,
+  initialDelay = 0,
+  onComplete,
+}: TextTypeProps) {
+  const [displayedText, setDisplayedText] = useState('');
+  const [currentCharIndex, setCurrentCharIndex] = useState(0);
+  const [isComplete, setIsComplete] = useState(false);
+
+  useEffect(() => {
+    // Reset when text changes
+    setDisplayedText('');
+    setCurrentCharIndex(0);
+    setIsComplete(false);
+  }, [text]);
+
+  useEffect(() => {
+    if (isComplete) return;
+
+    let timeout: ReturnType<typeof setTimeout>;
+
+    if (currentCharIndex < text.length) {
+      const delay = currentCharIndex === 0 ? initialDelay : typingSpeed;
+      timeout = setTimeout(() => {
+        setDisplayedText(prev => prev + text[currentCharIndex]);
+        setCurrentCharIndex(prev => prev + 1);
+      }, delay);
+    } else if (currentCharIndex === text.length && text.length > 0) {
+      setIsComplete(true);
+      onComplete?.();
+    }
+
+    return () => clearTimeout(timeout);
+  }, [currentCharIndex, text, typingSpeed, initialDelay, isComplete, onComplete]);
+
+  return (
+    <span className={`inline ${className}`}>
+      <span>{displayedText}</span>
+      {showCursor && !isComplete && (
+        <span 
+          className="ml-0.5 inline-block animate-pulse"
+          style={{ animationDuration: '0.7s' }}
+        >
+          {cursorCharacter}
+        </span>
+      )}
+    </span>
+  );
+}
 
 type CardType = "skeleton" | "item-list" | "item-sharing" | "watchtower" | "task";
 
@@ -766,24 +834,41 @@ function AgentBubble({
   isCardLoading?: boolean;
 }) {
   const config = cardType ? cardConfigs[cardType] : null;
-  const showSkeleton = isCardLoading || !config;
+  const [textComplete, setTextComplete] = useState(false);
+  // Show skeleton while card is loading OR while text is still typing
+  const showSkeleton = isCardLoading || !config || !textComplete;
+
+  // Memoize callback to prevent TextType re-renders
+  const handleTextComplete = useCallback(() => {
+    setTextComplete(true);
+  }, []);
+
+  // Reset text complete when content changes
+  useEffect(() => {
+    setTextComplete(false);
+  }, [content]);
 
   return (
     <div className="flex flex-col">
-      {/* Plain text response - no bubble */}
+      {/* Typed text response */}
       <p 
         className={`text-[16px] leading-normal py-3 ${inter.className}`}
         style={{ color: "black" }}
       >
-        {content}
+        <TextType 
+          text={content}
+          typingSpeed={12}
+          showCursor={false}
+          onComplete={handleTextComplete}
+        />
       </p>
       
-      {/* Summary card */}
+      {/* Summary card - shows loading state immediately, content after text completes */}
       {cardType && (
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ duration: 0.3, delay: 0.2 }}
+          transition={{ duration: 0.3 }}
         >
           <CardWrapper>
             {/* Header */}
@@ -855,14 +940,67 @@ function AgentBubble({
   );
 }
 
-// Chat header - centered icon only
-function ChatHeader() {
+// Chat header with countdown progress ring (CSS transition based)
+function ChatHeader({ 
+  cycleKey,
+  totalDuration,
+  isActive,
+}: { 
+  cycleKey: number;
+  totalDuration: number;
+  isActive: boolean;
+}) {
+  const size = 32;
+  const strokeWidth = 1;
+  const radius = (size - strokeWidth) / 2;
+  const circumference = 2 * Math.PI * radius;
+  
+  // When active, animate from 0 to 100% over totalDuration
+  // cycleKey forces remount to reset the animation
+  const strokeDashoffset = isActive ? 0 : circumference;
+
   return (
     <div className="flex items-center justify-center py-6">
-      {/* Sentinel icon in circle with border */}
+      {/* Sentinel icon in circle with progress ring */}
       <div 
-        className="w-8 h-8 rounded-full flex items-center justify-center border border-black"
+        className="relative flex items-center justify-center"
+        style={{ width: size, height: size }}
       >
+        {/* Progress ring SVG - key forces remount on new cycle */}
+        <svg
+          key={cycleKey}
+          className="absolute inset-0 -rotate-90"
+          width={size}
+          height={size}
+        >
+          {/* Background circle (light) */}
+          <circle
+            cx={size / 2}
+            cy={size / 2}
+            r={radius}
+            fill="none"
+            stroke="currentColor"
+            strokeWidth={strokeWidth}
+            className="text-black/20"
+          />
+          {/* Progress circle (dark, fills up over time) */}
+          <circle
+            cx={size / 2}
+            cy={size / 2}
+            r={radius}
+            fill="none"
+            stroke="currentColor"
+            strokeWidth={strokeWidth}
+            strokeLinecap="round"
+            className="text-black"
+            style={{
+              strokeDasharray: circumference,
+              strokeDashoffset: strokeDashoffset,
+              transition: isActive ? `stroke-dashoffset ${totalDuration}ms linear` : 'none',
+            }}
+          />
+        </svg>
+        {/* Icon */}
         <SentinelIcon size={16} />
       </div>
     </div>
@@ -885,11 +1023,32 @@ export function SummaryCardDemo() {
   const [hasTriggered, setHasTriggered] = useState(false);
   const [isExiting, setIsExiting] = useState(false);
   
+  // Progress ring state
+  const [cycleKey, setCycleKey] = useState(0);
+  const [isProgressActive, setIsProgressActive] = useState(false);
+  
   const containerRef = useRef<HTMLDivElement>(null);
+  
+  // Timing constants
+  const INITIAL_DELAY = 1200;
+  const TYPING_DURATION = 3500;
+  const CARD_LOADING_DURATION = 1500;
+  const DISPLAY_DURATION = 4000;
+  const FADE_OUT_DURATION = 350;
+  
+  // Total cycle duration (for progress ring)
+  const TOTAL_CYCLE_DURATION = INITIAL_DELAY + TYPING_DURATION + CARD_LOADING_DURATION + DISPLAY_DURATION + FADE_OUT_DURATION;
 
   // Function to start a conversation animation
   const startConversation = () => {
-    // Start typing indicator after a short delay
+    // Increment cycle key to remount progress ring, then activate it
+    setCycleKey(prev => prev + 1);
+    // Small delay to ensure SVG remounts before starting animation
+    requestAnimationFrame(() => {
+      setIsProgressActive(true);
+    });
+    
+    // Start typing indicator after initial delay
     setTimeout(() => {
       setIsTyping(true);
       
@@ -910,17 +1069,20 @@ export function SummaryCardDemo() {
             
             // After fade out, swap content and fade in
             setTimeout(() => {
+              // Reset progress
+              setIsProgressActive(false);
+              
               setShowAgentResponse(false);
               setCurrentIndex((prev) => (prev + 1) % conversationTemplates.length);
               setIsExiting(false);
               
               // Start next conversation
               startConversation();
-            }, 350);
-          }, 4000);
-        }, 1500);
-      }, 3500);
-    }, 1200);
+            }, FADE_OUT_DURATION);
+          }, DISPLAY_DURATION);
+        }, CARD_LOADING_DURATION);
+      }, TYPING_DURATION);
+    }, INITIAL_DELAY);
   };
 
   // Trigger first conversation when component enters viewport
@@ -965,8 +1127,12 @@ export function SummaryCardDemo() {
           margin: "0 auto",
         }}
       >
-      {/* Chat header */}
-      <ChatHeader />
+      {/* Chat header with countdown */}
+      <ChatHeader 
+        cycleKey={cycleKey} 
+        totalDuration={TOTAL_CYCLE_DURATION} 
+        isActive={isProgressActive} 
+      />
 
       {/* Messages area */}
       <motion.div 
@@ -996,7 +1162,7 @@ export function SummaryCardDemo() {
           )}
           {showAgentResponse && (
             <motion.div
-              key="response"
+              key={`response-${currentIndex}`}
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 0.25 }}
