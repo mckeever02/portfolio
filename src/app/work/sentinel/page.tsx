@@ -752,9 +752,9 @@ export default function SentinelPage() {
       </WideContent>
 
       {/* Interactive Summary Card Demo */}
-      <WideContent className="mt-8">
+      <FullWidthContent className="mt-8">
         <SummaryCardDemo />
-      </WideContent>
+      </FullWidthContent>
     </CaseStudyLayout>
   );
 }

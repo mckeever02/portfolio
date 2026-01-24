@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { motion } from "framer-motion";
+import { useState, useEffect, useRef } from "react";
+import { motion, AnimatePresence, useMotionValue, useAnimationFrame, useTransform } from "framer-motion";
 import Image from "next/image";
 import { Inter } from "next/font/google";
 
@@ -9,13 +9,47 @@ const inter = Inter({ subsets: ["latin"] });
 
 type CardType = "skeleton" | "item-list" | "item-sharing" | "watchtower" | "task";
 
-const cardTypeLabels: Record<CardType, string> = {
-  skeleton: "Loading State",
-  "item-list": "Item List",
-  "item-sharing": "Item Sharing Details",
-  watchtower: "Watchtower Report",
-  task: "Task",
-};
+// ===============================
+// CHAT TYPES & DATA
+// ===============================
+
+type MessageRole = "user" | "agent";
+
+interface ChatMessage {
+  id: string;
+  role: MessageRole;
+  content: string;
+  cardType?: Exclude<CardType, "skeleton">;
+}
+
+interface ConversationTemplate {
+  question: string;
+  response: string;
+  cardType: Exclude<CardType, "skeleton">;
+}
+
+const conversationTemplates: ConversationTemplate[] = [
+  {
+    question: "Which items are in the Finance vault?",
+    response: "Here are the 4 items in your Finance vault:",
+    cardType: "item-list",
+  },
+  {
+    question: "Who is NetSuite shared with?",
+    response: "NetSuite is shared with 6 people. Here's who has access:",
+    cardType: "item-sharing",
+  },
+  {
+    question: "Was Plex involved in a breach recently?",
+    response: "Yes, Plex was involved in a data breach in August 2022. Here's the Watchtower report:",
+    cardType: "watchtower",
+  },
+  {
+    question: "Rotate the NetSuite password and notify affected users",
+    response: "I can help with that. Here's what I'll do:",
+    cardType: "task",
+  },
+];
 
 // Skeleton base with shimmer
 function SkeletonBox({ className = "" }: { className?: string }) {
@@ -596,139 +630,387 @@ const UniversalSkeleton = () => (
 );
 
 // ===============================
+// CHAT UI COMPONENTS
+// ===============================
+
+// Sentinel icon SVG
+function SentinelIcon({ size = 16 }: { size?: number }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <g clipPath="url(#sentinel-clip)">
+        <path d="M0 8C0 7.55817 0.358172 7.2 0.8 7.2H3.508C3.99291 7.2 4.47307 7.10448 4.92105 6.91889C5.36904 6.7333 5.77608 6.46127 6.11892 6.11836C6.46177 5.77544 6.7337 5.36834 6.91919 4.92031C7.10469 4.47229 7.20011 3.99211 7.2 3.5072V0.799999C7.2 0.358172 7.55817 0 8 0C8.44183 0 8.8 0.358172 8.8 0.8V3.5072C8.7999 3.99217 8.89534 4.47242 9.08088 4.9205C9.26643 5.36858 9.53843 5.77571 9.88136 6.11864C10.2243 6.46157 10.6314 6.73357 11.0795 6.91912C11.5276 7.10466 12.0078 7.20011 12.4928 7.2H15.2C15.6418 7.2 16 7.55817 16 8C16 8.44183 15.6418 8.8 15.2 8.8H12.4928C12.0079 8.7999 11.5277 8.89531 11.0797 9.08081C10.6317 9.2663 10.2246 9.53823 9.88164 9.88108C9.53873 10.2239 9.2667 10.631 9.08111 11.0789C8.89552 11.5269 8.8 12.0071 8.8 12.492V15.2C8.8 15.6418 8.44183 16 8 16C7.55817 16 7.2 15.6418 7.2 15.2V12.492C7.2 11.5128 6.81102 10.5737 6.11864 9.88136C5.42625 9.18898 4.48718 8.8 3.508 8.8H0.799999C0.358171 8.8 0 8.44183 0 8Z" fill="black"/>
+        <path d="M2.16525 13.8345C1.85286 13.5221 1.85286 13.0157 2.16525 12.7033L3.86245 11.0061C4.17499 10.6935 4.68174 10.6936 4.99417 11.0063C5.30647 11.3188 5.30635 11.8253 4.99389 12.1377L3.29645 13.8346C2.98404 14.1469 2.47761 14.1469 2.16525 13.8345ZM13.834 2.1657C13.5216 1.85333 13.0152 1.85333 12.7028 2.1657L11.0052 3.8633C10.6928 4.17567 10.6928 4.68213 11.0052 4.9945C11.3176 5.30687 11.824 5.30687 12.1364 4.9945L13.834 3.2969C14.1464 2.98453 14.1464 2.47807 13.834 2.1657ZM2.16517 2.16574C2.47756 1.85334 2.98406 1.85334 3.29645 2.16574L4.99365 3.86294C5.30619 4.17548 5.3061 4.68223 4.99345 4.99466C4.68093 5.30696 4.17442 5.30684 3.86205 4.99438L2.16509 3.29694C1.85277 2.98453 1.85281 2.4781 2.16517 2.16574ZM13.834 13.8345C14.1464 13.5221 14.1464 13.0156 13.8341 12.7032L12.1375 11.0062C11.825 10.6936 11.3182 10.6935 11.0056 11.0061C10.693 11.3187 10.6931 11.8255 11.0057 12.138L12.7027 13.8346C13.0152 14.1469 13.5216 14.1469 13.834 13.8345Z" fill="black"/>
+      </g>
+      <defs>
+        <clipPath id="sentinel-clip">
+          <rect width="16" height="16" fill="white"/>
+        </clipPath>
+      </defs>
+    </svg>
+  );
+}
+
+// Shiny text component from React Bits (https://github.com/davidhdev/react-bits)
+interface ShinyTextProps {
+  text: string;
+  disabled?: boolean;
+  speed?: number;
+  className?: string;
+  color?: string;
+  shineColor?: string;
+  spread?: number;
+}
+
+function ShinyText({
+  text,
+  disabled = false,
+  speed = 2,
+  className = '',
+  color = '#b5b5b5',
+  shineColor = '#000000',
+  spread = 120,
+}: ShinyTextProps) {
+  const progress = useMotionValue(0);
+  const elapsedRef = useRef(0);
+  const lastTimeRef = useRef<number | null>(null);
+
+  const animationDuration = speed * 1000;
+
+  useAnimationFrame(time => {
+    if (disabled) {
+      lastTimeRef.current = null;
+      return;
+    }
+
+    if (lastTimeRef.current === null) {
+      lastTimeRef.current = time;
+      return;
+    }
+
+    const deltaTime = time - lastTimeRef.current;
+    lastTimeRef.current = time;
+
+    elapsedRef.current += deltaTime;
+
+    const cycleTime = elapsedRef.current % animationDuration;
+    const p = (cycleTime / animationDuration) * 100;
+    progress.set(p);
+  });
+
+  const backgroundPosition = useTransform(progress, p => `${150 - p * 2}% center`);
+
+  const gradientStyle: React.CSSProperties = {
+    backgroundImage: `linear-gradient(${spread}deg, ${color} 0%, ${color} 35%, ${shineColor} 50%, ${color} 65%, ${color} 100%)`,
+    backgroundSize: '200% auto',
+    WebkitBackgroundClip: 'text',
+    backgroundClip: 'text',
+    WebkitTextFillColor: 'transparent'
+  };
+
+  return (
+    <motion.span
+      className={`inline-block ${className}`}
+      style={{ ...gradientStyle, backgroundPosition }}
+    >
+      {text}
+    </motion.span>
+  );
+}
+
+// Typing indicator with spinning Sentinel icon
+function TypingIndicator() {
+  return (
+    <div className={`flex items-center gap-2 py-3 ${inter.className}`}>
+      <motion.div
+        animate={{ rotate: 360 }}
+        transition={{
+          duration: 2,
+          repeat: Infinity,
+          ease: "linear",
+        }}
+      >
+        <SentinelIcon size={16} />
+      </motion.div>
+      <ShinyText 
+        text="thinking..." 
+        className="text-[16px] leading-normal"
+        color="rgba(0,0,0,0.4)"
+        shineColor="rgba(0,0,0,1)"
+        speed={1.2}
+        spread={90}
+      />
+    </div>
+  );
+}
+
+// User message bubble - white background, black text
+function UserBubble({ content }: { content: string }) {
+  return (
+    <div 
+      className={`bg-white px-3 py-3 rounded-[12px] text-[16px] leading-normal ${inter.className}`}
+      style={{ color: "black" }}
+    >
+      {content}
+    </div>
+  );
+}
+
+// Agent message - plain text with optional card
+function AgentBubble({ 
+  content, 
+  cardType,
+  isCardLoading,
+}: { 
+  content: string; 
+  cardType?: Exclude<CardType, "skeleton">;
+  isCardLoading?: boolean;
+}) {
+  const config = cardType ? cardConfigs[cardType] : null;
+  const showSkeleton = isCardLoading || !config;
+
+  return (
+    <div className="flex flex-col">
+      {/* Plain text response - no bubble */}
+      <p 
+        className={`text-[16px] leading-normal py-3 ${inter.className}`}
+        style={{ color: "black" }}
+      >
+        {content}
+      </p>
+      
+      {/* Summary card */}
+      {cardType && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.3, delay: 0.2 }}
+        >
+          <CardWrapper>
+            {/* Header */}
+            <div className="flex items-center justify-between h-[56px] px-[16px] py-1">
+              <div className="flex items-center gap-3">
+                <TransitionElement
+                  isLoading={showSkeleton}
+                  skeleton={<SkeletonBox className="w-8 h-8 rounded-[8px]" />}
+                  delay={0}
+                >
+                  {config && (
+                    <div className="w-8 h-8 rounded-[8px] overflow-hidden shrink-0">
+                      {config.header.icon}
+                    </div>
+                  )}
+                </TransitionElement>
+                
+                <div className="flex flex-col leading-[1.2]">
+                  <TransitionElement
+                    isLoading={showSkeleton}
+                    skeleton={<div className="skeleton-shimmer h-[10px] w-[114px] rounded-full mb-1" />}
+                    delay={0.05}
+                  >
+                    {config && (
+                      <h4 
+                        className="text-[14px] font-semibold"
+                        style={{ color: "rgba(0,0,0,0.82)", letterSpacing: "-0.09px" }}
+                      >
+                        {config.header.title}
+                      </h4>
+                    )}
+                  </TransitionElement>
+                  <TransitionElement
+                    isLoading={showSkeleton}
+                    skeleton={<div className="skeleton-shimmer h-[10px] w-[66px] rounded-full" />}
+                    delay={0.1}
+                  >
+                    {config && (
+                      <p 
+                        className="text-[12px]"
+                        style={{ color: "rgba(0,0,0,0.62)", letterSpacing: "0.01px" }}
+                      >
+                        {config.header.subtitle}
+                      </p>
+                    )}
+                  </TransitionElement>
+                </div>
+              </div>
+              
+              {!showSkeleton && config?.header.actions && (
+                <div className="flex items-center gap-1">{config.header.actions}</div>
+              )}
+            </div>
+
+            {/* Body */}
+            <div className={showSkeleton ? 'overflow-hidden' : ''}>
+              <TransitionElement
+                isLoading={showSkeleton}
+                skeleton={<UniversalSkeleton />}
+                delay={0.2}
+              >
+                {config && config.body}
+              </TransitionElement>
+            </div>
+          </CardWrapper>
+        </motion.div>
+      )}
+    </div>
+  );
+}
+
+// Chat header - centered icon only
+function ChatHeader() {
+  return (
+    <div className="flex items-center justify-center py-6">
+      {/* Sentinel icon in circle with border */}
+      <div 
+        className="w-8 h-8 rounded-full flex items-center justify-center border border-black"
+      >
+        <SentinelIcon size={16} />
+      </div>
+    </div>
+  );
+}
+
+// ===============================
 // MAIN COMPONENT
 // ===============================
 
 export function SummaryCardDemo() {
-  const [selectedType, setSelectedType] = useState<CardType>("skeleton");
-  const [isLoading, setIsLoading] = useState(true);
-  const [pendingType, setPendingType] = useState<CardType>("skeleton");
+  // Cycle through conversation templates
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const template = conversationTemplates[currentIndex];
+  
+  // Conversation state
+  const [showAgentResponse, setShowAgentResponse] = useState(false);
+  const [isTyping, setIsTyping] = useState(false);
+  const [isCardLoading, setIsCardLoading] = useState(false);
+  const [hasTriggered, setHasTriggered] = useState(false);
+  const [isExiting, setIsExiting] = useState(false);
+  
+  const containerRef = useRef<HTMLDivElement>(null);
 
-  // Handle selection change
-  const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const newType = e.target.value as CardType;
-    setPendingType(newType);
-    setIsLoading(true);
+  // Function to start a conversation animation
+  const startConversation = () => {
+    // Start typing indicator after a short delay
+    setTimeout(() => {
+      setIsTyping(true);
+      
+      // After typing delay, show agent response with loading card
+      setTimeout(() => {
+        setIsTyping(false);
+        setShowAgentResponse(true);
+        setIsCardLoading(true);
+        
+        // After another delay, finish loading the card
+        setTimeout(() => {
+          setIsCardLoading(false);
+          
+          // After displaying the complete card, wait then cycle to next
+          setTimeout(() => {
+            // Fade out entire conversation
+            setIsExiting(true);
+            
+            // After fade out, swap content and fade in
+            setTimeout(() => {
+              setShowAgentResponse(false);
+              setCurrentIndex((prev) => (prev + 1) % conversationTemplates.length);
+              setIsExiting(false);
+              
+              // Start next conversation
+              startConversation();
+            }, 350);
+          }, 4000);
+        }, 1500);
+      }, 3500);
+    }, 1200);
   };
 
-  // Transition from loading to loaded
+  // Trigger first conversation when component enters viewport
   useEffect(() => {
-    if (isLoading && pendingType !== "skeleton") {
-      const timer = setTimeout(() => {
-        setSelectedType(pendingType);
-        setIsLoading(false);
-      }, 800);
-      return () => clearTimeout(timer);
-    } else if (pendingType === "skeleton") {
-      setSelectedType("skeleton");
-      setIsLoading(true);
+    if (hasTriggered) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const [entry] = entries;
+        if (entry.isIntersecting && !hasTriggered) {
+          setHasTriggered(true);
+          startConversation();
+        }
+      },
+      { threshold: 0.3 }
+    );
+
+    if (containerRef.current) {
+      observer.observe(containerRef.current);
     }
-  }, [isLoading, pendingType]);
 
-  // Get current config (or null for skeleton-only state)
-  const config = selectedType !== "skeleton" ? cardConfigs[selectedType] : null;
+    return () => observer.disconnect();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [hasTriggered]);
 
-  // Determine what to show
-  const showSkeleton = isLoading || selectedType === "skeleton";
 
   return (
-    <div className="bg-[#4a4a4a] rounded-xl p-6 md:p-8">
-      {/* Select menu */}
-      <div className="flex items-center gap-3 mb-6">
-        <span className="text-white/60 text-sm font-medium">Card Type:</span>
-        <select
-          value={pendingType}
-          onChange={handleChange}
-          className="bg-white/10 text-white text-sm rounded-lg px-3 py-1.5 border border-white/20 focus:outline-none focus:ring-2 focus:ring-white/30 cursor-pointer appearance-none pr-8"
-          style={{
-            backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E")`,
-            backgroundRepeat: "no-repeat",
-            backgroundPosition: "right 8px center",
-          }}
-        >
-          {Object.entries(cardTypeLabels).map(([value, label]) => (
-            <option key={value} value={value} className="text-black">
-              {label}
-            </option>
-          ))}
-        </select>
-      </div>
+    <div 
+      ref={containerRef}
+      className="w-full p-6 md:p-10 h-screen md:h-[calc(100vh-200px)]"
+      style={{ 
+        backgroundImage: "url('/images/work/sentinel/agent-bg.png')",
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+      }}
+    >
+      <div 
+        className="rounded-[12px] overflow-hidden flex flex-col border border-black/20"
+        style={{ 
+          backgroundColor: "#f1ede7",
+          maxWidth: "400px",
+          margin: "0 auto",
+        }}
+      >
+      {/* Chat header */}
+      <ChatHeader />
 
-      {/* Card */}
-      <div className="flex justify-center">
-        <CardWrapper>
-          {/* Header - Figma: h-56px, pl-16px, pr-12px, py-4px, gap-8px */}
-          <div className="flex items-center justify-between h-[56px] px-[16px] py-1">
-            <div className="flex items-center gap-3">
-              {/* Icon - 32px */}
-              <TransitionElement
-                isLoading={showSkeleton}
-                skeleton={<SkeletonBox className="w-8 h-8 rounded-[8px]" />}
-                delay={0}
-              >
-                {config && (
-                  config.header.iconBg ? (
-                    <div className={`w-8 h-8 rounded-[8px] flex items-center justify-center ${config.header.iconBg}`}>
-                      {config.header.icon}
-                    </div>
-                  ) : (
-                    <div className="w-8 h-8 rounded-[8px] overflow-hidden shrink-0">
-                      {config.header.icon}
-                    </div>
-                  )
-                )}
-              </TransitionElement>
-              
-              {/* Title & Subtitle - gap 4px */}
-              <div className="flex flex-col leading-[1.2]">
-                <TransitionElement
-                  isLoading={showSkeleton}
-                  skeleton={<div className="skeleton-shimmer h-[10px] w-[114px] rounded-full mb-1" />}
-                  delay={0.05}
-                >
-                  {config && (
-                    <h4 
-                      className="text-[16px] font-semibold"
-                      style={{ color: "rgba(0,0,0,0.82)", letterSpacing: "-0.09px" }}
-                    >
-                      {config.header.title}
-                    </h4>
-                  )}
-                </TransitionElement>
-                <TransitionElement
-                  isLoading={showSkeleton}
-                  skeleton={<div className="skeleton-shimmer h-[10px] w-[66px] rounded-full" />}
-                  delay={0.1}
-                >
-                  {config && (
-                    <p 
-                      className="text-[12px]"
-                      style={{ color: "rgba(0,0,0,0.62)", letterSpacing: "0.01px" }}
-                    >
-                      {config.header.subtitle}
-                    </p>
-                  )}
-                </TransitionElement>
-              </div>
-            </div>
-            
-            {/* Actions - only show when loaded */}
-            {!showSkeleton && config?.header.actions && (
-              <div className="flex items-center gap-1">{config.header.actions}</div>
-            )}
-          </div>
+      {/* Messages area */}
+      <motion.div 
+        className="px-4 pb-6 flex flex-col gap-3"
+        style={{ minHeight: "500px" }}
+        animate={{ 
+          opacity: isExiting ? 0 : 1,
+          y: isExiting ? -10 : 0,
+        }}
+        transition={{ duration: 0.3, ease: "easeOut" }}
+      >
+        {/* User message */}
+        <UserBubble content={template.question} />
 
-          {/* Body */}
-          <div className={showSkeleton ? 'overflow-hidden' : ''}>
-            <TransitionElement
-              isLoading={showSkeleton}
-              skeleton={<UniversalSkeleton />}
-              delay={0.2}
+        {/* Typing indicator OR Agent response - one at a time */}
+        <AnimatePresence mode="wait">
+          {isTyping && (
+            <motion.div
+              key="typing"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.2 }}
             >
-              {config && config.body}
-            </TransitionElement>
-          </div>
-        </CardWrapper>
+              <TypingIndicator />
+            </motion.div>
+          )}
+          {showAgentResponse && (
+            <motion.div
+              key="response"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.25 }}
+            >
+              <AgentBubble 
+                content={template.response} 
+                cardType={template.cardType}
+                isCardLoading={isCardLoading}
+              />
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+      </motion.div>
       </div>
     </div>
   );
