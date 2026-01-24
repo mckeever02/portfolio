@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
 interface CarouselItem {
@@ -16,21 +16,8 @@ interface TextCarouselProps {
   className?: string;
 }
 
-function QuoteMark() {
-  return (
-    <svg className="absolute left-1/2 -translate-x-1/2 top-0 w-12 h-12 text-black" viewBox="0 0 24 24" fill="currentColor">
-      <path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z" />
-    </svg>
-  );
-}
-
-interface ProgressButtonProps {
-  progress: number;
-  onClick: () => void;
-  isAnimating: boolean;
-}
-
-function ProgressButton({ progress, onClick, isAnimating }: ProgressButtonProps) {
+// Combined quote icon with progress ring - exported for external use
+export function QuoteProgressIndicator({ progress }: { progress: number }) {
   const size = 54;
   const strokeWidth = 2;
   const radius = (size - strokeWidth) / 2;
@@ -38,19 +25,15 @@ function ProgressButton({ progress, onClick, isAnimating }: ProgressButtonProps)
   const strokeDashoffset = circumference * (1 - progress);
 
   return (
-    <button
-      onClick={onClick}
-      className="absolute bottom-0 left-1/2 -translate-x-1/2 flex items-center justify-center transition-transform hover:scale-105 active:scale-95 overflow-hidden"
+    <div
+      className="relative flex items-center justify-center"
       style={{ width: size, height: size }}
-      aria-label="Next quote"
     >
-      {/* Progress ring */}
       <svg
         className="absolute inset-0 -rotate-90"
         width={size}
         height={size}
       >
-        {/* Background circle */}
         <circle
           cx={size / 2}
           cy={size / 2}
@@ -58,9 +41,8 @@ function ProgressButton({ progress, onClick, isAnimating }: ProgressButtonProps)
           fill="none"
           stroke="currentColor"
           strokeWidth={strokeWidth}
-          className="text-black/10"
+          className="text-white/30"
         />
-        {/* Progress circle */}
         <circle
           cx={size / 2}
           cy={size / 2}
@@ -69,41 +51,19 @@ function ProgressButton({ progress, onClick, isAnimating }: ProgressButtonProps)
           stroke="currentColor"
           strokeWidth={strokeWidth}
           strokeLinecap="round"
-          className="text-black"
+          className="text-white"
           style={{
             strokeDasharray: circumference,
             strokeDashoffset: strokeDashoffset,
           }}
         />
       </svg>
-      {/* Down arrow with animation */}
-      <motion.svg
-        width="24"
-        height="24"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        className="text-black"
-        animate={isAnimating ? {
-          y: [0, 40, -40, 0],
-          opacity: [1, 0, 0, 1],
-        } : { y: 0, opacity: 1 }}
-        transition={{
-          duration: 0.5,
-          times: [0, 0.3, 0.3, 1],
-          ease: "easeInOut",
-        }}
-      >
-        <path d="M12 5v14" />
-        <path d="m19 12-7 7-7-7" />
-      </motion.svg>
-    </button>
+      <svg className="w-5 h-5 text-white" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z" />
+      </svg>
+    </div>
   );
 }
-
 
 export function TextCarousel({
   items,
@@ -111,23 +71,12 @@ export function TextCarousel({
   loop = true,
   interval = 3000,
   className = "",
-}: TextCarouselProps) {
+  renderIndicator,
+}: TextCarouselProps & { renderIndicator?: (progress: number) => React.ReactNode }) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [progress, setProgress] = useState(0);
-  const [isArrowAnimating, setIsArrowAnimating] = useState(false);
   const animationRef = useRef<number | null>(null);
   const startTimeRef = useRef<number>(Date.now());
-
-  const goToNext = useCallback(() => {
-    setCurrentIndex((prev) => {
-      if (prev >= items.length - 1) {
-        return loop ? 0 : prev;
-      }
-      return prev + 1;
-    });
-    setProgress(0);
-    startTimeRef.current = Date.now();
-  }, [items.length, loop]);
 
   useEffect(() => {
     if (!autoplay) return;
@@ -138,7 +87,6 @@ export function TextCarousel({
       setProgress(newProgress);
 
       if (newProgress >= 1) {
-        // Reset for next cycle
         startTimeRef.current = Date.now();
         setProgress(0);
         setCurrentIndex((prev) => {
@@ -161,43 +109,27 @@ export function TextCarousel({
     };
   }, [autoplay, interval, items.length, loop]);
 
-  const handleManualNext = () => {
-    setIsArrowAnimating(true);
-    goToNext();
-    // Reset animation state after animation completes
-    setTimeout(() => setIsArrowAnimating(false), 500);
-  };
-
   return (
-    <div
-      className={`relative w-full pt-16 pb-20 ${className}`}
-    >
-      <QuoteMark />
-      <div className="relative w-full h-[280px] md:h-[240px] py-6">
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={currentIndex}
-            initial={{ opacity: 0, y: -30, filter: "blur(8px)" }}
-            animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-            exit={{ opacity: 0, y: 30, filter: "blur(8px)" }}
-            transition={{
-              duration: 0.6,
-              ease: [0.32, 0.72, 0, 1],
-            }}
-            className="absolute inset-0 flex flex-col justify-center items-start gap-6"
-          >
-            <p className="text-[var(--foreground)] text-2xl md:text-3xl leading-relaxed">
-              {items[currentIndex].quote}
-            </p>
-          </motion.div>
-        </AnimatePresence>
-      </div>
-      {/* Progress button */}
-      <ProgressButton 
-        progress={progress} 
-        onClick={handleManualNext}
-        isAnimating={isArrowAnimating}
-      />
-    </div>
+    <>
+      {/* Render indicator externally if provided */}
+      {renderIndicator?.(progress)}
+      
+      {/* Frosted content container */}
+      <AnimatePresence mode="wait">
+        <motion.div
+          key={currentIndex}
+          initial={{ opacity: 0, y: -20, filter: "blur(8px)" }}
+          animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+          exit={{ opacity: 0, y: 20, filter: "blur(8px)" }}
+          transition={{ duration: 0.6, ease: [0.32, 0.72, 0, 1] }}
+          className={`p-6 md:p-8 lg:p-10 backdrop-blur-md border border-white/20 ${className}`}
+          style={{ backgroundColor: "rgba(255, 255, 255, 0.2)" }}
+        >
+          <p className="text-white text-2xl md:text-3xl leading-snug">
+            {items[currentIndex].quote}
+          </p>
+        </motion.div>
+      </AnimatePresence>
+    </>
   );
 }

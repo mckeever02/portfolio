@@ -14,7 +14,7 @@ import { LightboxImage } from "@/components/Lightbox";
 import Image from "next/image";
 import { FlipCard, CardFace } from "@/components/FlipCard";
 import { SpotlightEffect } from "@/components/SpotlightEffect";
-import { TextCarousel } from "@/components/TextCarousel";
+import { TextCarousel, QuoteProgressIndicator } from "@/components/TextCarousel";
 import { SummaryCardDemo } from "@/components/SummaryCardDemo";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -596,17 +596,17 @@ export default function SentinelPage() {
         </ContentSection>
       </NarrowContent>
 
-      {/* Full Width Sentinel Interface Image */}
+      {/* Full Width Quote Section */}
       <FullWidthContent className="mt-0">
-          <div className="relative w-full aspect-[3154/2030] overflow-hidden rounded-lg shadow-2xl border border-black/10">
-            <Image
-              src="/images/work/sentinel/sentinel-research-testing.png"
-              alt="Sentinel AI task automation interface"
-              fill
-              className="object-cover"
-            />
-            {/* Transparent overlay with background blur */}
-            <div className="absolute inset-0 flex items-start justify-center pt-[15%] bg-[var(--background)]/50 backdrop-blur-[5px]">
+          <div 
+            className="relative w-full min-h-[650px] flex items-center justify-center py-20"
+            style={{
+              backgroundImage: "url('/images/work/sentinel/quote-bg.png')",
+              backgroundSize: "cover",
+              backgroundPosition: "center",
+            }}
+          >
+              {/* Quote indicator - absolutely positioned at top center */}
               <div className="w-full px-8 md:px-16 lg:px-24 max-w-4xl">
                 <TextCarousel
                   items={[
@@ -619,9 +619,13 @@ export default function SentinelPage() {
                   loop
                   interval={6000}
                   className="max-w-3xl"
+                  renderIndicator={(progress) => (
+                    <div className="absolute top-24 left-1/2 -translate-x-1/2">
+                      <QuoteProgressIndicator progress={progress} />
+                    </div>
+                  )}
                 />
               </div>
-            </div>
           </div>
       </FullWidthContent>
 

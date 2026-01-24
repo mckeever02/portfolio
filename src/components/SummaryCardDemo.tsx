@@ -1120,9 +1120,9 @@ export function SummaryCardDemo() {
       }}
     >
       <div 
-        className="rounded-[12px] overflow-hidden flex flex-col border border-black/20"
+        className="rounded-[12px] overflow-hidden flex flex-col border border-white/30 backdrop-blur-md"
         style={{ 
-          backgroundColor: "#f1ede7",
+          backgroundColor: "rgba(255, 255, 255, 0.4)",
           maxWidth: "400px",
           margin: "0 auto",
         }}
