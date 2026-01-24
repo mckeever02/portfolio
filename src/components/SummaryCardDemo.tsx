@@ -103,37 +103,137 @@ function IconBtn({ children }: { children: React.ReactNode }) {
   );
 }
 
-// List row component for Item List card
-// Figma: gap=8px, py=4px, px=8px, icon=24px, text 14px/-0.09px and 12px/0.01px
-function ListRow({ 
-  icon, 
-  title, 
-  subtitle 
+// ===============================
+// UNIFIED ROW COMPONENT
+// ===============================
+
+// Avatar colors matching 1Password design system
+const avatarColors = {
+  magenta: "#e6b7e6",
+  violet: "#c9ade6",
+  purple: "#b8b8e6",
+  lavender: "#adc9e6",
+  blue: "#ade6e6",
+  turquoise: "#ade6c9",
+  lime: "#c9e6ad",
+  yellow: "#e6e6ad",
+  gold: "#e6d4ad",
+  orange: "#e6c9ad",
+  peach: "#e6b8ad",
+  red: "#e6adad",
+  pink: "#e6adc9",
+  green: "#ade6ad",
+} as const;
+
+type AvatarColor = keyof typeof avatarColors;
+
+// Avatar component for initials-based avatars (matches login item style)
+function Avatar({ 
+  initials, 
+  color,
+  size = 24,
 }: { 
-  icon: React.ReactNode; 
-  title: string; 
-  subtitle: string;
+  initials: string; 
+  color: AvatarColor;
+  size?: number;
 }) {
   return (
-    <div className="flex items-center gap-2 px-2 py-1">
-      <div className="w-6 h-6 rounded-[4px] overflow-hidden shrink-0 flex items-center justify-center">
-        {icon}
+    <div 
+      className="rounded-[6px] flex items-center justify-center font-semibold shrink-0 leading-[1.2] uppercase"
+      style={{ 
+        backgroundColor: avatarColors[color], 
+        color: "rgba(0,0,0,0.62)",
+        width: size, 
+        height: size,
+        fontSize: size < 24 ? 8 : 10,
+        letterSpacing: "0.01px",
+      }}
+    >
+      {initials}
+    </div>
+  );
+}
+
+// Unified row component for all list-style items
+interface RowProps {
+  icon: React.ReactNode;
+  title: string | React.ReactNode;
+  subtitle?: string | React.ReactNode;
+  trailing?: React.ReactNode;
+  iconShape?: "square" | "circle";
+  size?: "default" | "compact";
+  isLoading?: boolean;
+}
+
+function Row({ 
+  icon, 
+  title, 
+  subtitle, 
+  trailing,
+  iconShape = "square",
+  size = "default",
+  isLoading = false,
+}: RowProps) {
+  return (
+    <div className={`flex items-center gap-3 px-4 ${size === "compact" ? "h-[40px]" : "h-[56px]"}`}>
+      <div className={`w-6 h-6 overflow-hidden shrink-0 flex items-center justify-center ${
+        iconShape === "circle" ? "rounded-full" : "rounded-[4px]"
+      }`}>
+        {isLoading ? (
+          <div className={`skeleton-shimmer w-6 h-6 ${iconShape === "circle" ? "rounded-full" : "rounded-[6px]"}`} />
+        ) : icon}
       </div>
       <div className="min-w-0 flex-1 leading-[1.2]">
-        <p 
-          className="text-[14px] truncate"
-          style={{ color: "rgba(0,0,0,0.82)", letterSpacing: "-0.09px" }}
-        >
-          {title}
-        </p>
-        <p 
-          className="text-[12px] truncate"
-          style={{ color: "rgba(0,0,0,0.62)", letterSpacing: "0.01px" }}
-        >
-          {subtitle}
-        </p>
+        {isLoading ? (
+          <>
+            <div className="skeleton-shimmer h-[10px] w-[114px] rounded-full mb-1" />
+            <div className="skeleton-shimmer h-[10px] w-[66px] rounded-full" />
+          </>
+        ) : (
+          <>
+            <p 
+              className="text-[14px] truncate"
+              style={{ color: "rgba(0,0,0,0.82)", letterSpacing: "-0.09px" }}
+            >
+              {title}
+            </p>
+            {subtitle && (
+              <p 
+                className="text-[12px] truncate"
+                style={{ color: "rgba(0,0,0,0.62)", letterSpacing: "0.01px" }}
+              >
+                {subtitle}
+              </p>
+            )}
+          </>
+        )}
       </div>
+      {trailing && !isLoading && trailing}
     </div>
+  );
+}
+
+// Badge component for trailing badges like "You"
+function Badge({ children }: { children: React.ReactNode }) {
+  return (
+    <span 
+      className="text-[12px] px-2 py-0.5 rounded-full leading-[1.2]"
+      style={{ backgroundColor: "rgba(0,0,0,0.05)", color: "rgba(0,0,0,0.82)", letterSpacing: "0.01px" }}
+    >
+      {children}
+    </span>
+  );
+}
+
+// Section label for card content sections
+function SectionLabel({ children }: { children: React.ReactNode }) {
+  return (
+    <p 
+      className="text-[14px] font-medium leading-[1.2] px-4 py-2"
+      style={{ color: "rgba(0,0,0,0.62)", letterSpacing: "0.01px" }}
+    >
+      {children}
+    </p>
   );
 }
 
@@ -173,55 +273,24 @@ const cardConfigs: Record<Exclude<CardType, "skeleton">, CardConfig> = {
       ),
     },
     body: (
-      <div className="flex flex-col p-2">
-        <ListRow
-          icon={
-            <div className="w-6 h-6 rounded-[4px] bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2">
-                <rect width="18" height="11" x="3" y="11" rx="2" ry="2" />
-                <path d="M7 11V7a5 5 0 0 1 10 0v4" />
-              </svg>
-            </div>
-          }
+      <div className="flex flex-col">
+        <Row
+          icon={<Image src="/images/work/sentinel/logo-netsuite.png" alt="NetSuite" width={24} height={24} className="rounded-[4px]" />}
           title="NetSuite"
           subtitle="Work4WorkFinance"
         />
-        <ListRow
-          icon={
-            <Image 
-              src="/images/work/sentinel/logo-aws.png" 
-              alt="AWS" 
-              width={24} 
-              height={24}
-              className="rounded-[4px]"
-            />
-          }
+        <Row
+          icon={<Image src="/images/work/sentinel/logo-aws.png" alt="AWS" width={24} height={24} className="rounded-[4px]" />}
           title="Amazon test"
           subtitle="emma.brown@work4work.org"
         />
-        <ListRow
-          icon={
-            <Image 
-              src="/images/work/sentinel/logo-starbucks.png" 
-              alt="Starbucks" 
-              width={24} 
-              height={24}
-              className="rounded-[4px]"
-            />
-          }
+        <Row
+          icon={<Image src="/images/work/sentinel/logo-starbucks.png" alt="Starbucks" width={24} height={24} className="rounded-[4px]" />}
           title="Starbucks"
           subtitle="emma.brown@work4work.org"
         />
-        <ListRow
-          icon={
-            <Image 
-              src="/images/work/sentinel/logo-plex.png" 
-              alt="Plex" 
-              width={24} 
-              height={24}
-              className="rounded-[4px]"
-            />
-          }
+        <Row
+          icon={<Image src="/images/work/sentinel/logo-plex.png" alt="Plex" width={24} height={24} className="rounded-[4px]" />}
           title="Plex"
           subtitle="emma.brown@work4work.org"
         />
@@ -231,15 +300,16 @@ const cardConfigs: Record<Exclude<CardType, "skeleton">, CardConfig> = {
   "item-sharing": {
     header: {
       icon: (
-        <div className="w-[32px] h-[32px] rounded-[8px] bg-gradient-to-br from-cyan-400 to-blue-500 flex items-center justify-center">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2">
-            <rect width="18" height="11" x="3" y="11" rx="2" ry="2" />
-            <path d="M7 11V7a5 5 0 0 1 10 0v4" />
-          </svg>
-        </div>
+        <Image 
+          src="/images/work/sentinel/logo-netsuite.png" 
+          alt="NetSuite" 
+          width={32} 
+          height={32}
+          className="rounded-[8px]"
+        />
       ),
       iconBg: "",
-      title: "Netsuite",
+      title: "NetSuite",
       subtitle: "Work4WorkFinance",
       actions: (
         <>
@@ -261,73 +331,38 @@ const cardConfigs: Record<Exclude<CardType, "skeleton">, CardConfig> = {
       ),
     },
     body: (
-      <div className="max-h-[300px] overflow-y-auto">
+      <div>
         {/* Located in section */}
-        <div className="px-4 pb-3">
-          <span 
-            className="text-[12px] leading-[1.2] block mb-2"
-            style={{ color: "rgba(0,0,0,0.62)", letterSpacing: "0.01px" }}
-          >
-            Located in:
-          </span>
-          <div className="flex items-center gap-2 px-2 py-1">
-            <Image 
-              src="/images/work/sentinel/vault-finance.png" 
-              alt="Finance vault" 
-              width={24} 
-              height={24}
-              className="rounded-[4px]"
-            />
-            <div className="min-w-0 flex-1">
-              <p className="text-[14px] text-[rgba(0,0,0,0.82)] leading-[1.2] tracking-[-0.09px]">Finance</p>
-              <p className="text-[12px] text-[rgba(0,0,0,0.62)] leading-[1.2] tracking-[0.01px]">Shared</p>
-            </div>
-          </div>
+        <div>
+          <SectionLabel>Located in:</SectionLabel>
+          <Row
+            icon={<Image src="/images/work/sentinel/vault-finance.png" alt="Finance vault" width={24} height={24} className="rounded-[4px]" />}
+            title="Finance"
+            subtitle="Shared"
+          />
         </div>
 
         {/* Divider */}
         <div className="h-px bg-[rgba(0,0,0,0.13)] mx-4" />
 
         {/* People with access section */}
-        <div className="px-4 pt-3 pb-2">
-          <span 
-            className="text-[12px] leading-[1.2] block mb-2"
-            style={{ color: "rgba(0,0,0,0.62)", letterSpacing: "0.01px" }}
-          >
-            6 people have access:
-          </span>
-          <div className="space-y-0">
-            {[
-              { initials: "SJ", name: "Sonja Johnson", color: "#06b6d4", isYou: true },
-              { initials: "EB", name: "Emma Brown", color: "#6366f1", isYou: false },
-              { initials: "KS", name: "Kira Smith", color: "#22c55e", isYou: false },
-              { initials: "LW", name: "Leon Waters", color: "#f97316", isYou: false },
-              { initials: "JS", name: "John Smith", color: "#0ea5e9", isYou: false },
-            ].map((person, i) => (
-              <div key={i} className="flex items-center gap-2 px-2 py-1.5">
-                <div 
-                  className="w-6 h-6 text-[10px] rounded-full flex items-center justify-center text-white font-medium shrink-0 leading-[1.2]" 
-                  style={{ backgroundColor: person.color }}
-                >
-                  {person.initials}
-                </div>
-                <span 
-                  className="text-[14px] leading-[1.2] flex-1"
-                  style={{ color: "rgba(0,0,0,0.82)", letterSpacing: "-0.09px" }}
-                >
-                  {person.name}
-                </span>
-                {person.isYou && (
-                  <span 
-                    className="text-[12px] px-2 py-0.5 rounded-full leading-[1.2]"
-                    style={{ backgroundColor: "rgba(0,0,0,0.05)", color: "rgba(0,0,0,0.82)", letterSpacing: "0.01px" }}
-                  >
-                    You
-                  </span>
-                )}
-              </div>
-            ))}
-          </div>
+        <div className="pt-1 pb-2">
+          <SectionLabel>6 people have access:</SectionLabel>
+          {[
+            { initials: "SJ", name: "Sonja Johnson", color: "magenta" as AvatarColor, isYou: true },
+            { initials: "EB", name: "Emma Brown", color: "violet" as AvatarColor, isYou: false },
+            { initials: "KS", name: "Kira Smith", color: "turquoise" as AvatarColor, isYou: false },
+            { initials: "LW", name: "Leon Waters", color: "orange" as AvatarColor, isYou: false },
+            { initials: "JS", name: "John Smith", color: "blue" as AvatarColor, isYou: false },
+          ].map((person, i) => (
+            <Row
+              key={i}
+              icon={<Avatar initials={person.initials} color={person.color} />}
+              title={person.name}
+              trailing={person.isYou ? <Badge>You</Badge> : undefined}
+              size="compact"
+            />
+          ))}
         </div>
       </div>
     ),
@@ -366,11 +401,11 @@ const cardConfigs: Record<Exclude<CardType, "skeleton">, CardConfig> = {
       ),
     },
     body: (
-      <div className="max-h-[300px] overflow-y-auto">
+      <div>
         {/* Description paragraph */}
         <div className="px-4 py-2">
           <p 
-            className="text-[12px] leading-[1.5]"
+            className="text-[13px] leading-[1.5]"
             style={{ color: "rgba(0,0,0,0.82)", letterSpacing: "0.01px" }}
           >
             In August 2022 Plex discovered suspicious activity on one of their databases. Plex began an investigation and it appears that a third-party was able to access a limited subset of data that includes emails, usernames, and encrypted passwords.
@@ -378,19 +413,12 @@ const cardConfigs: Record<Exclude<CardType, "skeleton">, CardConfig> = {
         </div>
 
         {/* Affected data section */}
-        <div className="pt-3 pb-2 px-4">
-          <p 
-            className="text-[12px] font-medium leading-[1.2]"
-            style={{ color: "rgba(0,0,0,0.62)", letterSpacing: "0.01px" }}
-          >
-            Affected data
-          </p>
-        </div>
-        <div className="flex flex-wrap gap-2 px-4 py-2">
+        <SectionLabel>Affected data</SectionLabel>
+        <div className="flex flex-wrap gap-2 px-3">
           {["Email addresses", "Passwords", "IP addresses", "Usernames"].map((label, i) => (
             <span 
               key={i}
-              className="text-[12px] h-[18px] px-2 rounded-full leading-[1.2] flex items-center"
+              className="text-[12px] py-1 px-2 rounded-full leading-[1.2] flex items-center"
               style={{ backgroundColor: "#ffefeb", color: "#a32600", letterSpacing: "0.01px" }}
             >
               {label}
@@ -399,26 +427,15 @@ const cardConfigs: Record<Exclude<CardType, "skeleton">, CardConfig> = {
         </div>
 
         {/* Affected users section */}
-        <div className="pt-3 pb-2 px-4">
-          <p 
-            className="text-[12px] font-medium leading-[1.2]"
-            style={{ color: "rgba(0,0,0,0.62)", letterSpacing: "0.01px" }}
-          >
-            Affected users
-          </p>
-        </div>
-        <div className="px-2 pb-2">
-          <div className="flex items-center gap-2 px-2 py-1">
-            <div 
-              className="w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-semibold uppercase shrink-0 leading-[1.2]"
-              style={{ backgroundColor: "#c9ade6", color: "rgba(0,0,0,0.62)" }}
-            >
-              EB
-            </div>
-            <div className="min-w-0 flex-1">
-              <p className="text-[14px] text-[rgba(0,0,0,0.82)] leading-[1.2] tracking-[-0.09px]">Emma Brown</p>
-              <p className="text-[12px] text-[rgba(0,0,0,0.62)] leading-[1.2] tracking-[0.01px]">emma.brown@work4work.org</p>
-            </div>
+        <div className="pt-3">
+          <SectionLabel>Affected users</SectionLabel>
+          <div className="pb-2">
+            <Row
+              icon={<Avatar initials="EB" color="violet" />}
+              title="Emma Brown"
+              subtitle="emma.brown@work4work.org"
+              size="compact"
+            />
           </div>
         </div>
 
@@ -447,15 +464,16 @@ const cardConfigs: Record<Exclude<CardType, "skeleton">, CardConfig> = {
   task: {
     header: {
       icon: (
-        <div className="w-[32px] h-[32px] rounded-[8px] bg-gradient-to-br from-cyan-400 to-blue-500 flex items-center justify-center">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2">
-            <rect width="18" height="11" x="3" y="11" rx="2" ry="2" />
-            <path d="M7 11V7a5 5 0 0 1 10 0v4" />
-          </svg>
-        </div>
+        <Image 
+          src="/images/work/sentinel/logo-netsuite.png" 
+          alt="NetSuite" 
+          width={32} 
+          height={32}
+          className="rounded-[8px]"
+        />
       ),
       iconBg: "",
-      title: "Netsuite",
+      title: "NetSuite",
       subtitle: "Work4WorkFinance",
       actions: (
         <>
@@ -477,7 +495,7 @@ const cardConfigs: Record<Exclude<CardType, "skeleton">, CardConfig> = {
       ),
     },
     body: (
-      <div className="max-h-[300px] overflow-y-auto">
+      <div>
         {/* Step 1 */}
         <div className="flex gap-2 items-center pl-4 pr-3 py-2">
           <div className="w-8 h-8 shrink-0 flex items-center justify-center">
@@ -567,21 +585,15 @@ const cardConfigs: Record<Exclude<CardType, "skeleton">, CardConfig> = {
 
 // Universal skeleton body used for all card types
 const UniversalSkeleton = () => (
-  <div className="p-4 space-y-3 overflow-hidden">
-    {/* Row items - versatile for lists, steps, or content */}
-    {[0, 1, 2].map((i) => (
-      <div key={i} className="flex items-center gap-3">
-        <SkeletonBox className="w-6 h-6 rounded-full shrink-0" />
-        <div className="flex flex-col gap-1 flex-1 min-w-0">
-          <SkeletonBox className="h-4 w-3/4" />
-          <SkeletonBox className="h-3 w-1/2" />
-        </div>
-      </div>
-    ))}
-    {/* Footer area */}
-    <div className="flex gap-2 pt-1">
-      <SkeletonBox className="h-7 w-20 rounded-lg shrink-0" />
-      <SkeletonBox className="h-7 w-24 rounded-lg shrink-0" />
+  <div className="overflow-hidden">
+    {/* 3 skeleton rows using Row component */}
+    <Row icon={null} title="" isLoading />
+    <Row icon={null} title="" isLoading />
+    <Row icon={null} title="" isLoading />
+    {/* Footer with 2 buttons */}
+    <div className="flex gap-2 justify-end px-4 py-4">
+      <div className="skeleton-shimmer h-[28px] w-[84px] rounded-[8px]" />
+      <div className="skeleton-shimmer h-[28px] w-[84px] rounded-[8px]" />
     </div>
   </div>
 );
@@ -648,8 +660,8 @@ export function SummaryCardDemo() {
       {/* Card */}
       <div className="flex justify-center">
         <CardWrapper>
-          {/* Header - Figma: pl-16px, pr-12px, py-4px, gap-8px */}
-          <div className="flex items-center justify-between pl-4 pr-3 py-1">
+          {/* Header - Figma: h-56px, pl-16px, pr-12px, py-4px, gap-8px */}
+          <div className="flex items-center justify-between h-[56px] px-[16px] py-1">
             <div className="flex items-center gap-3">
               {/* Icon - 32px */}
               <TransitionElement
@@ -670,16 +682,16 @@ export function SummaryCardDemo() {
                 )}
               </TransitionElement>
               
-              {/* Title & Subtitle - gap 1px (hairline) */}
-              <div className="flex flex-col gap-[1px] leading-[1.2]">
+              {/* Title & Subtitle - gap 4px */}
+              <div className="flex flex-col leading-[1.2]">
                 <TransitionElement
                   isLoading={showSkeleton}
-                  skeleton={<SkeletonBox className="h-[17px] w-20" />}
+                  skeleton={<div className="skeleton-shimmer h-[10px] w-[114px] rounded-full mb-1" />}
                   delay={0.05}
                 >
                   {config && (
                     <h4 
-                      className="text-[14px] font-semibold"
+                      className="text-[16px] font-semibold"
                       style={{ color: "rgba(0,0,0,0.82)", letterSpacing: "-0.09px" }}
                     >
                       {config.header.title}
@@ -688,7 +700,7 @@ export function SummaryCardDemo() {
                 </TransitionElement>
                 <TransitionElement
                   isLoading={showSkeleton}
-                  skeleton={<SkeletonBox className="h-[14px] w-12" />}
+                  skeleton={<div className="skeleton-shimmer h-[10px] w-[66px] rounded-full" />}
                   delay={0.1}
                 >
                   {config && (
@@ -703,25 +715,14 @@ export function SummaryCardDemo() {
               </div>
             </div>
             
-            {/* Actions - gap 4px */}
-            <TransitionElement
-              isLoading={showSkeleton}
-              skeleton={
-                <div className="flex items-center gap-1">
-                  <SkeletonBox className="w-7 h-7 rounded-[8px]" />
-                  <SkeletonBox className="w-7 h-7 rounded-[8px]" />
-                </div>
-              }
-              delay={0.15}
-            >
-              {config?.header.actions && (
-                <div className="flex items-center gap-1">{config.header.actions}</div>
-              )}
-            </TransitionElement>
+            {/* Actions - only show when loaded */}
+            {!showSkeleton && config?.header.actions && (
+              <div className="flex items-center gap-1">{config.header.actions}</div>
+            )}
           </div>
 
-          {/* Body - Figma: max-h-300px, overflow-y-auto (only when content loaded) */}
-          <div className={`max-h-[300px] ${showSkeleton ? 'overflow-hidden' : 'overflow-y-auto'}`}>
+          {/* Body */}
+          <div className={showSkeleton ? 'overflow-hidden' : ''}>
             <TransitionElement
               isLoading={showSkeleton}
               skeleton={<UniversalSkeleton />}
