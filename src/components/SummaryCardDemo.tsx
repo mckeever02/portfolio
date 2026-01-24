@@ -237,6 +237,50 @@ function SectionLabel({ children }: { children: React.ReactNode }) {
   );
 }
 
+// Step component for task cards
+function Step({ number, children }: { number: number; children: React.ReactNode }) {
+  return (
+    <div className="flex gap-2 items-center pl-4 pr-3 py-2">
+      <div className="w-8 h-8 shrink-0 flex items-center justify-center">
+        <div 
+          className="w-6 h-6 rounded-full flex items-center justify-center text-[12px] font-semibold leading-[1.2]"
+          style={{ backgroundColor: "#ededed", color: "rgba(0,0,0,0.62)", letterSpacing: "0.01px" }}
+        >
+          {number}
+        </div>
+      </div>
+      <p className="text-[12px] leading-[1.5] flex-1" style={{ color: "rgba(0,0,0,0.82)", letterSpacing: "0.01px" }}>
+        {children}
+      </p>
+    </div>
+  );
+}
+
+// Connector line between steps
+function StepConnector() {
+  return (
+    <div className="h-4 pl-4 pr-3">
+      <div className="w-8 h-full flex items-center justify-center">
+        <div className="w-[2px] h-full rounded-full" style={{ backgroundColor: "#ededed" }} />
+      </div>
+    </div>
+  );
+}
+
+// Step list that renders steps with connectors between them
+function StepList({ steps }: { steps: React.ReactNode[] }) {
+  return (
+    <>
+      {steps.map((step, i) => (
+        <div key={i}>
+          {step}
+          {i < steps.length - 1 && <StepConnector />}
+        </div>
+      ))}
+    </>
+  );
+}
+
 // Card configurations for each type
 const cardConfigs: Record<Exclude<CardType, "skeleton">, CardConfig> = {
   "item-list": {
@@ -496,64 +540,17 @@ const cardConfigs: Record<Exclude<CardType, "skeleton">, CardConfig> = {
     },
     body: (
       <div>
-        {/* Step 1 */}
-        <div className="flex gap-2 items-center pl-4 pr-3 py-2">
-          <div className="w-8 h-8 shrink-0 flex items-center justify-center">
-            <div 
-              className="w-6 h-6 rounded-full flex items-center justify-center text-[12px] font-semibold leading-[1.2]"
-              style={{ backgroundColor: "#ededed", color: "rgba(0,0,0,0.62)", letterSpacing: "0.01px" }}
-            >
-              1
-            </div>
-          </div>
-          <p className="text-[12px] leading-[1.5] flex-1" style={{ color: "rgba(0,0,0,0.82)", letterSpacing: "0.01px" }}>
+        <StepList steps={[
+          <Step number={1}>
             Send a notification to <span className="font-semibold">Emma Brown</span> to change her password for the <span className="font-semibold">Plex</span> login
-          </p>
-        </div>
-
-        {/* Connector 1 */}
-        <div className="h-4 pl-4 pr-3">
-          <div className="w-8 h-full flex items-center justify-center">
-            <div className="w-[2px] h-full rounded-full" style={{ backgroundColor: "#ededed" }} />
-          </div>
-        </div>
-
-        {/* Step 2 */}
-        <div className="flex gap-2 items-center pl-4 pr-3 py-2">
-          <div className="w-8 h-8 shrink-0 flex items-center justify-center">
-            <div 
-              className="w-6 h-6 rounded-full flex items-center justify-center text-[12px] font-semibold leading-[1.2]"
-              style={{ backgroundColor: "#ededed", color: "rgba(0,0,0,0.62)", letterSpacing: "0.01px" }}
-            >
-              2
-            </div>
-          </div>
-          <p className="text-[12px] leading-[1.5] flex-1" style={{ color: "rgba(0,0,0,0.82)", letterSpacing: "0.01px" }}>
+          </Step>,
+          <Step number={2}>
             Rotate the password for the <span className="font-semibold">NetSuite</span> login
-          </p>
-        </div>
-
-        {/* Connector 2 */}
-        <div className="h-4 pl-4 pr-3">
-          <div className="w-8 h-full flex items-center justify-center">
-            <div className="w-[2px] h-full rounded-full" style={{ backgroundColor: "#ededed" }} />
-          </div>
-        </div>
-
-        {/* Step 3 */}
-        <div className="flex gap-2 items-center pl-4 pr-3 py-2">
-          <div className="w-8 h-8 shrink-0 flex items-center justify-center">
-            <div 
-              className="w-6 h-6 rounded-full flex items-center justify-center text-[12px] font-semibold leading-[1.2]"
-              style={{ backgroundColor: "#ededed", color: "rgba(0,0,0,0.62)", letterSpacing: "0.01px" }}
-            >
-              3
-            </div>
-          </div>
-          <p className="text-[12px] leading-[1.5] flex-1" style={{ color: "rgba(0,0,0,0.82)", letterSpacing: "0.01px" }}>
+          </Step>,
+          <Step number={3}>
             Create a Watchtower report for Reused passwords
-          </p>
-        </div>
+          </Step>,
+        ]} />
 
         {/* Footer */}
         <div className="flex gap-2 justify-end p-4">
