@@ -17,12 +17,16 @@ interface TextCarouselProps {
 }
 
 // Combined quote icon with progress ring - exported for external use
-export function QuoteProgressIndicator({ progress }: { progress: number }) {
-  const size = 54;
-  const strokeWidth = 2;
+export function QuoteProgressIndicator({ progress, variant = "dark" }: { progress: number; variant?: "dark" | "light" }) {
+  const size = 32;
+  const strokeWidth = 1;
   const radius = (size - strokeWidth) / 2;
   const circumference = 2 * Math.PI * radius;
   const strokeDashoffset = circumference * (1 - progress);
+
+  const colors = variant === "dark" 
+    ? { ring: "text-black/20", progress: "text-black", icon: "text-black" }
+    : { ring: "text-white/30", progress: "text-white", icon: "text-white" };
 
   return (
     <div
@@ -41,7 +45,7 @@ export function QuoteProgressIndicator({ progress }: { progress: number }) {
           fill="none"
           stroke="currentColor"
           strokeWidth={strokeWidth}
-          className="text-white/30"
+          className={colors.ring}
         />
         <circle
           cx={size / 2}
@@ -51,14 +55,14 @@ export function QuoteProgressIndicator({ progress }: { progress: number }) {
           stroke="currentColor"
           strokeWidth={strokeWidth}
           strokeLinecap="round"
-          className="text-white"
+          className={colors.progress}
           style={{
             strokeDasharray: circumference,
             strokeDashoffset: strokeDashoffset,
           }}
         />
       </svg>
-      <svg className="w-5 h-5 text-white" viewBox="0 0 24 24" fill="currentColor">
+      <svg className={`w-4 h-4 ${colors.icon}`} viewBox="0 0 24 24" fill="currentColor">
         <path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z" />
       </svg>
     </div>
@@ -114,7 +118,7 @@ export function TextCarousel({
       {/* Render indicator externally if provided */}
       {renderIndicator?.(progress)}
       
-      {/* Frosted content container */}
+      {/* Content container */}
       <AnimatePresence mode="wait">
         <motion.div
           key={currentIndex}
@@ -122,13 +126,13 @@ export function TextCarousel({
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: 20 }}
           transition={{ duration: 0.6, ease: [0.32, 0.72, 0, 1] }}
-          className={`px-6 md:px-8 py-6 bg-white backdrop-blur-md  ${className}`}
+          className={className}
           style={{ 
             willChange: "transform, opacity",
             transform: "translateZ(0)",
           }}
         >
-          <p className="text-[var(--foreground)] text-2xl md:text-3xl leading-snug">
+          <p className="text-[var(--foreground)] text-xl md:text-2xl leading-snug text-center">
             {items[currentIndex].quote}
           </p>
         </motion.div>

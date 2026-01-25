@@ -14,6 +14,8 @@ export { LightboxImage } from "./Lightbox";
 export { SpotlightCard } from "./SpotlightCard";
 export { SpotlightEffect } from "./SpotlightEffect";
 export { FlipCard, CardFace } from "./FlipCard";
+export { FlipCarousel } from "./FlipCarousel";
+export { HoverCursor, useHoverCursor, RotateIcon, ArrowIcon, ExternalArrowIcon, ComingSoonText } from "./HoverCursor";
 export { FuzzyText } from "./FuzzyText";
 export { ASCIIText } from "./ASCIIText";
 export { Button } from "./Button";

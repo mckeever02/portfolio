@@ -13,10 +13,11 @@ import {
 import { LightboxImage } from "@/components/Lightbox";
 import Image from "next/image";
 import { FlipCard, CardFace } from "@/components/FlipCard";
+import { FlipCarousel } from "@/components/FlipCarousel";
 import { SpotlightEffect } from "@/components/SpotlightEffect";
 import { TextCarousel, QuoteProgressIndicator } from "@/components/TextCarousel";
 import { SummaryCardDemo } from "@/components/SummaryCardDemo";
-import { motion, AnimatePresence, useMotionValue } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 
 type StickyNote = { src: string; alt: string; rotation: number; delay: number; position: { top?: string; bottom?: string; left: string; translateX: string; translateY: string } };
 
@@ -264,9 +265,13 @@ const insights = [
     spotlightColor: "rgba(169, 155, 234, 0.25)",
     content: (
       <>
-        Admins need faster, clearer answers to their <span className="bg-[#A99BEA]/25 px-1 -skew-x-6 inline-block transform">data questions</span>. Current insights and reports <span className="bg-[#A99BEA]/25 px-1 -skew-x-6 inline-block transform">lack depth and clarity</span>.
+        Admins need faster, clearer answers to their data questions. Current insights and reports lack depth and clarity.
       </>
     ),
+    quote: {
+      text: (<>I don&apos;t have time to dig through a bunch of separate reports. I just need a <span className="bg-[#A99BEA]/25 px-1 -skew-x-6 inline-block transform">clear answer to simple questions</span> like &apos;Are we safer than last quarter?&apos; without spending half my day in dashboards.</>),
+      attribution: "IT Manager at a Mid-market SaaS company",
+    },
   },
   {
     tag: "Hard labour",
@@ -275,183 +280,44 @@ const insights = [
     spotlightColor: "rgba(249, 218, 239, 0.4)",
     content: (
       <>
-        Manual work like account recovery and user management <span className="bg-[#F9DAEF]/40 px-1 -skew-x-6 inline-block transform">overloads admins</span>. They want more efficient methods such as <span className="bg-[#F9DAEF]/40 px-1 -skew-x-6 inline-block transform">automation</span>.
+        Manual work like account recovery and user management overloads admins. They want more efficient methods such as automation.
       </>
     ),
+    quote: {
+      text: (<>What I am looking for is <span className="bg-[#F9DAEF]/40 px-1 -skew-x-6 inline-block transform">automation.</span> The automation piece means your life is going to get easier. Do this and there&apos;s less work for you.</>),
+      attribution: "InfoSec Manager at an SMB",
+    },
   },
 ];
 
-function InsightCard({ 
-  insight, 
-  onNavigate,
-  isHovered,
-  onHoverChange,
-  onMouseMove,
-}: { 
-  insight: typeof insights[0]; 
-  onNavigate: () => void;
-  isHovered: boolean;
-  onHoverChange: (hovered: boolean) => void;
-  onMouseMove: (e: React.MouseEvent<HTMLDivElement>) => void;
-}) {
-  const [transform, setTransform] = useState("perspective(1000px) rotateX(0deg) rotateY(0deg)");
-  const cardRef = useRef<HTMLDivElement>(null);
-
-  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    onMouseMove(e);
-
-    if (!cardRef.current) return;
-    const rect = cardRef.current.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
-    const centerX = rect.width / 2;
-    const centerY = rect.height / 2;
-
-    const rotateX = ((y - centerY) / centerY) * -4;
-    const rotateY = ((x - centerX) / centerX) * 4;
-
-    setTransform(`perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.01, 1.01, 1.01)`);
-  };
-
-  const handleMouseLeave = () => {
-    onHoverChange(false);
-    setTransform("perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)");
-  };
-
-  return (
-    <div
-      ref={cardRef}
-      onClick={onNavigate}
-      onMouseMove={handleMouseMove}
-      onMouseEnter={() => onHoverChange(true)}
-      onMouseLeave={handleMouseLeave}
-      className="cursor-pointer relative flex h-full"
-      style={{
-        perspective: "1000px",
-        cursor: isHovered ? "none" : "pointer",
-      }}
-    >
-      <div
-        className="bg-white p-10 md:p-12 border border-black/20 flex-1"
-        style={{
-          transition: "transform 0.15s ease-out",
-          transform: transform,
-        }}
-      >
-        <span 
-          className="text-white font-bold tracking-wide py-1 px-2 uppercase -skew-x-8 transform relative inline-block"
-          style={{ backgroundColor: insight.tagBg }}
-        >
-          {insight.tag}
-        </span>
-        <p className="text-[var(--foreground)] text-2xl md:text-3xl lg:text-4xl mt-6 leading-relaxed">
-          {insight.content}
-        </p>
-      </div>
-    </div>
-  );
-}
-
-function InsightsCarousel() {
-  const [activeIndex, setActiveIndex] = useState(0);
-  const [isHovered, setIsHovered] = useState(false);
-  const containerRef = useRef<HTMLDivElement>(null);
-  const cursorX = useMotionValue(0);
-  const cursorY = useMotionValue(0);
-  const lastClientPos = useRef({ x: 0, y: 0 });
-
-  const toggleSlide = () => {
-    setActiveIndex((prev) => (prev === 0 ? 1 : 0));
-  };
-
-  const updateCursorPosition = (clientX: number, clientY: number) => {
-    const rect = containerRef.current?.getBoundingClientRect();
-    if (rect) {
-      cursorX.set(clientX - rect.left);
-      cursorY.set(clientY - rect.top);
-    }
-  };
-
-  useEffect(() => {
-    if (!isHovered) return;
-
-    const handleScroll = () => {
-      updateCursorPosition(lastClientPos.current.x, lastClientPos.current.y);
-    };
-
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, [isHovered]);
-
-  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    lastClientPos.current = { x: e.clientX, y: e.clientY };
-    updateCursorPosition(e.clientX, e.clientY);
-  };
-
-  // Card width (800px) + gap (48px for gap-12)
-  const slideOffset = 848;
-
-  return (
-    <div className="w-full mt-0">
-          <div ref={containerRef} className="relative px-4 md:px-8 overflow-hidden">
-        {/* Slides container */}
-        <motion.div 
-          className="grid grid-cols-[800px_800px] gap-12"
-          animate={{ x: activeIndex === 0 ? 0 : -slideOffset }}
-          transition={{ duration: 0.5, ease: [0.32, 0.72, 0, 1] }}
-          style={{ 
-            paddingLeft: "max(1rem, calc((100vw - 800px) / 2))",
-            paddingRight: "max(1rem, calc((100vw - 800px) / 2))",
-          }}
-        >
-          {insights.map((insight, index) => (
-            <InsightCard 
-              key={index}
-              insight={insight}
-              onNavigate={toggleSlide}
-              isHovered={isHovered}
-              onHoverChange={setIsHovered}
-              onMouseMove={handleMouseMove}
-            />
-          ))}
-        </motion.div>
-
-        {/* Cursor-following circle with arrow - outside the sliding container */}
-        <motion.div
-          className="absolute top-0 left-0 w-14 h-14 rounded-full bg-[var(--foreground)] flex items-center justify-center pointer-events-none z-10"
-          style={{
-            x: cursorX,
-            y: cursorY,
-            translateX: "-50%",
-            translateY: "-50%",
-          }}
-          initial={{ scale: 0 }}
-          animate={{ scale: isHovered ? 1 : 0 }}
-          transition={{
-            type: "spring",
-            stiffness: 400,
-            damping: 25,
-          }}
-        >
-          <svg 
-            width="20" 
-            height="20" 
-            viewBox="0 0 24 24" 
-            fill="none" 
-            stroke="currentColor" 
-            strokeWidth="2"
-            strokeLinecap="round" 
-            strokeLinejoin="round"
-            className={`text-[var(--background)] transition-transform duration-300 ${activeIndex === 1 ? "rotate-180" : ""}`}
-          >
-            <path d="M5 12h14" />
-            <path d="M12 5l7 7-7 7" />
-          </svg>
-        </motion.div>
-      </div>
-    </div>
-  );
-}
+const hesitations = [
+  {
+    tag: "Breach fatigue",
+    tagBg: "#92400E",
+    content: (
+      <>
+        A pervasive sense that security incidents are inevitable, making admins wary of introducing new technologies that could expand their attack surface.
+      </>
+    ),
+    quote: {
+      text: "It just seems like [a breach] can happen to anybody and it's kind of bound to happen at some point. So, it just feels like it's somewhat inevitable that you can't avoid it.",
+      attribution: "Systems Engineer at a Mid-sized company",
+    },
+  },
+  {
+    tag: "AI as surveillance",
+    tagBg: "#581C87",
+    content: (
+      <>
+        Deep discomfort with AI accessing sensitive credential data—the feeling that introducing AI means &ldquo;another set of eyes&rdquo; can read private information.
+      </>
+    ),
+    quote: {
+      text: "Introducing AI in that area where I put my password for my email would make me feel like there is another set of eyes there that can read the data.",
+      attribution: "IT Engineer at an SMB",
+    },
+  },
+];
 
 // Timeline card data
 const timelineItems = [
@@ -627,19 +493,12 @@ export default function SentinelPage() {
       </NarrowContent>
 
       {/* Key Insights Carousel */}
-      <InsightsCarousel />
+      <FlipCarousel items={insights} />
 
-      {/* Quote Section */}
-      <FullWidthContent>
-        <div className="grid grid-cols-1 md:grid-cols-[3fr_2fr] gap-6">
-          <QuoteCard attribution="IT Manager at a Mid-market SaaS company">
-            We&apos;re meant to be an AI first company going forward. They would like it to <Highlight>enhance our day-to-day</Highlight>, take out the chaff, remove the thing. They&apos;re not looking to replace people and everything else.
-          </QuoteCard>
-          <QuoteCard attribution="InfoSec Manager at an SMB">
-            What I am looking for is <Highlight>automation.</Highlight> <br />The automation piece means your life is going to get easier. Do this and there&apos;s less work for you.
-          </QuoteCard>
-        </div>
-      </FullWidthContent>
+      {/* Line connector */}
+      <div className="flex justify-center">
+        <div className="w-0.5 h-16 bg-black/20" />
+      </div>
 
       <SolutionSection />
 
@@ -688,7 +547,7 @@ export default function SentinelPage() {
       </NarrowContent>
 
       {/* Interactive Summary Card Demo */}
-      <FullWidthContent>
+      <FullWidthContent className="-mt-8">
         <SummaryCardDemo />
       </FullWidthContent>
 
@@ -724,7 +583,7 @@ export default function SentinelPage() {
       {/* Full Width Quote Section */}
       <FullWidthContent>
           <div 
-            className="relative w-full min-h-[650px] flex items-center justify-center py-20"
+            className="w-full flex items-center justify-center p-16"
             style={{
               backgroundImage: "url('/images/work/sentinel/quote-bg.png')",
               backgroundSize: "cover",
@@ -732,8 +591,10 @@ export default function SentinelPage() {
               transform: "translateZ(0)",
             }}
           >
-              {/* Quote indicator - absolutely positioned at top center */}
-              <div className="w-full px-8 md:px-16 lg:px-24 max-w-4xl">
+            {/* Outer frosted glass wrapper */}
+            <div className="bg-white/20 backdrop-blur-xl rounded-2xl p-2 max-w-2xl w-full border border-white/30">
+              {/* Inner white container */}
+              <div className="bg-white rounded-xl p-8 md:p-10 h-[280px] flex flex-col">
                 <TextCarousel
                   items={[
                     { quote: "I like this as a concept. It feels familiar as well. I can give this to my team and they'll just know what to do with minimal instruction.", attribution: "Rafi · Snyk" },
@@ -744,14 +605,15 @@ export default function SentinelPage() {
                   autoplay
                   loop
                   interval={6000}
-                  className="max-w-3xl"
+                  className="w-full flex-1 flex items-start"
                   renderIndicator={(progress) => (
-                    <div className="absolute top-24 left-1/2 -translate-x-1/2">
-                      <QuoteProgressIndicator progress={progress} />
+                    <div className="flex justify-center mb-6">
+                      <QuoteProgressIndicator progress={progress} variant="dark" />
                     </div>
                   )}
                 />
               </div>
+            </div>
           </div>
       </FullWidthContent>
 
@@ -764,61 +626,7 @@ export default function SentinelPage() {
         </ContentSection>
       </NarrowContent>
 
-      <WideContent className="mt-0">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div className="bg-white p-6 border border-black/20">
-            <div 
-              className="rounded-lg flex items-center justify-center mb-4 shrink-0 bg-red-500/10"
-              style={{ width: 40, height: 40, minWidth: 40, minHeight: 40 }}
-            >
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="rgb(239, 68, 68)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
-                <path d="M12 8v4" />
-                <path d="M12 16h.01" />
-              </svg>
-            </div>
-            <h3 className="text-lg font-bold mb-2 text-[var(--foreground)] leading-tight">Trust & accuracy</h3>
-            <p className="text-[var(--foreground)]/70 text-base">Concerns about AI making mistakes or providing incorrect information in security-critical contexts.</p>
-          </div>
-          <div className="bg-white p-6 border border-black/20">
-            <div 
-              className="rounded-lg flex items-center justify-center mb-4 shrink-0 bg-amber-500/10"
-              style={{ width: 40, height: 40, minWidth: 40, minHeight: 40 }}
-            >
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="rgb(245, 158, 11)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <circle cx="12" cy="12" r="10" />
-                <path d="M12 6v6l4 2" />
-              </svg>
-            </div>
-            <h3 className="text-lg font-bold mb-2 text-[var(--foreground)] leading-tight">Control & oversight</h3>
-            <p className="text-[var(--foreground)]/70 text-base">Need to maintain visibility and approval over AI-initiated actions, especially for sensitive operations.</p>
-          </div>
-          <div className="bg-white p-6 border border-black/20">
-            <div 
-              className="rounded-lg flex items-center justify-center mb-4 shrink-0 bg-purple-500/10"
-              style={{ width: 40, height: 40, minWidth: 40, minHeight: 40 }}
-            >
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="rgb(168, 85, 247)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <rect width="18" height="11" x="3" y="11" rx="2" ry="2" />
-                <path d="M7 11V7a5 5 0 0 1 10 0v4" />
-              </svg>
-            </div>
-            <h3 className="text-lg font-bold mb-2 text-[var(--foreground)] leading-tight">Data privacy</h3>
-            <p className="text-[var(--foreground)]/70 text-base">Questions about how AI accesses and processes sensitive organizational data.</p>
-          </div>
-        </div>
-      </WideContent>
-
-      <FullWidthContent>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <QuoteCard attribution="Systems Engineer at a Mid-sized company">
-            It just seems like [a breach] can happen to anybody and it&apos;s kind of bound to happen at some point. So, it just feels like it&apos;s somewhat inevitable that you can&apos;t avoid it.
-          </QuoteCard>
-          <QuoteCard attribution="IT Engineer at an SMB">
-            Introducing AI in that area where I put my password for my email would make me feel like there is another set of eyes there that can read the data.
-          </QuoteCard>
-        </div>
-      </FullWidthContent>
+      <FlipCarousel items={hesitations} />
     </CaseStudyLayout>
   );
 }

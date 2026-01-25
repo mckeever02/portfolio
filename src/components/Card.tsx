@@ -2,8 +2,9 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { motion, useInView, useMotionValue } from "framer-motion";
+import { motion, useInView } from "framer-motion";
 import { ReactNode, useRef, useEffect, useState } from "react";
+import { HoverCursor, useHoverCursor, ArrowIcon, ExternalArrowIcon, ComingSoonText } from "./HoverCursor";
 
 interface CardProps {
   title: string;
@@ -31,33 +32,11 @@ export function Card({
   const containerRef = useRef<HTMLDivElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const isInView = useInView(containerRef, { amount: 0.3 });
-
-  // Cursor-following circle state
   const [isHovered, setIsHovered] = useState(false);
-  const cursorX = useMotionValue(0);
-  const cursorY = useMotionValue(0);
-  const lastClientPos = useRef({ x: 0, y: 0 });
 
-  // Update cursor position relative to card
-  const updateCursorPosition = (clientX: number, clientY: number) => {
-    const rect = containerRef.current?.getBoundingClientRect();
-    if (rect) {
-      cursorX.set(clientX - rect.left);
-      cursorY.set(clientY - rect.top);
-    }
-  };
-
-  // Update cursor position on scroll while hovered
-  useEffect(() => {
-    if (!isHovered) return;
-
-    const handleScroll = () => {
-      updateCursorPosition(lastClientPos.current.x, lastClientPos.current.y);
-    };
-
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, [isHovered]);
+  const { cursorX, cursorY, handleMouseMove, handleMouseEnter: initCursor } = useHoverCursor({
+    containerRef,
+  });
 
   // Play/pause video based on visibility
   useEffect(() => {
@@ -75,15 +54,8 @@ export function Card({
     }
   }, [isInView]);
 
-  // Cursor tracking handlers
-  const handleMouseMove = (e: React.MouseEvent) => {
-    lastClientPos.current = { x: e.clientX, y: e.clientY };
-    updateCursorPosition(e.clientX, e.clientY);
-  };
-
   const handleMouseEnter = (e: React.MouseEvent) => {
-    lastClientPos.current = { x: e.clientX, y: e.clientY };
-    updateCursorPosition(e.clientX, e.clientY);
+    initCursor(e);
     setIsHovered(true);
   };
 
@@ -189,64 +161,20 @@ export function Card({
         );
       })()}
 
-      {/* Cursor-following circle (hidden on touch devices) */}
-      <motion.div
-        className={`cursor-circle absolute top-0 left-0 rounded-full bg-[var(--foreground)] flex items-center justify-center pointer-events-none z-10 ${
-          comingSoon ? "w-24 h-24" : "w-14 h-14"
-        }`}
-        style={{
-          x: cursorX,
-          y: cursorY,
-          translateX: "-50%",
-          translateY: "-50%",
-        }}
-        initial={{ scale: 0 }}
-        animate={{ scale: isHovered ? 1 : 0 }}
-        transition={{
-          type: "spring",
-          stiffness: 400,
-          damping: 25,
-        }}
+      <HoverCursor 
+        cursorX={cursorX} 
+        cursorY={cursorY} 
+        isVisible={isHovered}
+        size={comingSoon ? "lg" : "md"}
       >
         {comingSoon ? (
-          // Coming soon text
-          <span className="text-[var(--background)] text-xs font-bold tracking-wide uppercase text-center leading-tight">
-            Coming<br />soon
-          </span>
+          <ComingSoonText />
         ) : externalLink ? (
-          // External link arrow (diagonal)
-          <svg
-            width="20"
-            height="20"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            className="text-[var(--background)]"
-          >
-            <path d="M7 17L17 7" />
-            <path d="M7 7h10v10" />
-          </svg>
+          <ExternalArrowIcon />
         ) : (
-          // Internal link arrow (right)
-          <svg
-            width="20"
-            height="20"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            className="text-[var(--background)]"
-          >
-            <path d="M5 12h14" />
-            <path d="M12 5l7 7-7 7" />
-          </svg>
+          <ArrowIcon />
         )}
-      </motion.div>
+      </HoverCursor>
     </motion.div>
   );
 }

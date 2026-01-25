@@ -1,8 +1,7 @@
 "use client";
 
-import { useState, useRef, ReactNode, useEffect } from "react";
-import { motion, useMotionValue } from "framer-motion";
-import { RotateCw } from "lucide-react";
+import { useState, useRef, ReactNode } from "react";
+import { HoverCursor, useHoverCursor, RotateIcon } from "./HoverCursor";
 
 interface FlipCardProps {
   front: ReactNode;
@@ -16,35 +15,17 @@ export function FlipCard({
   className = "",
 }: FlipCardProps) {
   const [isFlipped, setIsFlipped] = useState(false);
+  const [flipCount, setFlipCount] = useState(0);
   const [transform, setTransform] = useState("perspective(1000px) rotateX(0deg) rotateY(0deg)");
   const [isHovered, setIsHovered] = useState(false);
   const cardRef = useRef<HTMLDivElement>(null);
-  const cursorX = useMotionValue(0);
-  const cursorY = useMotionValue(0);
-  const lastClientPos = useRef({ x: 0, y: 0 });
-
-  const updateCursorPosition = (clientX: number, clientY: number) => {
-    const rect = cardRef.current?.getBoundingClientRect();
-    if (rect) {
-      cursorX.set(clientX - rect.left);
-      cursorY.set(clientY - rect.top);
-    }
-  };
-
-  useEffect(() => {
-    if (!isHovered) return;
-
-    const handleScroll = () => {
-      updateCursorPosition(lastClientPos.current.x, lastClientPos.current.y);
-    };
-
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, [isHovered]);
+  
+  const { cursorX, cursorY, handleMouseMove: updateCursor, handleMouseEnter: initCursor } = useHoverCursor({
+    containerRef: cardRef,
+  });
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    lastClientPos.current = { x: e.clientX, y: e.clientY };
-    updateCursorPosition(e.clientX, e.clientY);
+    updateCursor(e);
 
     if (!cardRef.current || isFlipped) return;
     const rect = cardRef.current.getBoundingClientRect();
@@ -60,8 +41,7 @@ export function FlipCard({
   };
 
   const handleMouseEnter = (e: React.MouseEvent<HTMLDivElement>) => {
-    lastClientPos.current = { x: e.clientX, y: e.clientY };
-    updateCursorPosition(e.clientX, e.clientY);
+    initCursor(e);
     setIsHovered(true);
   };
 
@@ -74,6 +54,7 @@ export function FlipCard({
 
   const handleClick = () => {
     setIsFlipped(!isFlipped);
+    setFlipCount((prev) => prev + 1);
     setTransform("perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)");
   };
 
@@ -124,29 +105,9 @@ export function FlipCard({
         </div>
       </div>
 
-      {/* Cursor-following circle */}
-      <motion.div
-        className="cursor-circle absolute top-0 left-0 w-14 h-14 rounded-full bg-[var(--foreground)] flex items-center justify-center pointer-events-none z-10"
-        style={{
-          x: cursorX,
-          y: cursorY,
-          translateX: "-50%",
-          translateY: "-50%",
-        }}
-        initial={{ scale: 0 }}
-        animate={{ scale: isHovered ? 1 : 0 }}
-        transition={{
-          type: "spring",
-          stiffness: 400,
-          damping: 25,
-        }}
-      >
-        <RotateCw 
-          size={20} 
-          className="text-[var(--background)] transition-transform duration-500" 
-          style={{ transform: isFlipped ? "rotate(180deg)" : "rotate(0deg)" }}
-        />
-      </motion.div>
+      <HoverCursor cursorX={cursorX} cursorY={cursorY} isVisible={isHovered}>
+        <RotateIcon flipCount={flipCount} />
+      </HoverCursor>
     </div>
   );
 }
