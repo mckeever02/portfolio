@@ -448,3 +448,12 @@ body {
   background-size: 200% 100%;
   animation: skeleton-shimmer 2s ease-in-out infinite;
 }
+
+/* Hide scrollbar while keeping functionality */
+.scrollbar-hide {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;  /* Chrome, Safari and Opera */
+}

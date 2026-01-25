@@ -258,6 +258,107 @@ function SolutionSection() {
   );
 }
 
+const insights = [
+  {
+    tag: "Unclear data",
+    tagBg: "#190C69",
+    highlightBg: "rgba(169, 155, 234, 0.25)",
+    spotlightColor: "rgba(169, 155, 234, 0.25)",
+    content: (
+      <>
+        Admins need faster, clearer answers to their <span className="bg-[#A99BEA]/25 px-1 -skew-x-6 inline-block transform">data questions</span>. Current insights and reports <span className="bg-[#A99BEA]/25 px-1 -skew-x-6 inline-block transform">lack depth and clarity</span>.
+      </>
+    ),
+  },
+  {
+    tag: "Hard labour",
+    tagBg: "#611046",
+    highlightBg: "rgba(249, 218, 239, 0.4)",
+    spotlightColor: "rgba(249, 218, 239, 0.4)",
+    content: (
+      <>
+        Manual work like account recovery and user management <span className="bg-[#F9DAEF]/40 px-1 -skew-x-6 inline-block transform">overloads admins</span>. They want more efficient methods such as <span className="bg-[#F9DAEF]/40 px-1 -skew-x-6 inline-block transform">automation</span>.
+      </>
+    ),
+  },
+];
+
+function InsightsCarousel() {
+  const [activeIndex, setActiveIndex] = useState(0);
+
+  const toggleSlide = () => {
+    setActiveIndex((prev) => (prev === 0 ? 1 : 0));
+  };
+
+  // Card width (800px) + gap (24px)
+  const slideOffset = 824;
+
+  return (
+      <div className="w-full mt-0 overflow-hidden px-4 md:px-8">
+      <div className="relative">
+        {/* Slides container */}
+        <motion.div 
+          className="flex gap-12"
+          animate={{ x: activeIndex === 0 ? 0 : -slideOffset }}
+          transition={{ duration: 0.5, ease: [0.32, 0.72, 0, 1] }}
+          style={{ 
+            paddingLeft: "max(1rem, calc((100vw - 800px) / 2))",
+            paddingRight: "max(1rem, calc((100vw - 800px) / 2))",
+          }}
+        >
+          {insights.map((insight, index) => (
+            <div key={index} className="shrink-0 w-[800px]">
+              <SpotlightEffect 
+                className="bg-white p-10 md:p-12 border border-black/20"
+                spotlightColor={insight.spotlightColor}
+              >
+                <span 
+                  className="text-white font-bold tracking-wide py-1 px-2 uppercase -skew-x-8 transform relative inline-block"
+                  style={{ backgroundColor: insight.tagBg }}
+                >
+                  {insight.tag}
+                </span>
+                <p className="text-[var(--foreground)] text-2xl md:text-3xl lg:text-4xl mt-6 leading-relaxed relative z-10">
+                  {insight.content}
+                </p>
+              </SpotlightEffect>
+            </div>
+          ))}
+        </motion.div>
+
+        {/* Arrow button - positioned relative to viewport center */}
+        <div 
+          className="absolute top-1/2 -translate-y-1/2 pointer-events-none"
+          style={{ 
+            left: "calc(50% + 400px + 24px)",
+          }}
+        >
+          <button
+            onClick={toggleSlide}
+            className="pointer-events-auto w-10 h-10 rounded-full bg-white border border-black/10 shadow-md flex items-center justify-center hover:bg-black/5 transition-colors"
+            aria-label={activeIndex === 0 ? "Next insight" : "Previous insight"}
+          >
+            <svg 
+              width="20" 
+              height="20" 
+              viewBox="0 0 24 24" 
+              fill="none" 
+              stroke="currentColor" 
+              strokeWidth="2"
+              strokeLinecap="round" 
+              strokeLinejoin="round"
+              className={`transition-transform duration-300 ${activeIndex === 1 ? "rotate-180" : ""}`}
+            >
+              <path d="M9 18l6-6-6-6" />
+            </svg>
+          </button>
+        </div>
+
+      </div>
+    </div>
+  );
+}
+
 export default function SentinelPage() {
   const caseStudy = getCaseStudy("sentinel");
 
@@ -338,28 +439,8 @@ export default function SentinelPage() {
         </ContentSection>
       </NarrowContent>
 
-      <FullWidthContent className="mt-0">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-12 md:px-12">
-          <SpotlightEffect 
-            className="bg-white p-10 md:p-12 border border-black/20"
-            spotlightColor="rgba(169, 155, 234, 0.25)"
-          >
-            <span className="text-[var(--foreground)] font-bold tracking-wide bg-[#190C69] text-white py-1 px-2 font-bold uppercase -skew-x-8 transform relative inline-block">Unclear data</span>
-            <p className="text-[var(--foreground)] text-2xl md:text-3xl mt-6 leading-relaxed relative z-10">
-              Admins need faster, clearer answers to their <span className="bg-[#A99BEA]/25 px-1 -skew-x-6 inline-block transform">data questions</span>. Current insights and reports <span className="bg-[#A99BEA]/25 px-1 -skew-x-6 inline-block transform">lack depth and clarity</span>.
-            </p>
-          </SpotlightEffect>
-          <SpotlightEffect 
-            className="bg-white p-10 md:p-12 border border-black/20"
-            spotlightColor="rgba(249, 218, 239, 0.4)"
-          >
-            <span className="text-[var(--foreground)] font-bold tracking-wide bg-[#611046] text-white py-1 px-2 font-bold uppercase -skew-x-8 transform relative inline-block">Hard labour</span>
-            <p className="text-[var(--foreground)] text-2xl md:text-3xl mt-6 leading-relaxed relative z-10">
-              Manual work like account recovery and user management <span className="bg-[#F9DAEF]/40 px-1 -skew-x-6 inline-block transform">overloads admins</span>. They want more efficient methods such as <span className="bg-[#F9DAEF]/40 px-1 -skew-x-6 inline-block transform">automation</span>.
-            </p>
-          </SpotlightEffect>
-        </div>
-      </FullWidthContent>
+      {/* Key Insights Carousel */}
+      <InsightsCarousel />
 
       {/* Quote Section */}
       <FullWidthContent className="mt-0 md:px-12">

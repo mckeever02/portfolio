@@ -14,7 +14,7 @@ interface CaseStudyLayoutProps {
 // Width wrapper components for flexible content layouts
 export function NarrowContent({ children, className = "" }: { children: React.ReactNode; className?: string }) {
   return (
-    <div className={`mx-auto w-full max-w-[800px] flex flex-col gap-10 ${className}`}>
+    <div className={`mx-auto w-full max-w-[800px] px-4 md:px-8 flex flex-col gap-10 ${className}`}>
       {children}
     </div>
   );
@@ -22,7 +22,7 @@ export function NarrowContent({ children, className = "" }: { children: React.Re
 
 export function WideContent({ children, className = "" }: { children: React.ReactNode; className?: string }) {
   return (
-    <div className={`mx-auto w-full max-w-[1000px] ${className}`}>
+    <div className={`mx-auto w-full max-w-[1000px] px-4 md:px-8 ${className}`}>
       {children}
     </div>
   );
@@ -40,22 +40,22 @@ function LayoutContent({ caseStudy, children }: CaseStudyLayoutProps) {
   return (
     <PageTransition>
       <div className="min-h-screen bg-[var(--background)]">
-        <div className="p-4 md:p-8">
+        <div className="py-4 md:py-8">
           <main className="flex flex-col gap-10 py-4 min-w-0">
             {/* Back Button */}
-            <div className="mx-auto w-full max-w-[800px]">
+            <div className="mx-auto w-full max-w-[800px] px-4 md:px-8">
               <BackButton />
             </div>
 
             {/* Hero + Content Wrapper */}
             <div className="flex flex-col gap-10">
               {/* Hero Image/Video */}
-              <div className="mx-auto w-full max-w-[1000px]">
+              <div className="mx-auto w-full max-w-[1000px] px-4 md:px-8">
                 <HeroImage bgColor={caseStudy.heroColor} imageSrc={caseStudy.heroImage} />
               </div>
 
               {/* Project Metadata - overlaps hero */}
-              <div className="mx-auto w-full max-w-[800px] md:-mt-[130px] relative z-10">
+              <div className="mx-auto w-full max-w-[800px] px-4 md:px-8 md:-mt-[130px] relative z-10">
                 <ProjectMeta
                   subtitle={caseStudy.subtitle}
                   timeline={caseStudy.timeline}
