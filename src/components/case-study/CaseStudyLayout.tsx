@@ -22,7 +22,7 @@ export function NarrowContent({ children, className = "" }: { children: React.Re
 
 export function WideContent({ children, className = "" }: { children: React.ReactNode; className?: string }) {
   return (
-    <div className={`mx-auto w-full max-w-[1000px] px-4 md:px-8 ${className}`}>
+    <div className={`mx-auto w-full max-w-[1100px] px-4 md:px-8 ${className}`}>
       {children}
     </div>
   );
@@ -30,7 +30,7 @@ export function WideContent({ children, className = "" }: { children: React.Reac
 
 export function FullWidthContent({ children, className = "" }: { children: React.ReactNode; className?: string }) {
   return (
-    <div className={`w-full ${className}`}>
+    <div className={`w-full max-w-[1920px] px-4 md:px-8 lg:px-12 ${className}`}>
       {children}
     </div>
   );

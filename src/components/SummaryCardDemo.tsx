@@ -815,7 +815,7 @@ function TypingIndicator() {
 function UserBubble({ content }: { content: string }) {
   return (
     <div 
-      className={`bg-white px-3 py-3 rounded-[12px] text-[16px] leading-normal ${inter.className}`}
+      className={`bg-black/5 px-3 py-3 rounded-[12px] text-[16px] leading-normal ${inter.className}`}
       style={{ color: "black" }}
     >
       {content}
@@ -1112,21 +1112,29 @@ export function SummaryCardDemo() {
   return (
     <div 
       ref={containerRef}
-      className="w-full p-6 md:p-10 h-screen md:h-[calc(100vh-200px)]"
+      className="w-full p-6 md:p-10 min-h-screen md:min-h-[calc(100vh-100px)]"
       style={{ 
         backgroundImage: "url('/images/work/sentinel/agent-bg.png')",
         backgroundSize: "cover",
         backgroundPosition: "center",
+        transform: "translateZ(0)",
       }}
     >
+      {/* Outer blur wrapper */}
       <div 
-        className="rounded-[12px] overflow-hidden flex flex-col border border-white/30 backdrop-blur-md"
+        className="rounded-[16px] p-2 backdrop-blur-md border border-white/30"
         style={{ 
-          backgroundColor: "rgba(255, 255, 255, 0.4)",
-          maxWidth: "400px",
+          backgroundColor: "rgba(255, 255, 255, 0.3)",
+          maxWidth: "416px",
           margin: "0 auto",
+          transform: "translateZ(0)",
+          willChange: "transform",
         }}
       >
+        {/* Inner white container */}
+        <div 
+          className="rounded-[12px] overflow-hidden flex flex-col bg-white"
+        >
       {/* Chat header with countdown */}
       <ChatHeader 
         cycleKey={cycleKey} 
@@ -1137,7 +1145,7 @@ export function SummaryCardDemo() {
       {/* Messages area */}
       <motion.div 
         className="px-4 pb-6 flex flex-col gap-3"
-        style={{ minHeight: "500px" }}
+        style={{ minHeight: "500px", transform: "translateZ(0)" }}
         animate={{ 
           opacity: isExiting ? 0 : 1,
           y: isExiting ? -10 : 0,
@@ -1177,6 +1185,7 @@ export function SummaryCardDemo() {
         </AnimatePresence>
 
       </motion.div>
+        </div>
       </div>
     </div>
   );

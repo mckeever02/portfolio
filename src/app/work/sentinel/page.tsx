@@ -134,7 +134,6 @@ function SolutionSection() {
 
   return (
     <FullWidthContent className="mt-0">
-      <div className="md:px-12">
       <div className="grid grid-cols-1 bg-white border border-black/20 lg:grid-cols-2 items-center">
         <div className="p-12">
           <section id="exploration" className="flex flex-col gap-6 scroll-mt-8">
@@ -252,7 +251,6 @@ function SolutionSection() {
               ))}
             </AnimatePresence>
         </div>
-      </div>
       </div>
     </FullWidthContent>
   );
@@ -455,6 +453,99 @@ function InsightsCarousel() {
   );
 }
 
+// Timeline card data
+const timelineItems = [
+  {
+    title: "Composable blocks",
+    description: "Small, reusable UI components that can be combined in different ways to present information, actions, and feedback.",
+        bannerBg: "/images/work/sentinel/composable-blocks-bg.png",
+    icon: (
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <rect x="3" y="3" width="7" height="7" />
+        <rect x="14" y="3" width="7" height="7" />
+        <rect x="14" y="14" width="7" height="7" />
+        <rect x="3" y="14" width="7" height="7" />
+      </svg>
+    ),
+  },
+  {
+    title: "Sentinel decides",
+    description: "1Password Sentinel determines which components to render based on the user's query and the type of response needed.",
+    bannerBg: "/images/work/sentinel/sentinel-decides-bg.png",
+    icon: (
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <circle cx="12" cy="12" r="3" />
+        <path d="M12 1v6" />
+        <path d="M12 17v6" />
+        <path d="M4.22 4.22l4.24 4.24" />
+        <path d="M15.54 15.54l4.24 4.24" />
+        <path d="M1 12h6" />
+        <path d="M17 12h6" />
+        <path d="M4.22 19.78l4.24-4.24" />
+        <path d="M15.54 8.46l4.24-4.24" />
+      </svg>
+    ),
+  },
+  {
+    title: "Flexible rendering",
+    description: "Components adapt to show tables, charts, action buttons, or confirmation dialogs depending on the task at hand.",
+      bannerBg: "/images/work/sentinel/flexible-rendering-bg-2.png",
+    icon: (
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z" />
+      </svg>
+    ),
+  },
+];
+
+function TimelineCard({ item }: { item: typeof timelineItems[0] }) {
+  return (
+    <div className="bg-white border border-black/20 flex overflow-hidden">
+        <div className="p-1">
+            <div 
+                className="relative aspect-square shrink-0 flex items-center justify-center self-stretch w-32"
+                style={{
+                backgroundImage: `url('${item.bannerBg}')`,
+                backgroundSize: "cover",
+                backgroundPosition: "center",
+                }}
+            >
+                <div className="rounded-lg bg-white/50 backdrop-blur-sm p-1">
+                <div className="rounded bg-white w-12 h-12 flex items-center justify-center">
+                    {item.icon}
+                </div>
+                </div>
+            </div>
+        </div>
+      <div className="p-6 flex-1">
+        <h3 className="text-xl font-bold mb-2 text-[var(--foreground)] leading-tight">{item.title}</h3>
+        <p className="text-[var(--foreground)] text-lg">{item.description}</p>
+      </div>
+    </div>
+  );
+}
+
+function TimelineConnector() {
+  return (
+    <div className="h-12 flex justify-center py-2">
+      <div className="w-0.5 h-full bg-black/30" />
+    </div>
+  );
+}
+
+function AgenticTimeline() {
+  return (
+    <div className="flex flex-col">
+      {timelineItems.map((item) => (
+        <div key={item.title}>
+          <TimelineCard item={item} />
+          <TimelineConnector />
+        </div>
+      ))}
+    </div>
+  );
+}
+
 export default function SentinelPage() {
   const caseStudy = getCaseStudy("sentinel");
 
@@ -539,7 +630,7 @@ export default function SentinelPage() {
       <InsightsCarousel />
 
       {/* Quote Section */}
-      <FullWidthContent className="mt-0 md:px-12">
+      <FullWidthContent>
         <div className="grid grid-cols-1 md:grid-cols-[3fr_2fr] gap-6">
           <QuoteCard attribution="IT Manager at a Mid-market SaaS company">
             We&apos;re meant to be an AI first company going forward. They would like it to <Highlight>enhance our day-to-day</Highlight>, take out the chaff, remove the thing. They&apos;re not looking to replace people and everything else.
@@ -551,189 +642,6 @@ export default function SentinelPage() {
       </FullWidthContent>
 
       <SolutionSection />
-
-      <WideContent className="mt-0">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {/* Concept 1: Contextual Assistant */}
-          <div className="group relative bg-gradient-to-br from-[#1a1a2e] to-[#16213e] p-6 border border-white/10 overflow-hidden">
-            <div className="absolute top-0 right-0 w-32 h-32 bg-[#A99BEA]/20 rounded-full blur-3xl transform translate-x-8 -translate-y-8 group-hover:bg-[#A99BEA]/30 transition-colors duration-500" />
-            <div className="relative z-10">
-              <div className="flex items-center gap-3 mb-4">
-                <div className="w-10 h-10 rounded-lg bg-[#A99BEA]/20 flex items-center justify-center">
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#A99BEA" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <circle cx="12" cy="12" r="10" />
-                    <path d="M12 16v-4" />
-                    <path d="M12 8h.01" />
-                  </svg>
-                </div>
-                <span className="text-xs font-mono uppercase tracking-wider text-[#A99BEA]">Concept A</span>
-              </div>
-              <h3 className="text-xl font-bold text-white mb-2">Contextual assistant</h3>
-              <p className="text-white/70 text-sm mb-4">AI appears contextually based on the current page and detected user intent.</p>
-              <div className="space-y-2">
-                <div className="flex items-center gap-2 text-xs text-white/50">
-                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <polyline points="20 6 9 17 4 12" />
-                  </svg>
-                  Low friction entry
-                </div>
-                <div className="flex items-center gap-2 text-xs text-white/50">
-                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <polyline points="20 6 9 17 4 12" />
-                  </svg>
-                  Context-aware suggestions
-                </div>
-                <div className="flex items-center gap-2 text-xs text-red-400/70">
-                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <line x1="18" y1="6" x2="6" y2="18" />
-                    <line x1="6" y1="6" x2="18" y2="18" />
-                  </svg>
-                  May feel intrusive
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Concept 2: Command Palette */}
-          <div className="group relative bg-gradient-to-br from-[#1a1a2e] to-[#16213e] p-6 border border-white/10 overflow-hidden">
-            <div className="absolute top-0 right-0 w-32 h-32 bg-[#F9DAEF]/20 rounded-full blur-3xl transform translate-x-8 -translate-y-8 group-hover:bg-[#F9DAEF]/30 transition-colors duration-500" />
-            <div className="relative z-10">
-              <div className="flex items-center gap-3 mb-4">
-                <div className="w-10 h-10 rounded-lg bg-[#F9DAEF]/20 flex items-center justify-center">
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#F9DAEF" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M18 3a3 3 0 0 0-3 3v12a3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3H6a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3V6a3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3h12a3 3 0 0 0 3-3 3 3 0 0 0-3-3z" />
-                  </svg>
-                </div>
-                <span className="text-xs font-mono uppercase tracking-wider text-[#F9DAEF]">Concept B</span>
-              </div>
-              <h3 className="text-xl font-bold text-white mb-2">Command palette</h3>
-              <p className="text-white/70 text-sm mb-4">Power-user focused interface triggered by keyboard shortcut for quick actions.</p>
-              <div className="space-y-2">
-                <div className="flex items-center gap-2 text-xs text-white/50">
-                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <polyline points="20 6 9 17 4 12" />
-                  </svg>
-                  Fast for power users
-                </div>
-                <div className="flex items-center gap-2 text-xs text-white/50">
-                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <polyline points="20 6 9 17 4 12" />
-                  </svg>
-                  Non-intrusive
-                </div>
-                <div className="flex items-center gap-2 text-xs text-red-400/70">
-                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <line x1="18" y1="6" x2="6" y2="18" />
-                    <line x1="6" y1="6" x2="18" y2="18" />
-                  </svg>
-                  Hidden discoverability
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Concept 3: Conversational Panel */}
-          <div className="group relative bg-gradient-to-br from-[#1a1a2e] to-[#16213e] p-6 border border-[#10B981]/30 overflow-hidden ring-2 ring-[#10B981]/20">
-            <div className="absolute top-3 right-3 px-2 py-1 bg-[#10B981]/20 rounded text-[10px] font-mono uppercase tracking-wider text-[#10B981]">
-              Selected
-            </div>
-            <div className="absolute top-0 right-0 w-32 h-32 bg-[#10B981]/20 rounded-full blur-3xl transform translate-x-8 -translate-y-8 group-hover:bg-[#10B981]/30 transition-colors duration-500" />
-            <div className="relative z-10">
-              <div className="flex items-center gap-3 mb-4">
-                <div className="w-10 h-10 rounded-lg bg-[#10B981]/20 flex items-center justify-center">
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#10B981" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
-                  </svg>
-                </div>
-                <span className="text-xs font-mono uppercase tracking-wider text-[#10B981]">Concept C</span>
-              </div>
-              <h3 className="text-xl font-bold text-white mb-2">Conversational panel</h3>
-              <p className="text-white/70 text-sm mb-4">Persistent chat panel allowing natural dialogue with the AI assistant.</p>
-              <div className="space-y-2">
-                <div className="flex items-center gap-2 text-xs text-white/50">
-                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <polyline points="20 6 9 17 4 12" />
-                  </svg>
-                  Natural interaction
-                </div>
-                <div className="flex items-center gap-2 text-xs text-white/50">
-                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <polyline points="20 6 9 17 4 12" />
-                  </svg>
-                  Supports complex queries
-                </div>
-                <div className="flex items-center gap-2 text-xs text-white/50">
-                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <polyline points="20 6 9 17 4 12" />
-                  </svg>
-                  Easy to discover
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <p className="text-[var(--foreground)]/70 text-center mt-6">
-          The conversational panel emerged as the strongest concept—balancing discoverability with power.
-        </p>
-      </WideContent>
-
-      <NarrowContent className="mt-16">
-        <ContentSection id="benefits" title="What benefits do Admins see when adding AI to 1Password?">
-          <BodyText>
-            Through discussions with admins and stakeholders, I identified the key benefits that an AI copilot could bring to the admin experience.
-          </BodyText>
-        </ContentSection>
-      </NarrowContent>
-
-      <NarrowContent className="mt-0 max-w-xl">
-        <div className="grid grid-cols-1 gap-4">
-          <div className="bg-white p-3 border border-black/20 flex flex-row gap-4">
-            <div 
-              className="h-48 w-48 flex flex-row items-center justify-center bg-black/5"
-            >
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="rgb(16, 185, 129)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M12 2v4" />
-                <path d="m16.2 7.8 2.9-2.9" />
-                <path d="M18 12h4" />
-                <path d="m16.2 16.2 2.9 2.9" />
-                <path d="M12 18v4" />
-                <path d="m4.9 19.1 2.9-2.9" />
-                <path d="M2 12h4" />
-                <path d="m4.9 4.9 2.9 2.9" />
-              </svg>
-            </div>
-            <div className="flex flex-col py-4">
-                <h3 className="text-xl font-bold mb-4 text-[var(--foreground)] leading-tight">Automating tasks</h3>
-                <p className="text-[var(--foreground)] text-xl">Save time and effort by automating repetitive administrative workflows.</p>
-            </div>
-          </div>
-          <div className="card-spotlight">
-            <div 
-              className="rounded-lg flex items-center justify-center mb-4 shrink-0 bg-blue-500/10"
-              style={{ width: 40, height: 40, minWidth: 40, minHeight: 40 }}
-            >
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="rgb(59, 130, 246)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z" />
-                <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z" />
-              </svg>
-            </div>
-            <h3 className="text-xl font-bold mb-2 text-[var(--foreground)] leading-tight">Actionable insights</h3>
-            <p className="text-[var(--foreground)] text-lg">Help customers spot risks and opportunities quickly with clear, actionable recommendations.</p>
-          </div>
-          <div className="card-spotlight">
-            <div 
-              className="rounded-lg flex items-center justify-center mb-4 shrink-0 bg-purple-500/10"
-              style={{ width: 40, height: 40, minWidth: 40, minHeight: 40 }}
-            >
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="rgb(168, 85, 247)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
-              </svg>
-            </div>
-            <h3 className="text-xl font-bold mb-2 text-[var(--foreground)] leading-tight">Natural language</h3>
-            <p className="text-[var(--foreground)] text-lg">Enable users to accomplish tasks without having to learn complex interfaces.</p>
-          </div>
-        </div>
-      </NarrowContent>
 
       {/* Proof of Concept Section */}
       <NarrowContent className="mt-16">
@@ -766,24 +674,43 @@ export default function SentinelPage() {
         </div>
       </NarrowContent>
 
-      {/* Zig-zag divider */}
-      <div className="flex justify-center py-16">
-        <svg
-          className="w-24 h-3"
-          viewBox="0 0 96 12"
-          fill="none"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <path
-            d="M0 6L8 11L16 6L24 11L32 6L40 11L48 6L56 11L64 6L72 11L80 6L88 11L96 6"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            className="text-[var(--foreground)]/30"
-          />
-        </svg>
-      </div>
+      {/* Agentic-driven UI Section */}
+      <NarrowContent className="mt-16">
+        <ContentSection id="agentic-ui" title="Agentic-driven UI">
+          <BodyText>
+            A key challenge was designing UI that could adapt to unpredictable AI responses. Rather than creating fixed layouts, I developed a system of modular building block components that the agent could dynamically compose based on context.
+          </BodyText>
+        </ContentSection>
+      </NarrowContent>
+
+      <NarrowContent className="mt-0">
+        <AgenticTimeline />
+      </NarrowContent>
+
+      {/* Interactive Summary Card Demo */}
+      <FullWidthContent>
+        <SummaryCardDemo />
+      </FullWidthContent>
+
+
+        {/* Zig-zag divider */}
+        <div className="flex justify-center py-16">
+            <svg
+                className="w-24 h-3"
+                viewBox="0 0 96 12"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+            >
+                <path
+                    d="M0 6L8 11L16 6L24 11L32 6L40 11L48 6L56 11L64 6L72 11L80 6L88 11L96 6"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    className="text-[var(--foreground)]/30"
+                />
+            </svg>
+        </div>
 
       {/* User Testing Section */}
       <NarrowContent>
@@ -795,7 +722,7 @@ export default function SentinelPage() {
       </NarrowContent>
 
       {/* Full Width Quote Section */}
-      <FullWidthContent className="mt-0">
+      <FullWidthContent>
           <div 
             className="relative w-full min-h-[650px] flex items-center justify-center py-20"
             style={{
@@ -882,7 +809,7 @@ export default function SentinelPage() {
         </div>
       </WideContent>
 
-      <FullWidthContent className="mt-0 md:px-12">
+      <FullWidthContent>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <QuoteCard attribution="Systems Engineer at a Mid-sized company">
             It just seems like [a breach] can happen to anybody and it&apos;s kind of bound to happen at some point. So, it just feels like it&apos;s somewhat inevitable that you can&apos;t avoid it.
@@ -891,72 +818,6 @@ export default function SentinelPage() {
             Introducing AI in that area where I put my password for my email would make me feel like there is another set of eyes there that can read the data.
           </QuoteCard>
         </div>
-      </FullWidthContent>
-
-      {/* Agentic-driven UI Section */}
-      <NarrowContent className="mt-16">
-        <ContentSection id="agentic-ui" title="Agentic-driven UI">
-          <BodyText>
-            A key challenge was designing UI that could adapt to unpredictable AI responses. Rather than creating fixed layouts, I developed a system of modular building block components that the agent could dynamically compose based on context.
-          </BodyText>
-        </ContentSection>
-      </NarrowContent>
-
-      <WideContent className="mt-0">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div className="bg-white p-6 border border-black/20">
-            <div 
-              className="rounded-lg flex items-center justify-center mb-4 shrink-0 bg-blue-500/10"
-              style={{ width: 40, height: 40, minWidth: 40, minHeight: 40 }}
-            >
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="rgb(59, 130, 246)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <rect x="3" y="3" width="7" height="7" />
-                <rect x="14" y="3" width="7" height="7" />
-                <rect x="14" y="14" width="7" height="7" />
-                <rect x="3" y="14" width="7" height="7" />
-              </svg>
-            </div>
-            <h3 className="text-lg font-bold mb-2 text-[var(--foreground)] leading-tight">Composable blocks</h3>
-            <p className="text-[var(--foreground)]/70 text-base">Small, reusable UI components that can be combined in different ways to present information, actions, and feedback.</p>
-          </div>
-          <div className="bg-white p-6 border border-black/20">
-            <div 
-              className="rounded-lg flex items-center justify-center mb-4 shrink-0 bg-emerald-500/10"
-              style={{ width: 40, height: 40, minWidth: 40, minHeight: 40 }}
-            >
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="rgb(16, 185, 129)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <circle cx="12" cy="12" r="3" />
-                <path d="M12 1v6" />
-                <path d="M12 17v6" />
-                <path d="M4.22 4.22l4.24 4.24" />
-                <path d="M15.54 15.54l4.24 4.24" />
-                <path d="M1 12h6" />
-                <path d="M17 12h6" />
-                <path d="M4.22 19.78l4.24-4.24" />
-                <path d="M15.54 8.46l4.24-4.24" />
-              </svg>
-            </div>
-            <h3 className="text-lg font-bold mb-2 text-[var(--foreground)] leading-tight">Agent decides</h3>
-            <p className="text-[var(--foreground)]/70 text-base">The AI agent determines which components to render based on the user&apos;s query and the type of response needed.</p>
-          </div>
-          <div className="bg-white p-6 border border-black/20">
-            <div 
-              className="rounded-lg flex items-center justify-center mb-4 shrink-0 bg-purple-500/10"
-              style={{ width: 40, height: 40, minWidth: 40, minHeight: 40 }}
-            >
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="rgb(168, 85, 247)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z" />
-              </svg>
-            </div>
-            <h3 className="text-lg font-bold mb-2 text-[var(--foreground)] leading-tight">Flexible rendering</h3>
-            <p className="text-[var(--foreground)]/70 text-base">Components adapt to show tables, charts, action buttons, or confirmation dialogs depending on the task at hand.</p>
-          </div>
-        </div>
-      </WideContent>
-
-      {/* Interactive Summary Card Demo */}
-      <FullWidthContent className="mt-8">
-        <SummaryCardDemo />
       </FullWidthContent>
     </CaseStudyLayout>
   );
