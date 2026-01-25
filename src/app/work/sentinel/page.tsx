@@ -166,18 +166,35 @@ function SolutionSection() {
           </section>
         </div>
 
-        <div className="mesh-gradient p-6 pl-0 overflow-hidden relative">
-            <div className="relative w-full aspect-[2760/3045] overflow-hidden rounded-lg rounded-l-none shadow-2xl border border-black/10 border-l-0">
-            <Image
+        <div 
+          className="p-6 pl-0 overflow-hidden relative"
+          style={{
+              backgroundImage: "url('/images/work/sentinel/preview-bg.png')",
+            backgroundSize: "cover",
+            backgroundPosition: "center",
+          }}
+        >
+            <motion.div 
+              className="relative w-full aspect-[2760/3045] overflow-hidden rounded-lg rounded-l-none shadow-2xl border border-black/10 border-l-0"
+              initial={{ x: "-75%", opacity: 0 }}
+              whileInView={{ x: 0, opacity: 1 }}
+              viewport={{ once: true, margin: "-100px" }}
+              transition={{ 
+                duration: 1.5,
+                ease: [0.16, 1, 0.3, 1],
+                delay: 0.2
+              }}
+            >
+              <Image
                 src="/images/work/sentinel/sentinel-tasks-cropped.png"
                 alt="Sentinel AI task automation interface"
                 fill
                 className="object-cover transition-transform duration-700 ease-out"
                 style={{
-                transform: imageFocus ? imageTransforms[imageFocus] : "scale(1) translate(0%, 0%)",
+                  transform: imageFocus ? imageTransforms[imageFocus] : "scale(1) translate(0%, 0%)",
                 }}
-            />
-            </div>
+              />
+            </motion.div>
             
             {/* Sticky notes that pop in on hover */}
             <AnimatePresence mode="popLayout">
