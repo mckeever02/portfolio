@@ -118,12 +118,16 @@ export function TextCarousel({
       <AnimatePresence mode="wait">
         <motion.div
           key={currentIndex}
-          initial={{ opacity: 0, y: -20, filter: "blur(8px)" }}
-          animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-          exit={{ opacity: 0, y: 20, filter: "blur(8px)" }}
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: 20 }}
           transition={{ duration: 0.6, ease: [0.32, 0.72, 0, 1] }}
-          className={`p-6 md:p-8 lg:p-10 backdrop-blur-md border border-white/20 ${className}`}
-          style={{ backgroundColor: "rgba(255, 255, 255, 0.2)" }}
+          className={`px-6 md:px-8 py-6 rounded-[20px] backdrop-blur-md border border-white/20 ${className}`}
+          style={{ 
+            backgroundColor: "rgba(255, 255, 255, 0.2)",
+            willChange: "transform, opacity",
+            transform: "translateZ(0)",
+          }}
         >
           <p className="text-white text-2xl md:text-3xl leading-snug">
             {items[currentIndex].quote}

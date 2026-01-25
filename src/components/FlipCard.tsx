@@ -153,6 +153,7 @@ interface CardFaceProps {
   iconClassName?: string;
   title: string;
   children: ReactNode;
+  bannerBg?: string;
 }
 
 export function CardFace({ 
@@ -160,7 +161,44 @@ export function CardFace({
   iconClassName = "bg-black/5", 
   title, 
   children,
+  bannerBg,
 }: CardFaceProps) {
+  if (bannerBg) {
+    return (
+      <div className="card-spotlight h-full flex flex-col overflow-hidden">
+        {/* Banner with background image */}
+        <div 
+          className="relative h-28 flex items-center justify-center -mx-6 -mt-6 mb-4 mx-[-24px] mt-[-24px]"
+          style={{
+            margin: "-24px -24px 16px -24px",
+          }}
+        >
+          <div 
+            className="absolute inset-1 overflow-hidden bg-black/20"
+            style={{
+              backgroundImage: `url('${bannerBg}')`,
+              backgroundSize: "cover",
+              backgroundPosition: "center",
+            }}
+          />
+          <div className="rounded-lg bg-white/50 backdrop-blur-sm w-15 h-15 relative flex items-center justify-center">
+            <div 
+              className="relative rounded flex items-center justify-center w-12 h-12 min-w-12 min-h-12 bg-white"
+            >
+              {icon}
+            </div>
+          </div>
+        </div>
+        <h3 className="text-xl font-bold mb-2 text-[var(--foreground)] leading-tight">
+          {title}
+        </h3>
+        <div className="flex-1">
+          {children}
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="card-spotlight h-full flex flex-col">
       <div 

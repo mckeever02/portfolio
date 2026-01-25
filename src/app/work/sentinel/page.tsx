@@ -60,6 +60,7 @@ const adminReasons = [
   {
     title: "People management",
     description: "Onboard new team members, manage permissions, handle account recovery, and maintain organizational structure.",
+    bannerBg: "/images/work/sentinel/people-management-bg.png",
     icon: (
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
         <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
@@ -76,6 +77,7 @@ const adminReasons = [
   {
     title: "Security management",
     description: "Configure security policies, enforce compliance standards, and manage authentication requirements across the organization.",
+    bannerBg: "/images/work/sentinel/security-management-bg.png",
     icon: (
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
         <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
@@ -90,6 +92,7 @@ const adminReasons = [
   {
     title: "Security insights",
     description: "Monitor password health, identify vulnerabilities, track breach alerts, and gain visibility into organizational security posture.",
+    bannerBg: "/images/work/sentinel/security-insights-bg.png",
     icon: (
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
         <path d="M2 12h5" />
@@ -292,11 +295,12 @@ export default function SentinelPage() {
           {adminReasons.map((reason) => (
             <FlipCard
               key={reason.title}
-              className="h-[280px]"
+              className="h-[340px]"
               front={
                 <CardFace
                   icon={reason.icon}
                   title={reason.title}
+                  bannerBg={reason.bannerBg}
                 >
                   <p className="text-[var(--foreground)] text-lg">
                     {reason.description}
@@ -621,6 +625,7 @@ export default function SentinelPage() {
               backgroundImage: "url('/images/work/sentinel/quote-bg.png')",
               backgroundSize: "cover",
               backgroundPosition: "center",
+              transform: "translateZ(0)",
             }}
           >
               {/* Quote indicator - absolutely positioned at top center */}
