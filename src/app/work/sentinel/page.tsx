@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { getCaseStudy } from "@/data/case-studies";
 import {
   CaseStudyLayout,
@@ -16,7 +16,7 @@ import { FlipCard, CardFace } from "@/components/FlipCard";
 import { SpotlightEffect } from "@/components/SpotlightEffect";
 import { TextCarousel, QuoteProgressIndicator } from "@/components/TextCarousel";
 import { SummaryCardDemo } from "@/components/SummaryCardDemo";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, useMotionValue } from "framer-motion";
 
 type StickyNote = { src: string; alt: string; rotation: number; delay: number; position: { top?: string; bottom?: string; left: string; translateX: string; translateY: string } };
 
@@ -283,22 +283,122 @@ const insights = [
   },
 ];
 
+function InsightCard({ 
+  insight, 
+  onNavigate,
+  isHovered,
+  onHoverChange,
+  onMouseMove,
+}: { 
+  insight: typeof insights[0]; 
+  onNavigate: () => void;
+  isHovered: boolean;
+  onHoverChange: (hovered: boolean) => void;
+  onMouseMove: (e: React.MouseEvent<HTMLDivElement>) => void;
+}) {
+  const [transform, setTransform] = useState("perspective(1000px) rotateX(0deg) rotateY(0deg)");
+  const cardRef = useRef<HTMLDivElement>(null);
+
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    onMouseMove(e);
+
+    if (!cardRef.current) return;
+    const rect = cardRef.current.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    const centerX = rect.width / 2;
+    const centerY = rect.height / 2;
+
+    const rotateX = ((y - centerY) / centerY) * -4;
+    const rotateY = ((x - centerX) / centerX) * 4;
+
+    setTransform(`perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.01, 1.01, 1.01)`);
+  };
+
+  const handleMouseLeave = () => {
+    onHoverChange(false);
+    setTransform("perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)");
+  };
+
+  return (
+    <div
+      ref={cardRef}
+      onClick={onNavigate}
+      onMouseMove={handleMouseMove}
+      onMouseEnter={() => onHoverChange(true)}
+      onMouseLeave={handleMouseLeave}
+      className="cursor-pointer relative flex h-full"
+      style={{
+        perspective: "1000px",
+        cursor: isHovered ? "none" : "pointer",
+      }}
+    >
+      <div
+        className="bg-white p-10 md:p-12 border border-black/20 flex-1"
+        style={{
+          transition: "transform 0.15s ease-out",
+          transform: transform,
+        }}
+      >
+        <span 
+          className="text-white font-bold tracking-wide py-1 px-2 uppercase -skew-x-8 transform relative inline-block"
+          style={{ backgroundColor: insight.tagBg }}
+        >
+          {insight.tag}
+        </span>
+        <p className="text-[var(--foreground)] text-2xl md:text-3xl lg:text-4xl mt-6 leading-relaxed">
+          {insight.content}
+        </p>
+      </div>
+    </div>
+  );
+}
+
 function InsightsCarousel() {
   const [activeIndex, setActiveIndex] = useState(0);
+  const [isHovered, setIsHovered] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const cursorX = useMotionValue(0);
+  const cursorY = useMotionValue(0);
+  const lastClientPos = useRef({ x: 0, y: 0 });
 
   const toggleSlide = () => {
     setActiveIndex((prev) => (prev === 0 ? 1 : 0));
   };
 
-  // Card width (800px) + gap (24px)
-  const slideOffset = 824;
+  const updateCursorPosition = (clientX: number, clientY: number) => {
+    const rect = containerRef.current?.getBoundingClientRect();
+    if (rect) {
+      cursorX.set(clientX - rect.left);
+      cursorY.set(clientY - rect.top);
+    }
+  };
+
+  useEffect(() => {
+    if (!isHovered) return;
+
+    const handleScroll = () => {
+      updateCursorPosition(lastClientPos.current.x, lastClientPos.current.y);
+    };
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [isHovered]);
+
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    lastClientPos.current = { x: e.clientX, y: e.clientY };
+    updateCursorPosition(e.clientX, e.clientY);
+  };
+
+  // Card width (800px) + gap (48px for gap-12)
+  const slideOffset = 848;
 
   return (
-      <div className="w-full mt-0 overflow-hidden px-4 md:px-8">
-      <div className="relative">
+    <div className="w-full mt-0">
+          <div ref={containerRef} className="relative px-4 md:px-8 overflow-hidden">
         {/* Slides container */}
         <motion.div 
-          className="flex gap-12"
+          className="grid grid-cols-[800px_800px] gap-12"
           animate={{ x: activeIndex === 0 ? 0 : -slideOffset }}
           transition={{ duration: 0.5, ease: [0.32, 0.72, 0, 1] }}
           style={{ 
@@ -307,53 +407,49 @@ function InsightsCarousel() {
           }}
         >
           {insights.map((insight, index) => (
-            <div key={index} className="shrink-0 w-[800px]">
-              <SpotlightEffect 
-                className="bg-white p-10 md:p-12 border border-black/20"
-                spotlightColor={insight.spotlightColor}
-              >
-                <span 
-                  className="text-white font-bold tracking-wide py-1 px-2 uppercase -skew-x-8 transform relative inline-block"
-                  style={{ backgroundColor: insight.tagBg }}
-                >
-                  {insight.tag}
-                </span>
-                <p className="text-[var(--foreground)] text-2xl md:text-3xl lg:text-4xl mt-6 leading-relaxed relative z-10">
-                  {insight.content}
-                </p>
-              </SpotlightEffect>
-            </div>
+            <InsightCard 
+              key={index}
+              insight={insight}
+              onNavigate={toggleSlide}
+              isHovered={isHovered}
+              onHoverChange={setIsHovered}
+              onMouseMove={handleMouseMove}
+            />
           ))}
         </motion.div>
 
-        {/* Arrow button - positioned relative to viewport center */}
-        <div 
-          className="absolute top-1/2 -translate-y-1/2 pointer-events-none"
-          style={{ 
-            left: "calc(50% + 400px + 24px)",
+        {/* Cursor-following circle with arrow - outside the sliding container */}
+        <motion.div
+          className="absolute top-0 left-0 w-14 h-14 rounded-full bg-[var(--foreground)] flex items-center justify-center pointer-events-none z-10"
+          style={{
+            x: cursorX,
+            y: cursorY,
+            translateX: "-50%",
+            translateY: "-50%",
+          }}
+          initial={{ scale: 0 }}
+          animate={{ scale: isHovered ? 1 : 0 }}
+          transition={{
+            type: "spring",
+            stiffness: 400,
+            damping: 25,
           }}
         >
-          <button
-            onClick={toggleSlide}
-            className="pointer-events-auto w-10 h-10 rounded-full bg-white border border-black/10 shadow-md flex items-center justify-center hover:bg-black/5 transition-colors"
-            aria-label={activeIndex === 0 ? "Next insight" : "Previous insight"}
+          <svg 
+            width="20" 
+            height="20" 
+            viewBox="0 0 24 24" 
+            fill="none" 
+            stroke="currentColor" 
+            strokeWidth="2"
+            strokeLinecap="round" 
+            strokeLinejoin="round"
+            className={`text-[var(--background)] transition-transform duration-300 ${activeIndex === 1 ? "rotate-180" : ""}`}
           >
-            <svg 
-              width="20" 
-              height="20" 
-              viewBox="0 0 24 24" 
-              fill="none" 
-              stroke="currentColor" 
-              strokeWidth="2"
-              strokeLinecap="round" 
-              strokeLinejoin="round"
-              className={`transition-transform duration-300 ${activeIndex === 1 ? "rotate-180" : ""}`}
-            >
-              <path d="M9 18l6-6-6-6" />
-            </svg>
-          </button>
-        </div>
-
+            <path d="M5 12h14" />
+            <path d="M12 5l7 7-7 7" />
+          </svg>
+        </motion.div>
       </div>
     </div>
   );
@@ -713,7 +809,7 @@ export default function SentinelPage() {
               <div className="w-full px-8 md:px-16 lg:px-24 max-w-4xl">
                 <TextCarousel
                   items={[
-                    { quote: "I like this as a concept. It feels familiar as well. A lot of companies are doing it this way so that's a good thing. It means I can give this to my team and they'll just know what to do with minimal instruction.", attribution: "Rafi · Snyk" },
+                    { quote: "I like this as a concept. It feels familiar as well. I can give this to my team and they'll just know what to do with minimal instruction.", attribution: "Rafi · Snyk" },
                     { quote: "It feels like you have a teammate. You don't have to think of everything yourself. Yeah, it's cool. It's cool. I like that.", attribution: "Seb · IntentHQ" },
                     { quote: "I'm very excited about 'Run tasks'. That's an extra resource that I have working for me now.", attribution: "Seb · IntentHQ" },
                     { quote: "Yeah, it's fantastic – seeing the list of actions that you have there, these are perfect examples of what people want to explore.", attribution: "Tibor · OpenTable" },

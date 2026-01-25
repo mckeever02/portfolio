@@ -141,7 +141,11 @@ export function FlipCard({
           damping: 25,
         }}
       >
-        <RotateCw size={20} className="text-[var(--background)]" />
+        <RotateCw 
+          size={20} 
+          className="text-[var(--background)] transition-transform duration-500" 
+          style={{ transform: isFlipped ? "rotate(180deg)" : "rotate(0deg)" }}
+        />
       </motion.div>
     </div>
   );

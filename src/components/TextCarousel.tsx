@@ -122,14 +122,13 @@ export function TextCarousel({
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: 20 }}
           transition={{ duration: 0.6, ease: [0.32, 0.72, 0, 1] }}
-          className={`px-6 md:px-8 py-6 rounded-[20px] backdrop-blur-md border border-white/20 ${className}`}
+          className={`px-6 md:px-8 py-6 bg-white backdrop-blur-md  ${className}`}
           style={{ 
-            backgroundColor: "rgba(255, 255, 255, 0.2)",
             willChange: "transform, opacity",
             transform: "translateZ(0)",
           }}
         >
-          <p className="text-white text-2xl md:text-3xl leading-snug">
+          <p className="text-[var(--foreground)] text-2xl md:text-3xl leading-snug">
             {items[currentIndex].quote}
           </p>
         </motion.div>
