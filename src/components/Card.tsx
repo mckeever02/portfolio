@@ -13,7 +13,6 @@ interface CardProps {
   href: string;
   imageUrl?: string;
   videoUrl?: string;
-  videoPoster?: string;
   externalLink?: boolean;
   comingSoon?: boolean;
   details: ReactNode;
@@ -26,7 +25,6 @@ export function Card({
   href,
   imageUrl,
   videoUrl,
-  videoPoster,
   externalLink = false,
   comingSoon = false,
   details,
@@ -97,7 +95,6 @@ export function Card({
                 <video
                   ref={videoRef}
                   src={videoUrl}
-                  poster={videoPoster}
                   aria-label={`Video preview for ${title}`}
                   loop
                   muted
