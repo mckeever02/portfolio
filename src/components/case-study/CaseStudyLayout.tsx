@@ -50,8 +50,8 @@ function LayoutContent({ caseStudy, children }: CaseStudyLayoutProps) {
             {/* Hero + Content Wrapper */}
             <div className="flex flex-col gap-10">
               {/* Hero Image/Video */}
-              <div className="mx-auto w-full max-w-[1000px] px-4 md:px-8">
-                <HeroImage bgColor={caseStudy.heroColor} imageSrc={caseStudy.heroImage} />
+              <div className="mx-auto w-full max-w-[1240px] px-4 md:px-8">
+                <HeroImage bgColor={caseStudy.heroColor} imageSrc={caseStudy.heroVideo || caseStudy.heroImage} poster={caseStudy.heroPoster} />
               </div>
 
               {/* Project Metadata - overlaps hero */}

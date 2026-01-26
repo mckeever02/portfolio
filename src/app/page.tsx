@@ -13,6 +13,7 @@ import {
   PageTransition,
 } from "@/components";
 import { useActiveSection } from "@/hooks/useActiveSection";
+import { caseStudies } from "@/data/case-studies";
 
 const sections = ["works", "projects", "about"] as const;
 
@@ -67,25 +68,26 @@ export default function Home() {
                 externalLink
               />
               <WorkCard
-                title="1Password Sentinel: Copilot for Admins"
-                description="Designed and championed an agentic vision to make 1Password security as simple as a conversation."
+                title={caseStudies.sentinel.title}
+                description={caseStudies.sentinel.description}
                 year="2025"
-                role="Design Lead"
-                company="1Password"
-                bgColor="#000000"
-                videoUrl="/images/work/sentinel/sentinel-hero.mp4?v=2"
-                href="/work/sentinel"
+                role={caseStudies.sentinel.role}
+                company={caseStudies.sentinel.company}
+                bgColor={caseStudies.sentinel.heroColor}
+                videoUrl={caseStudies.sentinel.heroVideo}
+                videoPoster={caseStudies.sentinel.heroPoster}
+                href={`/work/${caseStudies.sentinel.slug}`}
                 comingSoon
               />
               <WorkCard
-                title="Verifier"
-                description="0 → 1 design for a verification system to combat deepfakes and AI fraud"
+                title={caseStudies.verifier.title}
+                description={caseStudies.verifier.description}
                 year="2025"
-                role="Design Lead"
-                company="1Password"
-                bgColor="#c9e8e3"
-                imageUrl="/images/verifier-hero.jpg"
-                href="/work/verifier"
+                role={caseStudies.verifier.role}
+                company={caseStudies.verifier.company}
+                bgColor={caseStudies.verifier.heroColor}
+                imageUrl={caseStudies.verifier.heroImage}
+                href={`/work/${caseStudies.verifier.slug}`}
               />
               <WorkCard
                 title="Account Management"
