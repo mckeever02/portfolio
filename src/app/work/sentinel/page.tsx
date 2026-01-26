@@ -14,12 +14,147 @@ import { LightboxImage } from "@/components/Lightbox";
 import Image from "next/image";
 import { FlipCard, CardFace } from "@/components/FlipCard";
 import { FlipCarousel } from "@/components/FlipCarousel";
+import { MediaCarousel } from "@/components/MediaCarousel";
+import { HighlightText } from "@/components/HighlightText";
+import { HoverImageText } from "@/components/HoverImageText";
+import { ZigZagDivider } from "@/components/ZigZagDivider";
 import { SpotlightEffect } from "@/components/SpotlightEffect";
 import { TextCarousel, QuoteProgressIndicator } from "@/components/TextCarousel";
 import { SummaryCardDemo } from "@/components/SummaryCardDemo";
 import { motion, AnimatePresence } from "framer-motion";
 
 type StickyNote = { src: string; alt: string; rotation: number; delay: number; position: { top?: string; bottom?: string; left: string; translateX: string; translateY: string } };
+
+// Comic slide component for Sonja's story carousel
+type CaptionPosition = "top-center" | "bottom-center" | "bottom-right" | "bottom-left" | "top-left" | "top-right" | "center" | "center-left";
+
+const captionPositionClasses: Record<CaptionPosition, string> = {
+  "top-center": "absolute -top-10 left-1/2 -translate-x-1/2",
+  "bottom-center": "absolute -bottom-6 left-1/2 -translate-x-1/2",
+  "bottom-right": "absolute -bottom-6 right-6",
+  "bottom-left": "absolute -bottom-6 left-6",
+  "top-left": "absolute -top-10 left-6",
+  "top-right": "absolute -top-10 right-6",
+  "center": "absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2",
+  "center-left": "absolute top-1/2 left-6 -translate-y-1/2",
+};
+
+function ComicCaption({ 
+  caption, 
+  position, 
+  isActive 
+}: { 
+  caption: string; 
+  position: CaptionPosition; 
+  isActive: boolean;
+}) {
+  return (
+    <motion.div 
+      className={`${captionPositionClasses[position]} bg-[#FFFDE7] border-2 border-black px-6 py-3 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] z-10`}
+      style={{ fontFamily: "'Anime Ace', sans-serif" }}
+      initial={{ opacity: 0, scale: 0.8 }}
+      animate={{ 
+        opacity: isActive ? 1 : 0, 
+        scale: isActive ? 1 : 0.8 
+      }}
+      transition={{ 
+        type: "spring",
+        stiffness: 400,
+        damping: 15,
+        delay: isActive ? 0.3 : 0
+      }}
+    >
+      <p className="text-black text-base md:text-lg uppercase leading-snug text-center max-w-[280px]">
+        {caption}
+      </p>
+    </motion.div>
+  );
+}
+
+function ComicSlide({ 
+  children, 
+  caption,
+  captionPosition = "top-center",
+  isActive = false 
+}: { 
+  children: React.ReactNode; 
+  caption?: string;
+  captionPosition?: CaptionPosition;
+  isActive?: boolean;
+}) {
+  return (
+    <div className="bg-white/20 backdrop-blur-xl p-3 border border-white/30 rounded-xl relative">
+      <div className="relative">
+        {children}
+        {/* Light grey overlay for inactive slides */}
+        <motion.div
+          className="absolute inset-0 bg-gray-200 pointer-events-none rounded-lg"
+          animate={{ opacity: isActive ? 0 : 0.5 }}
+          transition={{ duration: 0.4 }}
+        />
+      </div>
+      {caption && (
+        <ComicCaption caption={caption} position={captionPosition} isActive={isActive} />
+      )}
+    </div>
+  );
+}
+
+// Video slide that only loads when active
+function ComicVideoSlide({ 
+  src,
+  caption,
+  captionPosition = "top-center",
+  isActive = false 
+}: { 
+  src: string;
+  caption?: string;
+  captionPosition?: CaptionPosition;
+  isActive?: boolean;
+}) {
+  const videoRef = useRef<HTMLVideoElement>(null);
+  
+  // Derive poster path from video src (e.g., sonja-story-2.mp4 -> sonja-story-2-poster.jpg)
+  const posterSrc = src.replace('.mp4', '-poster.jpg');
+
+  useEffect(() => {
+    if (videoRef.current) {
+      if (isActive) {
+        videoRef.current.currentTime = 0;
+        videoRef.current.play();
+      } else {
+        videoRef.current.pause();
+      }
+    }
+  }, [isActive]);
+
+  return (
+    <div className="bg-white/20 backdrop-blur-xl p-3 border border-white/30 rounded-xl relative">
+      <div className="relative">
+        <video
+          ref={videoRef}
+          loop
+          muted
+          playsInline
+          poster={posterSrc}
+          preload={isActive ? "auto" : "none"}
+          className="w-full rounded-lg"
+        >
+          <source src={src} type="video/mp4" />
+        </video>
+        {/* Light grey overlay for inactive slides */}
+        <motion.div
+          className="absolute inset-0 bg-gray-200 pointer-events-none rounded-lg"
+          animate={{ opacity: isActive ? 0 : 0.5 }}
+          transition={{ duration: 0.4 }}
+        />
+      </div>
+      {caption && (
+        <ComicCaption caption={caption} position={captionPosition} isActive={isActive} />
+      )}
+    </div>
+  );
+}
 
 function QuoteCard({ children, attribution }: { children: React.ReactNode; attribution: string }) {
   return (
@@ -141,29 +276,29 @@ function SolutionSection() {
             <span className="font-bold tracking-wide py-1 px-2 uppercase -skew-x-8 transform inline-block w-fit bg-[#e8e4df] text-black">The solution</span>
             <p className="text-[var(--foreground)] text-2xl md:text-3xl lg:text-4xl leading-relaxed">
               An AI Agent which can{" "}
-              <span
-                className="highlight-expand highlight-expand-blue"
+              <HighlightText
+                color="blue"
                 onMouseEnter={() => setImageFocus("insights")}
                 onMouseLeave={() => setImageFocus(null)}
               >
                 generate insights
-              </span>
+              </HighlightText>
               ,{" "}
-              <span
-                className="highlight-expand highlight-expand-purple"
+              <HighlightText
+                color="purple"
                 onMouseEnter={() => setImageFocus("tasks")}
                 onMouseLeave={() => setImageFocus(null)}
               >
                 automate tasks
-              </span>{" "}
+              </HighlightText>{" "}
               and{" "}
-              <span
-                className="highlight-expand highlight-expand-brown"
+              <HighlightText
+                color="brown"
                 onMouseEnter={() => setImageFocus("support")}
                 onMouseLeave={() => setImageFocus(null)}
               >
                 provide support
-              </span>
+              </HighlightText>
               .
             </p>
           </section>
@@ -430,7 +565,7 @@ export default function SentinelPage() {
       </NarrowContent>
 
       <LightboxImage
-        src="/images/sentinel.jpg"
+        src="/images/work/sentinel/sentinel.jpg"
         alt="Sentinel AI-powered admin copilot"
         maxWidth="1000px"
         aspectRatio="2880/1768"
@@ -498,7 +633,7 @@ export default function SentinelPage() {
       {/* Line connector */}
       <div className="flex justify-center">
         <div className="w-0.5 h-16 bg-black/20" />
-      </div>
+        </div>
 
       <SolutionSection />
 
@@ -581,11 +716,11 @@ export default function SentinelPage() {
       </NarrowContent>
 
       {/* Full Width Quote Section */}
-      <FullWidthContent>
+      <WideContent>
           <div 
-            className="w-full flex items-center justify-center p-16"
+            className="w-full flex items-center justify-center px-16 py-24"
             style={{
-              backgroundImage: "url('/images/work/sentinel/quote-bg.png')",
+              backgroundImage: "url('/images/work/sentinel/quote-bg-5.png')",
               backgroundSize: "cover",
               backgroundPosition: "center",
               transform: "translateZ(0)",
@@ -595,27 +730,27 @@ export default function SentinelPage() {
             <div className="bg-white/20 backdrop-blur-xl rounded-2xl p-2 max-w-2xl w-full border border-white/30">
               {/* Inner white container */}
               <div className="bg-white rounded-xl p-8 md:p-10 h-[280px] flex flex-col">
-                <TextCarousel
-                  items={[
-                    { quote: "I like this as a concept. It feels familiar as well. I can give this to my team and they'll just know what to do with minimal instruction.", attribution: "Rafi · Snyk" },
-                    { quote: "It feels like you have a teammate. You don't have to think of everything yourself. Yeah, it's cool. It's cool. I like that.", attribution: "Seb · IntentHQ" },
-                    { quote: "I'm very excited about 'Run tasks'. That's an extra resource that I have working for me now.", attribution: "Seb · IntentHQ" },
-                    { quote: "Yeah, it's fantastic – seeing the list of actions that you have there, these are perfect examples of what people want to explore.", attribution: "Tibor · OpenTable" },
-                  ]}
-                  autoplay
-                  loop
-                  interval={6000}
+              <TextCarousel
+                items={[
+                  { quote: "I like this as a concept. It feels familiar as well. I can give this to my team and they'll just know what to do with minimal instruction.", attribution: "Rafi · Snyk" },
+                  { quote: "It feels like you have a teammate. You don't have to think of everything yourself. Yeah, it's cool. It's cool. I like that.", attribution: "Seb · IntentHQ" },
+                  { quote: "I'm very excited about 'Run tasks'. That's an extra resource that I have working for me now.", attribution: "Seb · IntentHQ" },
+                  { quote: "Yeah, it's fantastic – seeing the list of actions that you have there, these are perfect examples of what people want to explore.", attribution: "Tibor · OpenTable" },
+                ]}
+                autoplay
+                loop
+                interval={6000}
                   className="w-full flex-1 flex items-start"
-                  renderIndicator={(progress) => (
+                renderIndicator={(progress) => (
                     <div className="flex justify-center mb-6">
                       <QuoteProgressIndicator progress={progress} variant="dark" />
-                    </div>
-                  )}
-                />
-              </div>
+                  </div>
+                )}
+              />
+          </div>
             </div>
           </div>
-      </FullWidthContent>
+      </WideContent>
 
       {/* AI Hesitations Section */}
       <NarrowContent className="mt-16">
@@ -627,6 +762,112 @@ export default function SentinelPage() {
       </NarrowContent>
 
       <FlipCarousel items={hesitations} />
+
+      <ZigZagDivider className="my-16" />
+
+      {/* Prototype Story Section */}
+      <NarrowContent>
+        <ContentSection id="prototype" title="Telling Sonja's story">
+          <BodyText>
+            To bring the vision to life and build alignment across stakeholders, I created a high-fidelity prototype that followed <HoverImageText
+              highlightColor="purple"
+              images={[
+                {
+                  src: "/images/work/sentinel/sonja-front.png",
+                  alt: "Sonja persona card front",
+                  width: 202,
+                  height: 269,
+                  offset: { x: -110, y: -20 },
+                  rotation: -5,
+                },
+                {
+                  src: "/images/work/sentinel/sonja-back.png",
+                  alt: "Sonja persona card back",
+                  width: 202,
+                  height: 269,
+                  offset: { x: 80, y: 25 },
+                  rotation: 4,
+                },
+              ]}
+            >Sonja—our B2B admin persona</HoverImageText>—through a realistic day-in-the-life scenario.
+          </BodyText>
+          <BodyText>
+            The prototype demonstrated how Sentinel could help Sonja tackle her most pressing challenges: responding to security alerts, onboarding new team members, and maintaining compliance—all while juggling the demands of a growing organization.
+          </BodyText>
+          <BodyText>
+            By grounding the demo in Sonja&apos;s actual workflows and pain points, we could show stakeholders not just what the feature does, but why it matters for the people we&apos;re building for.
+          </BodyText>
+        </ContentSection>
+      </NarrowContent>
+
+      {/* Sonja Story Carousel - outside width wrappers like FlipCarousel */}
+      <div
+        className="w-full py-16 mt-8"
+        style={{
+          backgroundImage: "url('/images/work/sentinel/sonja-story-bg.png')",
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+        }}
+      >
+        <MediaCarousel cardWidth={1000} gap={48}>
+          {/* Slide 1: Comic intro */}
+          <ComicSlide>
+            <Image
+              src="/images/work/sentinel/sonja-comic-start.jpg"
+              alt="Sonja's day-in-the-life comic introduction"
+              width={1040}
+              height={567}
+              className="w-full rounded-lg"
+            />
+          </ComicSlide>
+          {/* Slide 2 */}
+          <ComicVideoSlide 
+            src="/images/work/sentinel/sonja-story-2.mp4"
+            caption="Sonja decices to turn to Sentinel to investigate the alert."
+            captionPosition="top-center"
+          />
+          {/* Slide 3 */}
+          <ComicVideoSlide 
+            src="/images/work/sentinel/sonja-story-3.mp4"
+            caption="She first investigates who has access to Netsuite"
+            captionPosition="bottom-center"
+          />
+          {/* Slide 4 */}
+          <ComicVideoSlide 
+            src="/images/work/sentinel/sonja-story-4.mp4"
+            caption="Looks like many people have access to Netsuite. She investigates further."
+            captionPosition="bottom-right"
+          />
+          {/* Slide 5 */}
+          <ComicVideoSlide 
+            src="/images/work/sentinel/sonja-story-5.mp4"
+            caption="Damn! The password for Netsuite is being used elsewhere. Time to check who created the login."
+            captionPosition="center"
+          />
+          {/* Slide 6 */}
+          <ComicVideoSlide 
+            src="/images/work/sentinel/sonja-story-6.mp4"
+            caption="Aha! Sonja has found the leak. Now to plug it!"
+            captionPosition="center-left"
+          />
+          {/* Slide 7 */}
+          <ComicVideoSlide 
+            src="/images/work/sentinel/sonja-story-7.mp4"
+            caption="Sonja gets Sentinel to help Emma with rotating the password. The leak is plugged!"
+            captionPosition="top-center"
+          />
+          {/* Slide 8: Final comic */}
+          <ComicSlide caption="Crisis averted. Back to her coffee." captionPosition="top-center">
+            <Image
+              src="/images/work/sentinel/sonja-comic-final.jpg"
+              alt="Sonja's story conclusion"
+              width={1040}
+              height={567}
+              className="w-full rounded-lg"
+            />
+          </ComicSlide>
+        </MediaCarousel>
+        </div>
     </CaseStudyLayout>
   );
 }

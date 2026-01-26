@@ -73,7 +73,7 @@ export default function Home() {
                 role="Design Lead"
                 company="1Password"
                 bgColor="#000000"
-                videoUrl="/images/sentinel-hero.mp4?v=2"
+                videoUrl="/images/work/sentinel/sentinel-hero.mp4?v=2"
                 href="/work/sentinel"
                 comingSoon
               />

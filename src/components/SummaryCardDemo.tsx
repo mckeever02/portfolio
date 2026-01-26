@@ -1112,7 +1112,7 @@ export function SummaryCardDemo() {
   return (
     <div 
       ref={containerRef}
-      className="w-full p-6 md:p-10 min-h-screen md:min-h-[calc(100vh-100px)]"
+      className="w-full p-6 md:p-16"
       style={{ 
         backgroundImage: "url('/images/work/sentinel/agent-bg.png')",
         backgroundSize: "cover",
@@ -1133,7 +1133,7 @@ export function SummaryCardDemo() {
       >
         {/* Inner white container */}
         <div 
-          className="rounded-[12px] overflow-hidden flex flex-col bg-white"
+          className="rounded-[12px] overflow-hidden flex flex-col bg-white h-[640px]"
         >
       {/* Chat header with countdown */}
       <ChatHeader 

@@ -33,6 +33,33 @@
   font-display: swap;
 }
 
+@font-face {
+  font-family: 'Anime Ace';
+  src: url('/fonts/AnimeAce20BB.woff2') format('woff2'),
+       url('/fonts/AnimeAce20BB.woff') format('woff');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Anime Ace';
+  src: url('/fonts/AnimeAce20BB-Bold.woff2') format('woff2'),
+       url('/fonts/AnimeAce20BB-Bold.woff') format('woff');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Anime Ace';
+  src: url('/fonts/AnimeAce20BB-Italic.woff2') format('woff2'),
+       url('/fonts/AnimeAce20BB-Italic.woff') format('woff');
+  font-weight: 400;
+  font-style: italic;
+  font-display: swap;
+}
+
 :root {
   /* Design Tokens from Figma */
   --background: #f2ede6;
@@ -291,34 +318,44 @@ body {
 .highlight-expand {
   cursor: pointer;
   text-decoration: none;
-  background-image: linear-gradient(var(--highlight-color, #38BDF8), var(--highlight-color, #38BDF8));
+  background-image: linear-gradient(var(--highlight-color-line, var(--highlight-color, #38BDF8)), var(--highlight-color-line, var(--highlight-color, #38BDF8)));
   background-size: 100% 3px;
   background-position: 0 100%;
   background-repeat: no-repeat;
-  transition: background-size 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: background-size 0.25s cubic-bezier(0.4, 0, 0.2, 1), background-image 0.25s cubic-bezier(0.4, 0, 0.2, 1);
   box-decoration-break: clone;
   -webkit-box-decoration-break: clone;
 }
 
 .highlight-expand:hover {
+  background-image: linear-gradient(var(--highlight-color, #38BDF8), var(--highlight-color, #38BDF8));
   background-size: 100% 100%;
   cursor: zoom-in;
 }
 
 .highlight-expand-blue {
   --highlight-color: rgba(56, 189, 248, 0.4);
+  --highlight-color-line: rgba(56, 189, 248, 0.6);
 }
 
 .highlight-expand-purple {
   --highlight-color: rgba(169, 155, 234, 0.4);
+  --highlight-color-line: rgba(130, 100, 200, 0.7);
 }
 
 .highlight-expand-brown {
   --highlight-color: rgba(167, 139, 91, 0.4);
+  --highlight-color-line: rgba(167, 139, 91, 0.6);
 }
 
 .highlight-expand-orange {
   --highlight-color: rgba(249, 115, 22, 0.4);
+  --highlight-color-line: rgba(249, 115, 22, 0.6);
+}
+
+.highlight-expand-neutral {
+  --highlight-color: rgba(33, 32, 28, 0.2);
+  --highlight-color-line: rgba(33, 32, 28, 0.4);
 }
 
 /* React Medium Image Zoom - Custom Styles */
