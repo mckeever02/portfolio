@@ -49,15 +49,21 @@ export function ProjectMeta({ subtitle, timeline, role, team }: ProjectMetaProps
       </svg>
 
       <div className="flex gap-8">
-        <MetaItem label="Timeline">
-          <span className="text-base text-[var(--foreground)]">{timeline}</span>
-        </MetaItem>
-        <MetaItem label="Team">
-          <TeamAvatars team={team} />
-        </MetaItem>
-        <MetaItem label="Role">
-          <span className="text-base text-[var(--foreground)]">{role}</span>
-        </MetaItem>
+        {timeline && (
+          <MetaItem label="Timeline">
+            <span className="text-base text-[var(--foreground)]">{timeline}</span>
+          </MetaItem>
+        )}
+        {team && team.length > 0 && (
+          <MetaItem label="Team">
+            <TeamAvatars team={team} />
+          </MetaItem>
+        )}
+        {role && (
+          <MetaItem label="Role">
+            <span className="text-base text-[var(--foreground)]">{role}</span>
+          </MetaItem>
+        )}
       </div>
     </div>
   );
