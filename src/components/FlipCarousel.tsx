@@ -98,7 +98,7 @@ function CarouselCard<T extends FlipCarouselItem>({
       >
         {/* Front */}
         <div
-          className="relative w-full h-full bg-white p-10 md:p-12 border border-black/20 flex flex-col"
+          className="relative w-full h-full bg-[var(--background)] p-10 md:p-12 border border-[var(--foreground)]/20 flex flex-col"
           style={{
             backfaceVisibility: "hidden",
             WebkitBackfaceVisibility: "hidden",
@@ -117,20 +117,20 @@ function CarouselCard<T extends FlipCarouselItem>({
         
         {/* Back - Quote */}
         <div
-          className="absolute inset-0 w-full h-full bg-white p-10 md:p-12 border border-black/20 flex flex-col"
+          className="absolute inset-0 w-full h-full bg-[var(--background)] p-10 md:p-12 border border-[var(--foreground)]/20 flex flex-col"
           style={{
             backfaceVisibility: "hidden",
             WebkitBackfaceVisibility: "hidden",
             transform: "rotateY(180deg)",
           }}
         >
-          <svg className="w-8 h-8 text-black/20 mb-4 shrink-0" viewBox="0 0 24 24" fill="currentColor">
+          <svg className="w-8 h-8 text-[var(--foreground)]/20 mb-4 shrink-0" viewBox="0 0 24 24" fill="currentColor">
             <path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z" />
           </svg>
           <p className="text-[var(--foreground)] text-xl md:text-2xl leading-relaxed flex-1">
             {item.quote.text}
           </p>
-          <p className="text-black/60 uppercase font-bold tracking-wider text-sm mt-4">
+          <p className="text-[var(--foreground)]/60 uppercase font-bold tracking-wider text-sm mt-4">
             {item.quote.attribution}
           </p>
         </div>
@@ -203,7 +203,7 @@ export function FlipCarousel<T extends FlipCarouselItem>({
           {isHoveringActiveCard ? (
             <RotateIcon flipCount={flipCount} />
           ) : (
-            <ArrowIcon direction={hoveredCardIndex === 1 ? "left" : "right"} />
+            <ArrowIcon direction={hoveredCardIndex === 1 ? "right" : "left"} />
           )}
         </HoverCursor>
       </div>

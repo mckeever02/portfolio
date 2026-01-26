@@ -158,16 +158,16 @@ function ComicVideoSlide({
 
 function QuoteCard({ children, attribution }: { children: React.ReactNode; attribution: string }) {
   return (
-    <div className="bg-white border p-8 md:p-10 border-black/20 relative overflow-hidden h-full">
+    <div className="bg-[var(--background)] border p-8 md:p-10 border-[var(--foreground)]/20 relative overflow-hidden h-full">
       <div className="absolute top-0 left-0 w-48 h-48 bg-[#A99BEA]/10 rounded-full blur-3xl -translate-x-1/2 -translate-y-1/2" />
       <div className="relative z-10">
-        <svg className="w-8 h-8 text-black/20 mb-4" viewBox="0 0 24 24" fill="currentColor">
+        <svg className="w-8 h-8 text-[var(--foreground)]/40 mb-4" viewBox="0 0 24 24" fill="currentColor">
           <path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z" />
         </svg>
         <p className="text-[var(--foreground)] text-xl md:text-2xl leading-relaxed mb-6">
           {children}
         </p>
-        <p className="text-black/60 uppercase font-bold tracking-wider text-sm">
+        <p className="text-[var(--foreground)]/60 uppercase font-bold tracking-wider text-sm">
           {attribution}
         </p>
       </div>
@@ -191,6 +191,103 @@ const stickyNotes: Record<string, StickyNote[]> = {
     { src: "/images/work/sentinel/support-sticky-2.png", alt: "Provide support 2", rotation: 3, delay: 0.35, position: { top: "35%", left: "75%", translateX: "-50%", translateY: "-50%" } },
   ],
 };
+
+// Competitive analysis data
+const competitors = [
+  { name: "Okta", domain: "okta.com", genAI: true, conversational: true, predictive: true, personalisation: true, agentic: false },
+  { name: "CrowdStrike", domain: "crowdstrike.com", genAI: true, conversational: true, predictive: true, personalisation: true, agentic: true },
+  { name: "Atlassian", domain: "atlassian.com", genAI: true, conversational: true, predictive: "partial", personalisation: true, agentic: true },
+  { name: "HubSpot", domain: "hubspot.com", genAI: true, conversational: true, predictive: false, personalisation: true, agentic: true },
+  { name: "Monday.com", domain: "monday.com", genAI: true, conversational: true, predictive: "partial", personalisation: true, agentic: false },
+  { name: "Notion", domain: "notion.so", genAI: true, conversational: true, predictive: false, personalisation: true, agentic: true },
+  { name: "Zoho", domain: "zoho.com", genAI: true, conversational: true, predictive: true, personalisation: true, agentic: true },
+  { name: "Google Workspace", domain: "workspace.google.com", genAI: true, conversational: true, predictive: "partial", personalisation: true, agentic: false },
+  { name: "Salesforce", domain: "salesforce.com", genAI: true, conversational: true, predictive: true, personalisation: true, agentic: true },
+  { name: "1Password", domain: "1password.com", genAI: false, conversational: false, predictive: false, personalisation: false, agentic: false, highlight: true },
+];
+
+function StatusIcon({ status }: { status: boolean | "partial" }) {
+  if (status === true) {
+    return (
+      <svg className="w-5 h-5 text-emerald-500" viewBox="0 0 20 20" fill="currentColor">
+        <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+      </svg>
+    );
+  }
+  if (status === false) {
+    return (
+      <svg className="w-5 h-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
+        <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
+      </svg>
+    );
+  }
+  // partial - horizontal line (dash) icon
+  return (
+    <svg className="w-5 h-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor">
+      <path fillRule="evenodd" d="M3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clipRule="evenodd" />
+    </svg>
+  );
+}
+
+function CompetitorTable() {
+  const columns = [
+    { key: "genAI", label: "Generative AI" },
+    { key: "conversational", label: "Conversational UI" },
+    { key: "predictive", label: "Predictive insights" },
+    { key: "personalisation", label: "Personalisation" },
+    { key: "agentic", label: "Agentic systems" },
+  ];
+
+  return (
+    <div className="w-full overflow-x-auto">
+      <table className="w-full border-collapse">
+        <thead>
+          <tr className="border-b border-[var(--foreground)]/20">
+            <th className="py-4 px-4"></th>
+            {columns.map((col) => (
+              <th key={col.key} className="py-4 px-3 font-bold text-sm uppercase tracking-wider text-[var(--foreground)]/60 text-center">
+                {col.label}
+              </th>
+            ))}
+          </tr>
+        </thead>
+        <tbody>
+          {competitors.map((company, idx) => (
+            <tr 
+              key={company.name}
+              className={`border-b border-[var(--foreground)]/10 last:border-b-0 transition-colors ${
+                company.highlight 
+                  ? "bg-[var(--foreground)]/5" 
+                  : idx % 2 === 0 ? "bg-[var(--background)]" : "bg-[var(--foreground)]/[0.02]"
+              }`}
+            >
+              <td className={`py-4 px-4 ${company.highlight ? "font-bold text-[var(--foreground)]" : "text-[var(--foreground)]/80"}`}>
+                <div className="flex items-center gap-3">
+                  <Image
+                    src={`https://img.logo.dev/${company.domain}?token=pk_VAZ6tvAVQHCDwKeaNRVyjQ`}
+                    alt={`${company.name} logo`}
+                    width={20}
+                    height={20}
+                    className="rounded-sm"
+                    unoptimized
+                  />
+                  {company.name}
+                </div>
+              </td>
+              {columns.map((col) => (
+                <td key={col.key} className="py-4 px-3 text-center">
+                  <div className="flex justify-center">
+                    <StatusIcon status={company[col.key as keyof typeof company] as boolean | "partial"} />
+                  </div>
+                </td>
+              ))}
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
+}
 
 const adminReasons = [
   {
@@ -270,10 +367,10 @@ function SolutionSection() {
 
   return (
     <FullWidthContent className="mt-0">
-      <div className="grid grid-cols-1 bg-white border border-black/20 lg:grid-cols-2 items-center">
+      <div className="grid grid-cols-1 bg-[var(--background)] border border-[var(--foreground)]/20 lg:grid-cols-2 items-center">
         <div className="p-12">
           <section id="exploration" className="flex flex-col gap-6 scroll-mt-8">
-            <span className="font-bold tracking-wide py-1 px-2 uppercase -skew-x-8 transform inline-block w-fit bg-[#e8e4df] text-black">The solution</span>
+            <span className="font-bold tracking-wide py-1 px-2 uppercase -skew-x-8 transform inline-block w-fit bg-[var(--foreground)]/10 text-[var(--foreground)]">The solution</span>
             <p className="text-[var(--foreground)] text-2xl md:text-3xl lg:text-4xl leading-relaxed">
               An AI Agent which can{" "}
               <HighlightText
@@ -313,7 +410,7 @@ function SolutionSection() {
           }}
         >
             <motion.div 
-              className="relative w-full aspect-[2760/3045] overflow-hidden rounded-lg rounded-l-none shadow-2xl border border-black/10 border-l-0"
+              className="relative w-full aspect-[2760/3045] overflow-hidden rounded-lg rounded-l-none shadow-2xl border border-[var(--foreground)]/10 border-l-0"
               initial={{ x: "-75%", opacity: 0 }}
               whileInView={{ x: 0, opacity: 1 }}
               viewport={{ once: true, margin: "-100px" }}
@@ -501,7 +598,7 @@ const timelineItems = [
 
 function TimelineCard({ item }: { item: typeof timelineItems[0] }) {
   return (
-    <div className="bg-white border border-black/20 flex overflow-hidden">
+    <div className="bg-[var(--background)] border border-[var(--foreground)]/20 flex overflow-hidden">
         <div className="p-1">
             <div 
                 className="relative aspect-square shrink-0 flex items-center justify-center self-stretch w-32"
@@ -511,8 +608,8 @@ function TimelineCard({ item }: { item: typeof timelineItems[0] }) {
                 backgroundPosition: "center",
                 }}
             >
-                <div className="rounded-lg bg-white/50 backdrop-blur-sm p-1">
-                <div className="rounded bg-white w-12 h-12 flex items-center justify-center">
+                <div className="rounded-lg bg-white/30 backdrop-blur-sm p-1">
+                <div className="rounded bg-[var(--background)] text-[var(--foreground)] w-12 h-12 flex items-center justify-center">
                     {item.icon}
                 </div>
                 </div>
@@ -529,7 +626,7 @@ function TimelineCard({ item }: { item: typeof timelineItems[0] }) {
 function TimelineConnector() {
   return (
     <div className="h-12 flex justify-center py-2">
-      <div className="w-0.5 h-full bg-black/30" />
+      <div className="w-0.5 h-full bg-[var(--foreground)]/30" />
     </div>
   );
 }
@@ -571,10 +668,39 @@ export default function SentinelPage() {
         aspectRatio="2880/1768"
       />
 
+      {/* Making a case for Agentic AI */}
       <NarrowContent className="mt-16">
-        <ContentSection id="why-admins" title="Why do Admins go to the Admin console?">
+        <ContentSection id="making-the-case" title="Making a case for Agentic AI in 1Password">
           <BodyText>
-            Understanding admin motivations and their pain points helped me identify where an AI copilot could provide the most value.
+            As AI capabilities rapidly evolved across the industry, 1Password risked falling behind competitors who were already shipping AI-powered features. I conducted a competitive analysis to understand where the market was heading and identify the opportunity for 1Password to differentiate.
+          </BodyText>
+        </ContentSection>
+      </NarrowContent>
+
+      <WideContent className="mt-0">
+        <div className="bg-[var(--background)] border border-[var(--foreground)]/20 overflow-hidden">
+          <CompetitorTable />
+        </div>
+        <p className="text-[var(--foreground)]/60 text-center mt-4 text-sm">
+          Competitive landscape analysis of AI capabilities across B2B SaaS platforms (Q3 2025)
+        </p>
+      </WideContent>
+
+      <NarrowContent className="mt-8">
+        <BodyText>
+            The case I made to leadership was simple—we needed to catch up, and fast. Falling behind wasn&apos;t just a competitive issue—it was an existential one.
+        </BodyText>
+
+        <QuoteCard attribution="Buzz Woeckener – 1Password Customer Advisory Board">
+            AI is the next competitive advantage — we want to automate the simple things so we can humanize the difficult things.
+        </QuoteCard>
+      </NarrowContent>
+
+
+      <NarrowContent className="mt-16">
+        <ContentSection id="why-admins" title="Understanding our Admin pain points">
+          <BodyText>
+            Understanding admin motivations and their pain points helped me identify where AI features might be most valuable.
           </BodyText>
         </ContentSection>
       </NarrowContent>
@@ -632,14 +758,14 @@ export default function SentinelPage() {
 
       {/* Line connector */}
       <div className="flex justify-center">
-        <div className="w-0.5 h-16 bg-black/20" />
+        <div className="w-0.5 h-16 bg-[var(--foreground)]/20" />
         </div>
 
       <SolutionSection />
 
       {/* Proof of Concept Section */}
       <NarrowContent className="mt-16">
-        <ContentSection id="proof-of-concept" title="Building a proof of concept">
+        <ContentSection id="proof-of-concept" title="Vibe-coding a proof of concept">
           <BodyText>
             I vibe-coded a proof of concept to help validate the idea and demonstrate the potential capabilities.
           </BodyText>
@@ -647,11 +773,13 @@ export default function SentinelPage() {
       </NarrowContent>
 
       <WideContent className="mt-0">
-        <div className="relative w-full overflow-hidden border border-black/20">
+        <div className="relative w-full overflow-hidden border border-[var(--foreground)]/20">
           <video
             src="/images/work/sentinel/xam-assistant-concept.mp4"
+            poster="/images/work/sentinel/xam-assistant-concept-poster.jpg"
             controls
             playsInline
+            preload="none"
             className="w-full h-auto"
           />
         </div>
@@ -663,7 +791,13 @@ export default function SentinelPage() {
             src="/images/work/sentinel/sentinel-concept-diagram.png"
             alt="Sentinel concept diagram"
             fill
-            className="object-contain"
+            className="object-contain dark:hidden"
+          />
+          <Image
+            src="/images/work/sentinel/sentinel-concept-diagram-dark.png"
+            alt="Sentinel concept diagram"
+            fill
+            className="object-contain hidden dark:block"
           />
         </div>
       </NarrowContent>
@@ -728,8 +862,8 @@ export default function SentinelPage() {
           >
             {/* Outer frosted glass wrapper */}
             <div className="bg-white/20 backdrop-blur-xl rounded-2xl p-2 max-w-2xl w-full border border-white/30">
-              {/* Inner white container */}
-              <div className="bg-white rounded-xl p-8 md:p-10 h-[280px] flex flex-col">
+              {/* Inner container */}
+              <div className="bg-[var(--background)] rounded-xl p-8 md:p-10 h-[280px] flex flex-col">
               <TextCarousel
                 items={[
                   { quote: "I like this as a concept. It feels familiar as well. I can give this to my team and they'll just know what to do with minimal instruction.", attribution: "Rafi · Snyk" },
@@ -743,7 +877,7 @@ export default function SentinelPage() {
                   className="w-full flex-1 flex items-start"
                 renderIndicator={(progress) => (
                     <div className="flex justify-center mb-6">
-                      <QuoteProgressIndicator progress={progress} variant="dark" />
+                      <QuoteProgressIndicator progress={progress} />
                   </div>
                 )}
               />

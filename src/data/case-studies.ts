@@ -17,6 +17,7 @@ export interface CaseStudy {
   heroColor: string;
   heroImage?: string;
   heroVideo?: string;
+  heroVideoPoster?: string;
   timeline: string;
   role: string;
   team: TeamMember[];
@@ -33,6 +34,7 @@ export const caseStudies: Record<string, CaseStudy> = {
     description: "Designed and championed an agentic vision to make 1Password security as simple as a conversation.",
     heroColor: "#2a1f5c",
     heroVideo: "/images/work/sentinel/sentinel-pixel-video.mp4",
+    heroVideoPoster: "/images/work/sentinel/sentinel-pixel-video-poster.jpg",
     timeline: "Q4 2025",
     role: "Design Lead",
     team: [],

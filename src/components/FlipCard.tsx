@@ -146,9 +146,9 @@ export function CardFace({
               backgroundPosition: "center",
             }}
           />
-          <div className="rounded-lg bg-white/50 backdrop-blur-sm w-15 h-15 relative flex items-center justify-center">
+          <div className="rounded-lg bg-white/30 backdrop-blur-sm w-15 h-15 relative flex items-center justify-center">
             <div 
-              className="relative rounded flex items-center justify-center w-12 h-12 min-w-12 min-h-12 bg-white"
+              className="relative rounded flex items-center justify-center w-12 h-12 min-w-12 min-h-12 bg-[var(--background)] text-[var(--foreground)]"
             >
               {icon}
             </div>
@@ -167,7 +167,7 @@ export function CardFace({
   return (
     <div className="card-spotlight h-full flex flex-col">
       <div 
-        className={`rounded-lg flex items-center justify-center mb-4 shrink-0 ${iconClassName}`}
+        className={`rounded-lg flex items-center justify-center mb-4 shrink-0 text-[var(--foreground)] ${iconClassName}`}
         style={{ width: 40, height: 40, minWidth: 40, minHeight: 40 }}
       >
         {icon}

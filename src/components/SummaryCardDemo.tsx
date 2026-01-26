@@ -166,12 +166,11 @@ function TransitionElement({
   );
 }
 
-// Card wrapper - matches Figma: corner-radius/large (12px), border/neutral rgba(0,0,0,0.13)
+// Card wrapper - matches Figma: corner-radius/large (12px), border/neutral
 function CardWrapper({ children }: { children: React.ReactNode }) {
   return (
     <div 
-      className={`bg-white rounded-[12px] max-w-[328px] w-full border overflow-hidden ${inter.className}`}
-      style={{ borderColor: "rgba(0,0,0,0.13)" }}
+      className={`bg-[var(--background)] rounded-[12px] max-w-[328px] w-full border border-[var(--foreground)]/10 overflow-hidden ${inter.className}`}
     >
       {children}
     </div>
@@ -197,8 +196,7 @@ interface CardConfig {
 function IconBtn({ children }: { children: React.ReactNode }) {
   return (
     <button 
-      className="min-h-[28px] px-1.5 py-[5.5px] flex items-center justify-center rounded-[8px] transition-colors hover:bg-black/5"
-      style={{ color: "rgba(0,0,0,0.62)" }}
+      className="min-h-[28px] px-1.5 py-[5.5px] flex items-center justify-center rounded-[8px] transition-colors hover:bg-[var(--foreground)]/5 text-[var(--foreground)]/60"
     >
       {children}
     </button>
@@ -241,10 +239,9 @@ function Avatar({
 }) {
   return (
     <div 
-      className="rounded-[6px] flex items-center justify-center font-semibold shrink-0 leading-[1.2] uppercase"
+      className="rounded-[6px] flex items-center justify-center font-semibold shrink-0 leading-[1.2] uppercase text-black/60"
       style={{ 
         backgroundColor: avatarColors[color], 
-        color: "rgba(0,0,0,0.62)",
         width: size, 
         height: size,
         fontSize: size < 24 ? 8 : 10,
@@ -294,15 +291,15 @@ function Row({
         ) : (
           <>
             <p 
-              className="text-[14px] truncate"
-              style={{ color: "rgba(0,0,0,0.82)", letterSpacing: "-0.09px" }}
+              className="text-[14px] truncate text-[var(--foreground)]/80"
+              style={{ letterSpacing: "-0.09px" }}
             >
               {title}
             </p>
             {subtitle && (
               <p 
-                className="text-[12px] truncate"
-                style={{ color: "rgba(0,0,0,0.62)", letterSpacing: "0.01px" }}
+                className="text-[12px] truncate text-[var(--foreground)]/60"
+                style={{ letterSpacing: "0.01px" }}
               >
                 {subtitle}
               </p>
@@ -319,8 +316,8 @@ function Row({
 function Badge({ children }: { children: React.ReactNode }) {
   return (
     <span 
-      className="text-[12px] px-2 py-0.5 rounded-full leading-[1.2]"
-      style={{ backgroundColor: "rgba(0,0,0,0.05)", color: "rgba(0,0,0,0.82)", letterSpacing: "0.01px" }}
+      className="text-[12px] px-2 py-0.5 rounded-full leading-[1.2] bg-[var(--foreground)]/5 text-[var(--foreground)]/80"
+      style={{ letterSpacing: "0.01px" }}
     >
       {children}
     </span>
@@ -331,8 +328,8 @@ function Badge({ children }: { children: React.ReactNode }) {
 function SectionLabel({ children }: { children: React.ReactNode }) {
   return (
     <p 
-      className="text-[14px] font-medium leading-[1.2] px-4 py-2"
-      style={{ color: "rgba(0,0,0,0.62)", letterSpacing: "0.01px" }}
+      className="text-[14px] font-medium leading-[1.2] px-4 py-2 text-[var(--foreground)]/60"
+      style={{ letterSpacing: "0.01px" }}
     >
       {children}
     </p>
@@ -345,13 +342,13 @@ function Step({ number, children }: { number: number; children: React.ReactNode 
     <div className="flex gap-2 items-center pl-4 pr-3 py-2">
       <div className="w-8 h-8 shrink-0 flex items-center justify-center">
         <div 
-          className="w-6 h-6 rounded-full flex items-center justify-center text-[12px] font-semibold leading-[1.2]"
-          style={{ backgroundColor: "#ededed", color: "rgba(0,0,0,0.62)", letterSpacing: "0.01px" }}
+          className="w-6 h-6 rounded-full flex items-center justify-center text-[12px] font-semibold leading-[1.2] bg-[var(--foreground)]/10 text-[var(--foreground)]/60"
+          style={{ letterSpacing: "0.01px" }}
         >
           {number}
         </div>
       </div>
-      <p className="text-[12px] leading-[1.5] flex-1" style={{ color: "rgba(0,0,0,0.82)", letterSpacing: "0.01px" }}>
+      <p className="text-[12px] leading-[1.5] flex-1 text-[var(--foreground)]/80" style={{ letterSpacing: "0.01px" }}>
         {children}
       </p>
     </div>
@@ -363,7 +360,7 @@ function StepConnector() {
   return (
     <div className="h-4 pl-4 pr-3">
       <div className="w-8 h-full flex items-center justify-center">
-        <div className="w-[2px] h-full rounded-full" style={{ backgroundColor: "#ededed" }} />
+        <div className="w-[2px] h-full rounded-full bg-[var(--foreground)]/10" />
       </div>
     </div>
   );
@@ -489,7 +486,7 @@ const cardConfigs: Record<Exclude<CardType, "skeleton">, CardConfig> = {
         </div>
 
         {/* Divider */}
-        <div className="h-px bg-[rgba(0,0,0,0.13)] mx-4" />
+        <div className="h-px bg-[var(--foreground)]/10 mx-4" />
 
         {/* People with access section */}
         <div className="pt-1 pb-2">
@@ -551,8 +548,8 @@ const cardConfigs: Record<Exclude<CardType, "skeleton">, CardConfig> = {
         {/* Description paragraph */}
         <div className="px-4 py-2">
           <p 
-            className="text-[13px] leading-[1.5]"
-            style={{ color: "rgba(0,0,0,0.82)", letterSpacing: "0.01px" }}
+            className="text-[13px] leading-[1.5] text-[var(--foreground)]/80"
+            style={{ letterSpacing: "0.01px" }}
           >
             In August 2022 Plex discovered suspicious activity on one of their databases. Plex began an investigation and it appears that a third-party was able to access a limited subset of data that includes emails, usernames, and encrypted passwords.
           </p>
@@ -564,8 +561,8 @@ const cardConfigs: Record<Exclude<CardType, "skeleton">, CardConfig> = {
           {["Email addresses", "Passwords", "IP addresses", "Usernames"].map((label, i) => (
             <span 
               key={i}
-              className="text-[12px] py-1 px-2 rounded-full leading-[1.2] flex items-center"
-              style={{ backgroundColor: "#ffefeb", color: "#a32600", letterSpacing: "0.01px" }}
+              className="text-[12px] py-1 px-2 rounded-full leading-[1.2] flex items-center bg-red-500/20 text-red-400"
+              style={{ letterSpacing: "0.01px" }}
             >
               {label}
             </span>
@@ -588,12 +585,8 @@ const cardConfigs: Record<Exclude<CardType, "skeleton">, CardConfig> = {
         {/* Footer with Learn more button */}
         <div className="flex justify-end p-4">
           <button 
-            className="flex items-center gap-2 px-2 py-[5.5px] min-h-[28px] rounded-[8px] text-[14px] leading-[1.2] border transition-colors hover:bg-gray-50"
-            style={{ 
-              color: "rgba(0,0,0,0.82)", 
-              borderColor: "rgba(0,0,0,0.13)",
-              letterSpacing: "-0.09px"
-            }}
+            className="flex items-center gap-2 px-2 py-[5.5px] min-h-[28px] rounded-[8px] text-[14px] leading-[1.2] border border-[var(--foreground)]/10 transition-colors hover:bg-[var(--foreground)]/5 text-[var(--foreground)]/80"
+            style={{ letterSpacing: "-0.09px" }}
           >
             {/* External link icon */}
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -657,12 +650,8 @@ const cardConfigs: Record<Exclude<CardType, "skeleton">, CardConfig> = {
         {/* Footer */}
         <div className="flex gap-2 justify-end p-4">
           <button 
-            className="text-[14px] px-2 py-[5.5px] min-h-[28px] rounded-[8px] leading-[1.2] transition-colors hover:bg-gray-50"
-            style={{ 
-              color: "rgba(0,0,0,0.82)", 
-              letterSpacing: "-0.09px",
-              border: "1px solid rgba(0,0,0,0.13)"
-            }}
+            className="text-[14px] px-2 py-[5.5px] min-h-[28px] rounded-[8px] leading-[1.2] transition-colors hover:bg-[var(--foreground)]/5 text-[var(--foreground)]/80 border border-[var(--foreground)]/10"
+            style={{ letterSpacing: "-0.09px" }}
           >
             Cancel
           </button>
@@ -704,10 +693,10 @@ const UniversalSkeleton = () => (
 // Sentinel icon SVG
 function SentinelIcon({ size = 16 }: { size?: number }) {
   return (
-    <svg width={size} height={size} viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <svg width={size} height={size} viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" className="text-[var(--foreground)]">
       <g clipPath="url(#sentinel-clip)">
-        <path d="M0 8C0 7.55817 0.358172 7.2 0.8 7.2H3.508C3.99291 7.2 4.47307 7.10448 4.92105 6.91889C5.36904 6.7333 5.77608 6.46127 6.11892 6.11836C6.46177 5.77544 6.7337 5.36834 6.91919 4.92031C7.10469 4.47229 7.20011 3.99211 7.2 3.5072V0.799999C7.2 0.358172 7.55817 0 8 0C8.44183 0 8.8 0.358172 8.8 0.8V3.5072C8.7999 3.99217 8.89534 4.47242 9.08088 4.9205C9.26643 5.36858 9.53843 5.77571 9.88136 6.11864C10.2243 6.46157 10.6314 6.73357 11.0795 6.91912C11.5276 7.10466 12.0078 7.20011 12.4928 7.2H15.2C15.6418 7.2 16 7.55817 16 8C16 8.44183 15.6418 8.8 15.2 8.8H12.4928C12.0079 8.7999 11.5277 8.89531 11.0797 9.08081C10.6317 9.2663 10.2246 9.53823 9.88164 9.88108C9.53873 10.2239 9.2667 10.631 9.08111 11.0789C8.89552 11.5269 8.8 12.0071 8.8 12.492V15.2C8.8 15.6418 8.44183 16 8 16C7.55817 16 7.2 15.6418 7.2 15.2V12.492C7.2 11.5128 6.81102 10.5737 6.11864 9.88136C5.42625 9.18898 4.48718 8.8 3.508 8.8H0.799999C0.358171 8.8 0 8.44183 0 8Z" fill="black"/>
-        <path d="M2.16525 13.8345C1.85286 13.5221 1.85286 13.0157 2.16525 12.7033L3.86245 11.0061C4.17499 10.6935 4.68174 10.6936 4.99417 11.0063C5.30647 11.3188 5.30635 11.8253 4.99389 12.1377L3.29645 13.8346C2.98404 14.1469 2.47761 14.1469 2.16525 13.8345ZM13.834 2.1657C13.5216 1.85333 13.0152 1.85333 12.7028 2.1657L11.0052 3.8633C10.6928 4.17567 10.6928 4.68213 11.0052 4.9945C11.3176 5.30687 11.824 5.30687 12.1364 4.9945L13.834 3.2969C14.1464 2.98453 14.1464 2.47807 13.834 2.1657ZM2.16517 2.16574C2.47756 1.85334 2.98406 1.85334 3.29645 2.16574L4.99365 3.86294C5.30619 4.17548 5.3061 4.68223 4.99345 4.99466C4.68093 5.30696 4.17442 5.30684 3.86205 4.99438L2.16509 3.29694C1.85277 2.98453 1.85281 2.4781 2.16517 2.16574ZM13.834 13.8345C14.1464 13.5221 14.1464 13.0156 13.8341 12.7032L12.1375 11.0062C11.825 10.6936 11.3182 10.6935 11.0056 11.0061C10.693 11.3187 10.6931 11.8255 11.0057 12.138L12.7027 13.8346C13.0152 14.1469 13.5216 14.1469 13.834 13.8345Z" fill="black"/>
+        <path d="M0 8C0 7.55817 0.358172 7.2 0.8 7.2H3.508C3.99291 7.2 4.47307 7.10448 4.92105 6.91889C5.36904 6.7333 5.77608 6.46127 6.11892 6.11836C6.46177 5.77544 6.7337 5.36834 6.91919 4.92031C7.10469 4.47229 7.20011 3.99211 7.2 3.5072V0.799999C7.2 0.358172 7.55817 0 8 0C8.44183 0 8.8 0.358172 8.8 0.8V3.5072C8.7999 3.99217 8.89534 4.47242 9.08088 4.9205C9.26643 5.36858 9.53843 5.77571 9.88136 6.11864C10.2243 6.46157 10.6314 6.73357 11.0795 6.91912C11.5276 7.10466 12.0078 7.20011 12.4928 7.2H15.2C15.6418 7.2 16 7.55817 16 8C16 8.44183 15.6418 8.8 15.2 8.8H12.4928C12.0079 8.7999 11.5277 8.89531 11.0797 9.08081C10.6317 9.2663 10.2246 9.53823 9.88164 9.88108C9.53873 10.2239 9.2667 10.631 9.08111 11.0789C8.89552 11.5269 8.8 12.0071 8.8 12.492V15.2C8.8 15.6418 8.44183 16 8 16C7.55817 16 7.2 15.6418 7.2 15.2V12.492C7.2 11.5128 6.81102 10.5737 6.11864 9.88136C5.42625 9.18898 4.48718 8.8 3.508 8.8H0.799999C0.358171 8.8 0 8.44183 0 8Z" fill="currentColor"/>
+        <path d="M2.16525 13.8345C1.85286 13.5221 1.85286 13.0157 2.16525 12.7033L3.86245 11.0061C4.17499 10.6935 4.68174 10.6936 4.99417 11.0063C5.30647 11.3188 5.30635 11.8253 4.99389 12.1377L3.29645 13.8346C2.98404 14.1469 2.47761 14.1469 2.16525 13.8345ZM13.834 2.1657C13.5216 1.85333 13.0152 1.85333 12.7028 2.1657L11.0052 3.8633C10.6928 4.17567 10.6928 4.68213 11.0052 4.9945C11.3176 5.30687 11.824 5.30687 12.1364 4.9945L13.834 3.2969C14.1464 2.98453 14.1464 2.47807 13.834 2.1657ZM2.16517 2.16574C2.47756 1.85334 2.98406 1.85334 3.29645 2.16574L4.99365 3.86294C5.30619 4.17548 5.3061 4.68223 4.99345 4.99466C4.68093 5.30696 4.17442 5.30684 3.86205 4.99438L2.16509 3.29694C1.85277 2.98453 1.85281 2.4781 2.16517 2.16574ZM13.834 13.8345C14.1464 13.5221 14.1464 13.0156 13.8341 12.7032L12.1375 11.0062C11.825 10.6936 11.3182 10.6935 11.0056 11.0061C10.693 11.3187 10.6931 11.8255 11.0057 12.138L12.7027 13.8346C13.0152 14.1469 13.5216 14.1469 13.834 13.8345Z" fill="currentColor"/>
       </g>
       <defs>
         <clipPath id="sentinel-clip">
@@ -802,8 +791,8 @@ function TypingIndicator() {
       <ShinyText 
         text="thinking..." 
         className="text-[16px] leading-normal"
-        color="rgba(0,0,0,0.4)"
-        shineColor="rgba(0,0,0,1)"
+        color="var(--shiny-text-base, rgba(255,255,255,0.4))"
+        shineColor="var(--shiny-text-shine, rgba(255,255,255,1))"
         speed={1.2}
         spread={90}
       />
@@ -811,12 +800,11 @@ function TypingIndicator() {
   );
 }
 
-// User message bubble - white background, black text
+// User message bubble
 function UserBubble({ content }: { content: string }) {
   return (
     <div 
-      className={`bg-black/5 px-3 py-3 rounded-[12px] text-[16px] leading-normal ${inter.className}`}
-      style={{ color: "black" }}
+      className={`bg-[var(--foreground)]/5 px-3 py-3 rounded-[12px] text-[16px] leading-normal text-[var(--foreground)] ${inter.className}`}
     >
       {content}
     </div>
@@ -852,8 +840,7 @@ function AgentBubble({
     <div className="flex flex-col">
       {/* Typed text response */}
       <p 
-        className={`text-[16px] leading-normal py-3 ${inter.className}`}
-        style={{ color: "black" }}
+        className={`text-[16px] leading-normal py-3 text-[var(--foreground)] ${inter.className}`}
       >
         <TextType 
           text={content}
@@ -894,8 +881,8 @@ function AgentBubble({
                   >
                     {config && (
                       <h4 
-                        className="text-[14px] font-semibold"
-                        style={{ color: "rgba(0,0,0,0.82)", letterSpacing: "-0.09px" }}
+                        className="text-[14px] font-semibold text-[var(--foreground)]/80"
+                        style={{ letterSpacing: "-0.09px" }}
                       >
                         {config.header.title}
                       </h4>
@@ -908,8 +895,8 @@ function AgentBubble({
                   >
                     {config && (
                       <p 
-                        className="text-[12px]"
-                        style={{ color: "rgba(0,0,0,0.62)", letterSpacing: "0.01px" }}
+                        className="text-[12px] text-[var(--foreground)]/60"
+                        style={{ letterSpacing: "0.01px" }}
                       >
                         {config.header.subtitle}
                       </p>
@@ -981,7 +968,7 @@ function ChatHeader({
             fill="none"
             stroke="currentColor"
             strokeWidth={strokeWidth}
-            className="text-black/20"
+            className="text-[var(--foreground)]/20"
           />
           {/* Progress circle (dark, fills up over time) */}
           <circle
@@ -992,7 +979,7 @@ function ChatHeader({
             stroke="currentColor"
             strokeWidth={strokeWidth}
             strokeLinecap="round"
-            className="text-black"
+            className="text-[var(--foreground)]"
             style={{
               strokeDasharray: circumference,
               strokeDashoffset: strokeDashoffset,
@@ -1131,9 +1118,9 @@ export function SummaryCardDemo() {
           willChange: "transform",
         }}
       >
-        {/* Inner white container */}
+        {/* Inner container */}
         <div 
-          className="rounded-[12px] overflow-hidden flex flex-col bg-white h-[640px]"
+          className="rounded-[12px] overflow-hidden flex flex-col bg-[var(--background)] h-[660px]"
         >
       {/* Chat header with countdown */}
       <ChatHeader 

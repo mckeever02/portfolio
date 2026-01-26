@@ -12,6 +12,7 @@ interface WorkCardProps {
   href: string;
   imageUrl?: string;
   videoUrl?: string;
+  videoPoster?: string;
   externalLink?: boolean;
   comingSoon?: boolean;
 }
@@ -26,6 +27,7 @@ export function WorkCard({
   href,
   imageUrl,
   videoUrl,
+  videoPoster,
   externalLink = false,
   comingSoon = false,
 }: WorkCardProps) {
@@ -37,6 +39,7 @@ export function WorkCard({
       href={href}
       imageUrl={imageUrl}
       videoUrl={videoUrl}
+      videoPoster={videoPoster}
       externalLink={externalLink}
       comingSoon={comingSoon}
       details={

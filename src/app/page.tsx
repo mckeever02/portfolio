@@ -75,6 +75,7 @@ export default function Home() {
                 company={caseStudies.sentinel.company}
                 bgColor={caseStudies.sentinel.heroColor}
                 videoUrl={caseStudies.sentinel.heroVideo}
+                videoPoster={caseStudies.sentinel.heroVideoPoster}
                 href={`/work/${caseStudies.sentinel.slug}`}
                 comingSoon
               />

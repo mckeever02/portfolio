@@ -17,16 +17,16 @@ interface TextCarouselProps {
 }
 
 // Combined quote icon with progress ring - exported for external use
-export function QuoteProgressIndicator({ progress, variant = "dark" }: { progress: number; variant?: "dark" | "light" }) {
+export function QuoteProgressIndicator({ progress, variant = "default" }: { progress: number; variant?: "default" | "light" }) {
   const size = 32;
   const strokeWidth = 1;
   const radius = (size - strokeWidth) / 2;
   const circumference = 2 * Math.PI * radius;
   const strokeDashoffset = circumference * (1 - progress);
 
-  const colors = variant === "dark" 
-    ? { ring: "text-black/20", progress: "text-black", icon: "text-black" }
-    : { ring: "text-white/30", progress: "text-white", icon: "text-white" };
+  const colors = variant === "light" 
+    ? { ring: "text-white/30", progress: "text-white", icon: "text-white" }
+    : { ring: "text-[var(--foreground)]/20", progress: "text-[var(--foreground)]", icon: "text-[var(--foreground)]" };
 
   return (
     <div

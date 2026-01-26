@@ -50,13 +50,13 @@ export function MediaCarousel({
 
   const slideOffset = cardWidth + gap;
 
-  // Determine arrow direction based on carousel movement direction
+  // Determine arrow direction based on navigation direction
   const getArrowDirection = () => {
     if (hoveredCardIndex === null) return "right";
     if (hoveredCardIndex === activeIndex) return "right"; // Active slide goes forward
-    // Next slide (right) = left arrow (carousel moves left)
-    // Previous slide (left) = right arrow (carousel moves right)
-    return hoveredCardIndex > activeIndex ? "left" : "right";
+    // Next slide (right) = right arrow
+    // Previous slide (left) = left arrow
+    return hoveredCardIndex > activeIndex ? "right" : "left";
   };
 
   return (

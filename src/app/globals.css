@@ -73,6 +73,14 @@
   --nav-indicator: #21201c;
   --max-width: 1280px;
   
+  /* Shiny text effect colors */
+  --shiny-text-base: rgba(0, 0, 0, 0.4);
+  --shiny-text-shine: rgba(0, 0, 0, 1);
+  
+  /* Skeleton loading colors */
+  --skeleton-base: #e5e5e5;
+  --skeleton-highlight: #f0f0f0;
+  
   /* Fonts - GT Cinetype and GT Era Display with system fallbacks */
   --font-cinetype: 'GT Cinetype', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   --font-era: 'GT Era Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
@@ -98,6 +106,14 @@
     --border: rgba(255, 255, 255, 0.06);
     --border-darker: rgba(255, 255, 255, 0.06);
     --border-hover: rgba(255, 255, 255, 0.1);
+    
+    /* Shiny text effect colors - dark mode */
+    --shiny-text-base: rgba(255, 255, 255, 0.4);
+    --shiny-text-shine: rgba(255, 255, 255, 1);
+    
+    /* Skeleton loading colors - dark mode */
+    --skeleton-base: rgba(255, 255, 255, 0.1);
+    --skeleton-highlight: rgba(255, 255, 255, 0.15);
     --card-background: #1F1E1B;
     --nav-track: rgba(0, 0, 0, 0.3);
     --nav-indicator: #E7E6E3;
@@ -476,11 +492,11 @@ body {
 .skeleton-shimmer {
   background: linear-gradient(
     90deg,
-    #e5e5e5 0%,
-    #f0f0f0 25%,
-    #e5e5e5 50%,
-    #f0f0f0 75%,
-    #e5e5e5 100%
+    var(--skeleton-base) 0%,
+    var(--skeleton-highlight) 25%,
+    var(--skeleton-base) 50%,
+    var(--skeleton-highlight) 75%,
+    var(--skeleton-base) 100%
   );
   background-size: 200% 100%;
   animation: skeleton-shimmer 2s ease-in-out infinite;
