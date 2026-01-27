@@ -130,9 +130,9 @@ export function MediaCarousel({
         </motion.div>
 
         {!isMobile && (
-          <HoverCursor cursorX={cursorX} cursorY={cursorY} isVisible={isHovered}>
-            <ArrowIcon direction={getArrowDirection()} />
-          </HoverCursor>
+        <HoverCursor cursorX={cursorX} cursorY={cursorY} isVisible={isHovered}>
+          <ArrowIcon direction={getArrowDirection()} />
+        </HoverCursor>
         )}
       </div>
 

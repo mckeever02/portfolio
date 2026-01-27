@@ -19,7 +19,7 @@ export const metadata: Metadata = caseStudy ? {
     title: caseStudy.title,
     description: caseStudy.subtitle,
     images: caseStudy.heroVideoPoster ? [caseStudy.heroVideoPoster] : [],
-  },
+    },
 } : {
   title: "Case Study Not Found",
 };

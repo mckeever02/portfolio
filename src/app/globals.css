@@ -530,6 +530,47 @@ body {
   }
 }
 
+/* Tilt card - project cards on home page */
+.tilt-card-shadow {
+  opacity: 0;
+  transition: opacity 200ms ease-out;
+  background: #d4d0c8;
+}
+
+.tilt-card:hover .tilt-card-shadow {
+  opacity: 1;
+}
+
+.tilt-card:active .tilt-card-shadow {
+  opacity: 0;
+}
+
+.tilt-card-face {
+  position: relative;
+  transition: transform 200ms ease-out, border-color 200ms ease-out;
+}
+
+.tilt-card:hover .tilt-card-face {
+  transform: translate(-4px, -8px) rotate(0.5deg);
+  border-color: black;
+}
+
+.tilt-card:active .tilt-card-face {
+  transform: translate(0, 0) rotate(0deg);
+  border-color: black;
+  transition: transform 50ms ease-out;
+}
+
+@media (prefers-color-scheme: dark) {
+  .tilt-card-shadow {
+    background: #3a3a3a;
+  }
+
+  .tilt-card:hover .tilt-card-face,
+  .tilt-card:active .tilt-card-face {
+    border-color: var(--foreground);
+  }
+}
 
 /* Skeleton shimmer animation */
 @keyframes skeleton-shimmer {

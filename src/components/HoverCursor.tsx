@@ -66,6 +66,7 @@ interface HoverCursorProps {
   children: ReactNode;
   size?: "sm" | "md" | "lg";
   className?: string;
+  label?: string;
 }
 
 const sizeClasses = {
@@ -81,10 +82,11 @@ export function HoverCursor({
   children,
   size = "md",
   className = "",
+  label,
 }: HoverCursorProps) {
   return (
     <motion.div
-      className={`absolute top-0 left-0 ${sizeClasses[size]} rounded-full bg-[var(--foreground)] flex items-center justify-center pointer-events-none z-10 ${className}`}
+      className="absolute top-0 left-0 pointer-events-none z-10"
       style={{
         x: cursorX,
         y: cursorY,
@@ -99,7 +101,18 @@ export function HoverCursor({
         damping: 25,
       }}
     >
-      {children}
+      {label ? (
+        <div className="bg-[var(--foreground)] rounded-full pl-4 pr-1.5 py-1.5 whitespace-nowrap flex items-center gap-3">
+          <span className="text-[var(--background)] text-base font-medium">{label}</span>
+          <div className="w-8 h-8 rounded-full bg-[var(--background)] flex items-center justify-center">
+            <span className="[&_svg]:text-[var(--foreground)]">{children}</span>
+          </div>
+        </div>
+      ) : (
+        <div className={`${sizeClasses[size]} rounded-full bg-[var(--foreground)] flex items-center justify-center ${className}`}>
+          {children}
+        </div>
+      )}
     </motion.div>
   );
 }

@@ -77,7 +77,6 @@ export default function Home() {
                 videoUrl={caseStudies.sentinel.heroVideo}
                 videoPoster={caseStudies.sentinel.heroVideoPoster}
                 href={`/work/${caseStudies.sentinel.slug}`}
-                comingSoon
               />
               <WorkCard
                 title={caseStudies.verifier.title}
@@ -121,6 +120,7 @@ export default function Home() {
                 videoUrl="/images/sweepr-splash.mp4"
                 href="https://v3.mckvr.design/case-studies/multimodal-design-system"
                 externalLink
+                hoverLabel="View case study"
               />
             </div>
           </section>

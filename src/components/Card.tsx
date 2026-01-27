@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { motion, useInView } from "framer-motion";
+import { useInView } from "framer-motion";
 import { ReactNode, useRef, useEffect, useState } from "react";
 import { HoverCursor, useHoverCursor, ArrowIcon, ExternalArrowIcon, ComingSoonText } from "./HoverCursor";
 
@@ -17,6 +17,7 @@ interface CardProps {
   externalLink?: boolean;
   comingSoon?: boolean;
   details: ReactNode;
+  hoverLabel?: string;
 }
 
 export function Card({
@@ -30,6 +31,7 @@ export function Card({
   externalLink = false,
   comingSoon = false,
   details,
+  hoverLabel,
 }: CardProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -65,79 +67,77 @@ export function Card({
     setIsHovered(false);
   };
 
+  const cardContent = (
+    <>
+      {/* Visual Area */}
+      <div
+        className="aspect-video w-full overflow-hidden relative"
+        style={{ backgroundColor: bgColor }}
+      >
+        {videoUrl ? (
+          <video
+            ref={videoRef}
+            src={videoUrl}
+            poster={videoPoster}
+            aria-label={`Video preview for ${title}`}
+            loop
+            muted
+            playsInline
+            preload="none"
+            className="w-full h-full object-cover"
+          />
+        ) : imageUrl ? (
+          <Image
+            src={imageUrl}
+            alt={title}
+            fill
+            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 80vw, 800px"
+            className="object-cover"
+            loading="lazy"
+          />
+        ) : null}
+      </div>
+
+      {/* Info Area */}
+      <div className="bg-[var(--card-background)] border-t border-[var(--border-darker)] group-hover:border-black dark:group-hover:border-[var(--foreground)] flex flex-col gap-6 px-6 pt-6 pb-3 transition-colors duration-150">
+        {/* Project Info */}
+        <div className="flex flex-col gap-2">
+          <h3 className="text-xl font-bold text-[var(--foreground)]">
+            {title}
+          </h3>
+          <p className="text-base sm:text-lg text-[var(--foreground)]">
+            {description}
+          </p>
+        </div>
+
+        {/* Project Details */}
+        {details}
+      </div>
+    </>
+  );
+
+  const cardFaceClassName = "tilt-card-face group flex flex-col border border-[var(--border-darker)] overflow-hidden bg-[var(--card-background)]";
+  const cardStyle = { cursor: isHovered ? "none" : comingSoon ? "default" : "pointer" } as const;
+
   return (
-    <motion.div
+    <div
       ref={containerRef}
-      className="relative"
+      className={`relative ${comingSoon ? "" : "tilt-card cursor-pointer"}`}
       style={{ cursor: isHovered ? "none" : comingSoon ? "default" : "auto" }}
-      whileHover={{ 
-        rotate: -0.5,
-      }}
-      transition={{
-        type: "spring",
-        stiffness: 400,
-        damping: 25,
-      }}
       onMouseMove={handleMouseMove}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
     >
+      {/* Solid shadow - appears on hover */}
+      {!comingSoon && (
+        <div className="tilt-card-shadow absolute inset-0" />
+      )}
+      
+      {/* Main card face */}
       {(() => {
-        const cardClassName = "group flex flex-col border border-[var(--border-darker)] hover:border-[var(--border-hover)] overflow-hidden bg-[var(--card-background)] transition-all duration-200 hover:shadow-[0_2px_8px_rgba(0,0,0,0.04)]";
-        const cardStyle = { cursor: isHovered ? "none" : comingSoon ? "default" : "pointer" } as const;
-        
-        const cardContent = (
-          <>
-            {/* Visual Area */}
-            <div
-              className="aspect-video w-full overflow-hidden relative"
-              style={{ backgroundColor: bgColor }}
-            >
-              {videoUrl ? (
-                <video
-                  ref={videoRef}
-                  src={videoUrl}
-                  poster={videoPoster}
-                  aria-label={`Video preview for ${title}`}
-                  loop
-                  muted
-                  playsInline
-                  preload="none"
-                  className="w-full h-full object-cover"
-                />
-              ) : imageUrl ? (
-                <Image
-                  src={imageUrl}
-                  alt={title}
-                  fill
-                  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 80vw, 800px"
-                  className="object-cover"
-                  loading="lazy"
-                />
-              ) : null}
-            </div>
-
-            {/* Info Area */}
-            <div className="bg-[var(--card-background)] border-t border-[var(--border-darker)] flex flex-col gap-6 px-6 pt-6 pb-3">
-              {/* Project Info */}
-              <div className="flex flex-col gap-2">
-                <h3 className="text-xl font-bold text-[var(--foreground)]">
-                  {title}
-                </h3>
-                <p className="text-base sm:text-lg text-[var(--foreground)]">
-                  {description}
-                </p>
-              </div>
-
-              {/* Project Details */}
-              {details}
-            </div>
-          </>
-        );
-
         if (comingSoon) {
           return (
-            <div className={cardClassName} style={cardStyle}>
+            <div className={cardFaceClassName} style={cardStyle}>
               {cardContent}
             </div>
           );
@@ -149,7 +149,7 @@ export function Card({
               href={href}
               target="_blank"
               rel="noopener noreferrer"
-              className={cardClassName}
+              className={cardFaceClassName}
               style={cardStyle}
             >
               {cardContent}
@@ -158,7 +158,7 @@ export function Card({
         }
         
         return (
-          <Link href={href} className={cardClassName} style={cardStyle}>
+          <Link href={href} className={cardFaceClassName} style={cardStyle}>
             {cardContent}
           </Link>
         );
@@ -169,6 +169,7 @@ export function Card({
         cursorY={cursorY} 
         isVisible={isHovered}
         size={comingSoon ? "lg" : "md"}
+        label={comingSoon ? undefined : hoverLabel ?? (externalLink ? "View launch" : "View case study")}
       >
         {comingSoon ? (
           <ComingSoonText />
@@ -178,7 +179,7 @@ export function Card({
           <ArrowIcon />
         )}
       </HoverCursor>
-    </motion.div>
+    </div>
   );
 }
 
