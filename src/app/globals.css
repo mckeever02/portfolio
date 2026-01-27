@@ -62,7 +62,8 @@
 
 :root {
   /* Design Tokens from Figma */
-  --background: #f2ede6;
+  --page-background: #f2ede6;
+  --background: #ffffff;
   --foreground: #21201c;
   --foreground-secondary: rgba(33, 32, 28, 0.7);
   --border: rgba(0, 0, 0, 0.1);
@@ -87,6 +88,7 @@
 }
 
 @theme inline {
+  --color-page-background: var(--page-background);
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-foreground-secondary: var(--foreground-secondary);
@@ -100,6 +102,7 @@
 /* Dark mode - triggered by system preference */
 @media (prefers-color-scheme: dark) {
   :root {
+    --page-background: #181715;
     --background: #181715;
     --foreground: #E7E6E3;
     --foreground-secondary: rgba(231, 230, 227, 0.7);
@@ -129,7 +132,7 @@ html {
 }
 
 body {
-  background: var(--background);
+  background: var(--page-background);
   color: var(--foreground);
   font-family: var(--font-cinetype);
   min-height: 100vh;
@@ -476,6 +479,45 @@ body {
       radial-gradient(at 90% 55%, hsla(320, 40%, 12%, 1) 0px, transparent 50%),
       radial-gradient(at 67% 20%, hsla(200, 50%, 10%, 1) 0px, transparent 50%),
       radial-gradient(at 10% 85%, hsla(250, 35%, 14%, 1) 0px, transparent 50%);
+  }
+}
+
+/* Back Button Hover Effect */
+.back-button-shadow {
+  opacity: 0;
+  transition: opacity 200ms ease-out;
+}
+
+.back-button:hover .back-button-shadow {
+  opacity: 1;
+}
+
+.back-button-face {
+  transition: transform 200ms ease-out, border-color 200ms ease-out;
+}
+
+.back-button:hover .back-button-face {
+  transform: translate(-4px, -4px) rotate(2deg);
+  background-color: var(--card-background);
+  border-color: black;
+}
+
+.back-button-arrow {
+  transition: transform 200ms ease-out;
+}
+
+.back-button:hover .back-button-arrow {
+  transform: translateX(-2px);
+}
+
+@media (prefers-color-scheme: dark) {
+  .back-button-shadow {
+    background: var(--foreground);
+    border-color: var(--foreground);
+  }
+
+  .back-button:hover .back-button-face {
+    border-color: var(--foreground);
   }
 }
 

@@ -15,7 +15,7 @@ interface ProjectMetaProps {
 
 function MetaItem({ label, children }: { label: string; children: ReactNode }) {
   return (
-    <div className="sm:flex-1 flex flex-col gap-2 min-w-0">
+    <div className="flex-1 flex flex-col gap-2 min-w-0">
       <span className="text-xs font-bold tracking-[1.2px] uppercase text-[var(--foreground-secondary)] font-[var(--font-era)]">
         {label}
       </span>
@@ -27,7 +27,7 @@ function MetaItem({ label, children }: { label: string; children: ReactNode }) {
 export function ProjectMeta({ subtitle, timeline, role, team }: ProjectMetaProps) {
   return (
     <div className="bg-[var(--card-background)] border border-[var(--border-darker)] flex flex-col gap-6 p-6">
-      <h1 className="text-[24px] sm:text-[32px] lg:text-[40px] leading-[1.4] tracking-[-0.32px] text-[var(--foreground)]">
+      <h1 className="text-xl xs:text-[24px] sm:text-[32px] lg:text-[40px] leading-[1.4] tracking-[-0.32px] text-[var(--foreground)]">
         {subtitle}
       </h1>
 
