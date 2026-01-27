@@ -15,7 +15,7 @@ interface ProjectMetaProps {
 
 function MetaItem({ label, children }: { label: string; children: ReactNode }) {
   return (
-    <div className="sm:flex-1 flex flex-col gap-2 min-w-0">
+    <div className="flex-1 flex flex-col gap-2 min-w-0">
       <span className="text-xs font-bold tracking-[1.2px] uppercase text-[var(--foreground-secondary)] font-[var(--font-era)]">
         {label}
       </span>
@@ -27,7 +27,7 @@ function MetaItem({ label, children }: { label: string; children: ReactNode }) {
 export function ProjectMeta({ subtitle, timeline, role, team }: ProjectMetaProps) {
   return (
     <div className="bg-[var(--card-background)] border border-[var(--border-darker)] flex flex-col gap-6 p-6">
-      <h1 className="text-[24px] sm:text-[32px] leading-[1.4] tracking-[-0.32px] text-[var(--foreground)]">
+      <h1 className="text-[22px] xs:text-[24px] sm:text-[32px] lg:text-[40px] leading-[1.4] xs:tracking-[-0.32px] text-[var(--foreground)]">
         {subtitle}
       </h1>
 
@@ -49,15 +49,21 @@ export function ProjectMeta({ subtitle, timeline, role, team }: ProjectMetaProps
       </svg>
 
       <div className="flex gap-8">
-        <MetaItem label="Timeline">
-          <span className="text-base text-[var(--foreground)]">{timeline}</span>
-        </MetaItem>
-        <MetaItem label="Team">
-          <TeamAvatars team={team} />
-        </MetaItem>
-        <MetaItem label="Role">
-          <span className="text-base text-[var(--foreground)]">{role}</span>
-        </MetaItem>
+        {timeline && (
+          <MetaItem label="Timeline">
+            <span className="text-base text-[var(--foreground)]">{timeline}</span>
+          </MetaItem>
+        )}
+        {team && team.length > 0 && (
+          <MetaItem label="Team">
+            <TeamAvatars team={team} />
+          </MetaItem>
+        )}
+        {role && (
+          <MetaItem label="Role">
+            <span className="text-base text-[var(--foreground)]">{role}</span>
+          </MetaItem>
+        )}
       </div>
     </div>
   );

@@ -12,8 +12,10 @@ interface WorkCardProps {
   href: string;
   imageUrl?: string;
   videoUrl?: string;
+  videoPoster?: string;
   externalLink?: boolean;
   comingSoon?: boolean;
+  hoverLabel?: string;
 }
 
 export function WorkCard({
@@ -26,8 +28,10 @@ export function WorkCard({
   href,
   imageUrl,
   videoUrl,
+  videoPoster,
   externalLink = false,
   comingSoon = false,
+  hoverLabel,
 }: WorkCardProps) {
   return (
     <Card
@@ -37,8 +41,10 @@ export function WorkCard({
       href={href}
       imageUrl={imageUrl}
       videoUrl={videoUrl}
+      videoPoster={videoPoster}
       externalLink={externalLink}
       comingSoon={comingSoon}
+      hoverLabel={hoverLabel}
       details={
         <div className="flex items-center gap-3 min-w-0 whitespace-nowrap overflow-hidden">
           <CardDetailText>{year}</CardDetailText>

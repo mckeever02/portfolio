@@ -32,6 +32,7 @@ export function ProjectCard({
       imageUrl={imageUrl}
       videoUrl={videoUrl}
       externalLink={externalLink}
+      hoverLabel="View project"
       details={
         <div className="flex items-center">
           <CardDetailText>{year}</CardDetailText>

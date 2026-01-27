@@ -10,9 +10,9 @@ import {
   ProjectCard,
   ImageCarousel,
   Timeline,
-  PageTransition,
 } from "@/components";
 import { useActiveSection } from "@/hooks/useActiveSection";
+import { caseStudies } from "@/data/case-studies";
 
 const sections = ["works", "projects", "about"] as const;
 
@@ -20,14 +20,7 @@ export default function Home() {
   const activeSection = useActiveSection(sections);
 
   return (
-    <PageTransition direction="back">
-      <a 
-        href="#works" 
-        className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:bg-[var(--foreground)] focus:text-[var(--background)] focus:px-4 focus:py-2 focus:rounded"
-      >
-        Skip to content
-      </a>
-      <div className="min-h-screen bg-[var(--background)]">
+    <div className="min-h-screen bg-[var(--page-background)]">
       <div className="mx-auto max-w-[1280px] grid grid-cols-1 md:grid-cols-[300px_1fr] gap-8 lg:gap-24 xl:gap-32 p-4 lg:p-8">
         {/* Fixed Left Sidebar */}
         <aside aria-label="Profile and navigation" className="md:sticky md:top-4 lg:top-8 h-fit flex flex-col gap-10 md:gap-16 px-1 py-4 lg:py-8">
@@ -67,25 +60,25 @@ export default function Home() {
                 externalLink
               />
               <WorkCard
-                title="1Password Sentinel: Copilot for Admins"
-                description="Designed and championed an agentic vision to make 1Password security as simple as a conversation."
+                title={caseStudies.sentinel.title}
+                description={caseStudies.sentinel.description}
                 year="2025"
-                role="Design Lead"
-                company="1Password"
-                bgColor="#000000"
-                videoUrl="/images/sentinel-hero.mp4?v=2"
-                href="/work/sentinel"
-                comingSoon
+                role={caseStudies.sentinel.role}
+                company={caseStudies.sentinel.company}
+                bgColor={caseStudies.sentinel.heroColor}
+                videoUrl={caseStudies.sentinel.heroVideo}
+                videoPoster={caseStudies.sentinel.heroVideoPoster}
+                href={`/work/${caseStudies.sentinel.slug}`}
               />
               <WorkCard
-                title="Verifier"
-                description="0 → 1 design for a verification system to combat deepfakes and AI fraud"
+                title={caseStudies.verifier.title}
+                description={caseStudies.verifier.description}
                 year="2025"
-                role="Design Lead"
-                company="1Password"
-                bgColor="#c9e8e3"
-                imageUrl="/images/verifier-hero.jpg"
-                href="/work/verifier"
+                role={caseStudies.verifier.role}
+                company={caseStudies.verifier.company}
+                bgColor={caseStudies.verifier.heroColor}
+                imageUrl={caseStudies.verifier.heroImage}
+                href={`/work/${caseStudies.verifier.slug}`}
               />
               <WorkCard
                 title="Account Management"
@@ -119,6 +112,7 @@ export default function Home() {
                 videoUrl="/images/sweepr-splash.mp4"
                 href="https://v3.mckvr.design/case-studies/multimodal-design-system"
                 externalLink
+                hoverLabel="View case study"
               />
             </div>
           </section>
@@ -191,6 +185,5 @@ export default function Home() {
         </main>
       </div>
     </div>
-    </PageTransition>
   );
 }

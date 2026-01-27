@@ -13,8 +13,11 @@ export interface CaseStudy {
   title: string;
   company: string;
   subtitle: string;
+  description: string;
   heroColor: string;
   heroImage?: string;
+  heroVideo?: string;
+  heroVideoPoster?: string;
   timeline: string;
   role: string;
   team: TeamMember[];
@@ -25,11 +28,13 @@ export interface CaseStudy {
 export const caseStudies: Record<string, CaseStudy> = {
   sentinel: {
     slug: "sentinel",
-    title: "Sentinel",
+    title: "1Password Sentinel: Copilot for Admins",
     company: "1Password",
     subtitle: "Bringing agentic intelligence to the 1Password admin experience",
+    description: "Designed and championed an agentic vision to make 1Password security as simple as a conversation.",
     heroColor: "#2a1f5c",
-    heroImage: "/images/sentinel-hero.mp4",
+    heroVideo: "/images/work/sentinel/sentinel-pixel-video.mp4",
+    heroVideoPoster: "/images/work/sentinel/sentinel-pixel-video-poster.jpg",
     timeline: "Q4 2025",
     role: "Design Lead",
     team: [],
@@ -41,6 +46,7 @@ export const caseStudies: Record<string, CaseStudy> = {
     title: "Verifier",
     company: "1Password",
     subtitle: "Identity verification in the age of AI fraud and deepfakes",
+    description: "0 → 1 design for a verification system to combat deepfakes and AI fraud",
     heroColor: "#c9e8e3",
     heroImage: "/images/verifier-hero.jpg",
     timeline: "H1 2025",

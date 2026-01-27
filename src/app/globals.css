@@ -33,9 +33,37 @@
   font-display: swap;
 }
 
+@font-face {
+  font-family: 'Anime Ace';
+  src: url('/fonts/AnimeAce20BB.woff2') format('woff2'),
+       url('/fonts/AnimeAce20BB.woff') format('woff');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Anime Ace';
+  src: url('/fonts/AnimeAce20BB-Bold.woff2') format('woff2'),
+       url('/fonts/AnimeAce20BB-Bold.woff') format('woff');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Anime Ace';
+  src: url('/fonts/AnimeAce20BB-Italic.woff2') format('woff2'),
+       url('/fonts/AnimeAce20BB-Italic.woff') format('woff');
+  font-weight: 400;
+  font-style: italic;
+  font-display: swap;
+}
+
 :root {
   /* Design Tokens from Figma */
-  --background: #f2ede6;
+  --page-background: #f2ede6;
+  --background: #ffffff;
   --foreground: #21201c;
   --foreground-secondary: rgba(33, 32, 28, 0.7);
   --border: rgba(0, 0, 0, 0.1);
@@ -46,12 +74,21 @@
   --nav-indicator: #21201c;
   --max-width: 1280px;
   
+  /* Shiny text effect colors */
+  --shiny-text-base: rgba(0, 0, 0, 0.4);
+  --shiny-text-shine: rgba(0, 0, 0, 1);
+  
+  /* Skeleton loading colors */
+  --skeleton-base: #e5e5e5;
+  --skeleton-highlight: #f0f0f0;
+  
   /* Fonts - GT Cinetype and GT Era Display with system fallbacks */
   --font-cinetype: 'GT Cinetype', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   --font-era: 'GT Era Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 }
 
 @theme inline {
+  --color-page-background: var(--page-background);
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-foreground-secondary: var(--foreground-secondary);
@@ -65,12 +102,21 @@
 /* Dark mode - triggered by system preference */
 @media (prefers-color-scheme: dark) {
   :root {
+    --page-background: #181715;
     --background: #181715;
     --foreground: #E7E6E3;
     --foreground-secondary: rgba(231, 230, 227, 0.7);
     --border: rgba(255, 255, 255, 0.06);
     --border-darker: rgba(255, 255, 255, 0.06);
     --border-hover: rgba(255, 255, 255, 0.1);
+    
+    /* Shiny text effect colors - dark mode */
+    --shiny-text-base: rgba(255, 255, 255, 0.4);
+    --shiny-text-shine: rgba(255, 255, 255, 1);
+    
+    /* Skeleton loading colors - dark mode */
+    --skeleton-base: rgba(255, 255, 255, 0.1);
+    --skeleton-highlight: rgba(255, 255, 255, 0.15);
     --card-background: #1F1E1B;
     --nav-track: rgba(0, 0, 0, 0.3);
     --nav-indicator: #E7E6E3;
@@ -86,7 +132,7 @@ html {
 }
 
 body {
-  background: var(--background);
+  background: var(--page-background);
   color: var(--foreground);
   font-family: var(--font-cinetype);
   min-height: 100vh;
@@ -255,6 +301,77 @@ body {
   transform: rotate(-8deg);
 }
 
+/* Colored squiggly underlines - works with multi-line text */
+.squiggly {
+  text-decoration: underline;
+  text-decoration-style: wavy;
+  text-underline-offset: 4px;
+  text-decoration-thickness: 2px;
+  cursor: pointer;
+  position: relative;
+  display: inline;
+  transition: text-decoration-color 0.2s ease;
+}
+
+.squiggly:hover {
+  cursor: zoom-in;
+}
+
+.squiggly-purple {
+  text-decoration-color: #A99BEA;
+}
+
+.squiggly-orange {
+  text-decoration-color: #F97316;
+}
+
+.squiggly-blue {
+  text-decoration-color: #38BDF8;
+}
+
+.squiggly-brown {
+  text-decoration-color: #A78B5B;
+}
+
+/* Underline-to-rectangle hover effect */
+.highlight-expand {
+  cursor: pointer;
+  text-decoration: none;
+  background-image: linear-gradient(var(--highlight-color, #38BDF8), var(--highlight-color, #38BDF8));
+  background-size: 100% 3px;
+  background-position: 0 100%;
+  background-repeat: no-repeat;
+  /* Springy ease-out for expansion */
+  transition: background-size 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
+}
+
+.highlight-expand:hover {
+  background-size: 100% 100%;
+  cursor: zoom-in;
+}
+
+.highlight-expand-blue {
+  --highlight-color: rgba(56, 189, 248, 0.4);
+}
+
+.highlight-expand-purple {
+  --highlight-color: rgba(169, 155, 234, 0.4);
+}
+
+.highlight-expand-brown {
+  --highlight-color: rgba(167, 139, 91, 0.4);
+}
+
+.highlight-expand-orange {
+  --highlight-color: rgba(249, 115, 22, 0.4);
+}
+
+.highlight-expand-neutral {
+  --highlight-color: rgba(33, 32, 28, 0.2);
+}
+
 /* React Medium Image Zoom - Custom Styles */
 [data-rmiz] {
   cursor: zoom-in;
@@ -270,10 +387,7 @@ body {
 }
 
 [data-rmiz-btn-unzoom] {
-  background-color: rgba(255, 255, 255, 0.1) !important;
-  border-radius: 50%;
-  color: white !important;
-  transition: background-color 0.2s ease;
+  @apply absolute top-6 right-6 w-12 h-12 flex items-center justify-center bg-white/10 hover:bg-white/20 rounded-full transition-colors cursor-pointer text-white;
 }
 
 [data-rmiz-btn-unzoom]:hover {
@@ -308,4 +422,184 @@ body {
 .card-spotlight:hover::before,
 .card-spotlight:focus-within::before {
   opacity: 1;
+}
+
+/* Spotlight effect only (no default card styling) */
+.spotlight-effect {
+  position: relative;
+  overflow: hidden;
+  --mouse-x: 50%;
+  --mouse-y: 50%;
+  --spotlight-color: rgba(255, 255, 255, 0.15);
+}
+
+.spotlight-effect::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: radial-gradient(600px circle at var(--mouse-x) var(--mouse-y), var(--spotlight-color), transparent 40%);
+  opacity: 0;
+  transition: opacity 0.5s ease;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.spotlight-effect:hover::before {
+  opacity: 1;
+}
+
+/* Mesh Gradient Backgrounds - Sourced from mshr.app */
+.mesh-gradient {
+  background-color: #e8ddd4;
+  background-image: 
+    radial-gradient(at 47% 96%, hsla(23, 45%, 82%, 1) 0px, transparent 50%),
+    radial-gradient(at 18% 30%, hsla(340, 30%, 86%, 1) 0px, transparent 50%),
+    radial-gradient(at 90% 55%, hsla(266, 35%, 82%, 1) 0px, transparent 50%),
+    radial-gradient(at 67% 20%, hsla(174, 25%, 80%, 1) 0px, transparent 50%),
+    radial-gradient(at 10% 85%, hsla(41, 40%, 88%, 1) 0px, transparent 50%);
+}
+
+@media (prefers-color-scheme: dark) {
+  .mesh-gradient {
+    background-color: #0f0c14;
+    background-image: 
+      radial-gradient(at 47% 96%, hsla(270, 50%, 18%, 1) 0px, transparent 50%),
+      radial-gradient(at 18% 30%, hsla(230, 45%, 15%, 1) 0px, transparent 50%),
+      radial-gradient(at 90% 55%, hsla(320, 40%, 12%, 1) 0px, transparent 50%),
+      radial-gradient(at 67% 20%, hsla(200, 50%, 10%, 1) 0px, transparent 50%),
+      radial-gradient(at 10% 85%, hsla(250, 35%, 14%, 1) 0px, transparent 50%);
+  }
+}
+
+/* Back Button Hover Effect */
+/* Tilt button - shared styles for back button, carousel nav, etc. */
+.tilt-button-shadow {
+  opacity: 0;
+  transition: opacity 150ms ease-out;
+}
+
+.tilt-button:not(:disabled):hover .tilt-button-shadow {
+  opacity: 1;
+}
+
+.tilt-button:not(:disabled):active .tilt-button-shadow {
+  opacity: 0;
+}
+
+.tilt-button-face {
+  transition: transform 150ms ease-out, border-color 150ms ease-out, background-color 150ms ease-out;
+}
+
+.tilt-button:not(:disabled):hover .tilt-button-face {
+  transform: translate(-4px, -4px) rotate(2deg);
+  background-color: var(--card-background);
+  border-color: black;
+}
+
+.tilt-button:not(:disabled):active .tilt-button-face {
+  transform: translate(0, 0) rotate(0deg);
+  background-color: var(--card-background);
+  border-color: black;
+  transition: transform 50ms ease-out;
+}
+
+.tilt-button-arrow {
+  transition: transform 150ms ease-out;
+}
+
+.tilt-button:not(:disabled):hover .tilt-button-arrow {
+  transform: translateX(-2px);
+}
+
+.tilt-button:not(:disabled):active .tilt-button-arrow {
+  transform: translateX(0);
+}
+
+@media (prefers-color-scheme: dark) {
+  .tilt-button-shadow {
+    background: var(--foreground);
+    border-color: var(--foreground);
+  }
+
+  .tilt-button:not(:disabled):hover .tilt-button-face,
+  .tilt-button:not(:disabled):active .tilt-button-face {
+    border-color: var(--foreground);
+  }
+}
+
+/* Tilt card - project cards on home page */
+.tilt-card-shadow {
+  opacity: 0;
+  transition: opacity 200ms ease-out;
+  background: #d4d0c8;
+}
+
+.tilt-card:hover .tilt-card-shadow {
+  opacity: 1;
+}
+
+.tilt-card:active .tilt-card-shadow {
+  opacity: 0;
+}
+
+.tilt-card-face {
+  position: relative;
+  transition: transform 200ms ease-out, border-color 200ms ease-out;
+}
+
+.tilt-card:hover .tilt-card-face {
+  transform: translate(-4px, -8px) rotate(0.5deg);
+  border-color: black;
+}
+
+.tilt-card:active .tilt-card-face {
+  transform: translate(0, 0) rotate(0deg);
+  border-color: black;
+  transition: transform 50ms ease-out;
+}
+
+@media (prefers-color-scheme: dark) {
+  .tilt-card-shadow {
+    background: #3a3a3a;
+  }
+
+  .tilt-card:hover .tilt-card-face,
+  .tilt-card:active .tilt-card-face {
+    border-color: var(--foreground);
+  }
+}
+
+/* Skeleton shimmer animation */
+@keyframes skeleton-shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+.skeleton-shimmer {
+  background: linear-gradient(
+    90deg,
+    var(--skeleton-base) 0%,
+    var(--skeleton-highlight) 25%,
+    var(--skeleton-base) 50%,
+    var(--skeleton-highlight) 75%,
+    var(--skeleton-base) 100%
+  );
+  background-size: 200% 100%;
+  animation: skeleton-shimmer 2s ease-in-out infinite;
+}
+
+/* Hide scrollbar while keeping functionality */
+.scrollbar-hide {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;  /* Chrome, Safari and Opera */
 }
