@@ -25,6 +25,7 @@ export { ASCIIText } from "./ASCIIText";
 export { Button } from "./Button";
 export { SummaryCardDemo } from "./SummaryCardDemo";
 export { SkewedTag } from "./SkewedTag";
+export { TiltButton, ArrowLeftIcon, ArrowRightIcon } from "./TiltButton";
 export {
   Skeleton,
   SkeletonRect,

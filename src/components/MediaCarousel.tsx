@@ -1,8 +1,9 @@
 "use client";
 
-import { useState, useRef, ReactNode, isValidElement, cloneElement } from "react";
+import { useState, useRef, useEffect, ReactNode, isValidElement, cloneElement } from "react";
 import { motion } from "framer-motion";
 import { HoverCursor, useHoverCursor, ArrowIcon } from "./HoverCursor";
+import { TiltButton, ArrowLeftIcon, ArrowRightIcon } from "./TiltButton";
 
 interface MediaCarouselProps {
   children: ReactNode[];
@@ -18,18 +19,36 @@ export interface MediaSlideProps {
 
 export function MediaCarousel({ 
   children,
-  cardWidth = 800,
-  gap = 48,
+  cardWidth: desktopCardWidth = 800,
+  gap: desktopGap = 48,
   className = "",
 }: MediaCarouselProps) {
   const [activeIndex, setActiveIndex] = useState(0);
   const [isHovered, setIsHovered] = useState(false);
   const [hoveredCardIndex, setHoveredCardIndex] = useState<number | null>(null);
+  const [responsiveWidth, setResponsiveWidth] = useState<number | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
+  
+  // Track screen size for responsive layout
+  useEffect(() => {
+    const updateWidth = () => {
+      const width = window.innerWidth;
+      // On mobile (< md), use viewport width minus padding
+      setResponsiveWidth(width < 768 ? width - 32 : null);
+    };
+    updateWidth();
+    window.addEventListener('resize', updateWidth);
+    return () => window.removeEventListener('resize', updateWidth);
+  }, []);
   
   const { cursorX, cursorY, handleMouseMove } = useHoverCursor({
     containerRef,
   });
+
+  // Responsive card width and gap
+  const isMobile = responsiveWidth !== null;
+  const cardWidth = responsiveWidth ?? desktopCardWidth;
+  const gap = isMobile ? 16 : desktopGap;
 
   const navigateTo = (index: number) => {
     setActiveIndex(index);
@@ -59,16 +78,19 @@ export function MediaCarousel({
     return hoveredCardIndex > activeIndex ? "right" : "left";
   };
 
+  const canGoPrev = activeIndex > 0;
+  const canGoNext = activeIndex < children.length - 1;
+
   return (
     <div className={`w-full mt-0 -my-8 ${className}`}>
-      <div ref={containerRef} className="relative px-4 md:px-8 py-8 overflow-x-clip overflow-y-visible">
+      <div ref={containerRef} className="relative py-8 overflow-x-clip overflow-y-visible">
         <motion.div 
           className="grid"
           style={{ 
             gridTemplateColumns: children.map(() => `${cardWidth}px`).join(" "),
             gap: `${gap}px`,
-            paddingLeft: `max(1rem, calc((100vw - ${cardWidth}px) / 2))`,
-            paddingRight: `max(1rem, calc((100vw - ${cardWidth}px) / 2))`,
+            paddingLeft: `calc((100vw - ${cardWidth}px) / 2)`,
+            paddingRight: `calc((100vw - ${cardWidth}px) / 2)`,
           }}
           animate={{ x: activeIndex === 0 ? 0 : -activeIndex * slideOffset }}
           transition={{ duration: 0.5, ease: [0.32, 0.72, 0, 1] }}
@@ -94,7 +116,7 @@ export function MediaCarousel({
                 onMouseMove={handleMouseMove}
                 className="cursor-pointer"
                 style={{ 
-                  cursor: isHovered ? "none" : "pointer",
+                  cursor: isHovered && !isMobile ? "none" : "pointer",
                 }}
                 animate={{ 
                   scale: index === activeIndex ? 1 : 0.9
@@ -107,9 +129,32 @@ export function MediaCarousel({
           })}
         </motion.div>
 
-        <HoverCursor cursorX={cursorX} cursorY={cursorY} isVisible={isHovered}>
-          <ArrowIcon direction={getArrowDirection()} />
-        </HoverCursor>
+        {!isMobile && (
+          <HoverCursor cursorX={cursorX} cursorY={cursorY} isVisible={isHovered}>
+            <ArrowIcon direction={getArrowDirection()} />
+          </HoverCursor>
+        )}
+      </div>
+
+      {/* Navigation arrows - only shown on mobile/tablet */}
+      <div className="flex md:hidden justify-center items-center gap-6 mt-6">
+        <TiltButton
+          onClick={() => canGoPrev && navigateTo(activeIndex - 1)}
+          disabled={!canGoPrev}
+          aria-label="Previous slide"
+          iconOnly
+        >
+          <ArrowLeftIcon />
+        </TiltButton>
+        
+        <TiltButton
+          onClick={() => canGoNext && navigateTo(activeIndex + 1)}
+          disabled={!canGoNext}
+          aria-label="Next slide"
+          iconOnly
+        >
+          <ArrowRightIcon />
+        </TiltButton>
       </div>
     </div>
   );

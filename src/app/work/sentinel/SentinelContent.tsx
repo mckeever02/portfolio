@@ -22,9 +22,50 @@ import { SpotlightEffect } from "@/components/SpotlightEffect";
 import { TextCarousel, QuoteProgressIndicator } from "@/components/TextCarousel";
 import { SummaryCardDemo } from "@/components/SummaryCardDemo";
 import { SkewedTag } from "@/components/SkewedTag";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, useScroll, useTransform } from "framer-motion";
 
 type StickyNote = { src: string; alt: string; rotation: number; delay: number; position: { top?: string; bottom?: string; left: string; translateX: string; translateY: string } };
+
+// Scroll-scale image component - scales up as user scrolls into view
+function ScrollScaleImage({ 
+  src, 
+  alt,
+  aspectRatio = "16/9",
+  maxWidth = "1000px",
+}: { 
+  src: string; 
+  alt: string;
+  aspectRatio?: string;
+  maxWidth?: string;
+}) {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+    offset: ["start end", "center center"],
+  });
+  const scale = useTransform(scrollYProgress, [0, 1], [0.85, 1]);
+
+  return (
+    <motion.div
+      ref={containerRef}
+      className="mx-auto w-full"
+      style={{ scale, maxWidth }}
+    >
+      <div 
+        className="relative rounded-lg overflow-hidden border border-black/10"
+        style={{ aspectRatio }}
+      >
+        <Image
+          src={src}
+          alt={alt}
+          fill
+          className="object-cover"
+          sizes={`(max-width: 768px) 100vw, ${maxWidth}`}
+        />
+      </div>
+    </motion.div>
+  );
+}
 
 // Comic slide component for Sonja's story carousel
 type CaptionPosition = "top-center" | "bottom-center" | "bottom-right" | "bottom-left" | "top-left" | "top-right" | "center" | "center-left";
@@ -51,7 +92,7 @@ function ComicCaption({
 }) {
   return (
     <motion.div 
-      className={`${captionPositionClasses[position]} bg-[#FFFDE7] border-2 border-black px-6 py-3 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] z-10`}
+      className={`${captionPositionClasses[position]} bg-[#FFFDE7] border-2 border-black px-3 py-2 md:px-4 md:py-2.5 shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] md:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] z-10`}
       style={{ fontFamily: "'Anime Ace', sans-serif" }}
       initial={{ opacity: 0, scale: 0.8 }}
       animate={{ 
@@ -65,7 +106,7 @@ function ComicCaption({
         delay: isActive ? 0.3 : 0
       }}
     >
-      <p className="text-black text-base md:text-lg uppercase leading-snug text-center max-w-[280px]">
+      <p className="text-black text-xs md:text-sm uppercase leading-snug text-center max-w-[200px] md:max-w-[280px]">
         {caption}
       </p>
     </motion.div>
@@ -806,7 +847,7 @@ export function SentinelContent({ caseStudy }: { caseStudy: CaseStudy }) {
       </NarrowContent>
 
       <WideContent>
-        <LightboxImage
+        <ScrollScaleImage
           src="/images/work/sentinel/sentinel.jpg"
           alt="Sentinel AI-powered admin copilot"
           maxWidth="1000px"

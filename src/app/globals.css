@@ -475,43 +475,61 @@ body {
 }
 
 /* Back Button Hover Effect */
-.back-button-shadow {
+/* Tilt button - shared styles for back button, carousel nav, etc. */
+.tilt-button-shadow {
   opacity: 0;
-  transition: opacity 200ms ease-out;
+  transition: opacity 150ms ease-out;
 }
 
-.back-button:hover .back-button-shadow {
+.tilt-button:not(:disabled):hover .tilt-button-shadow {
   opacity: 1;
 }
 
-.back-button-face {
-  transition: transform 200ms ease-out, border-color 200ms ease-out;
+.tilt-button:not(:disabled):active .tilt-button-shadow {
+  opacity: 0;
 }
 
-.back-button:hover .back-button-face {
+.tilt-button-face {
+  transition: transform 150ms ease-out, border-color 150ms ease-out, background-color 150ms ease-out;
+}
+
+.tilt-button:not(:disabled):hover .tilt-button-face {
   transform: translate(-4px, -4px) rotate(2deg);
   background-color: var(--card-background);
   border-color: black;
 }
 
-.back-button-arrow {
-  transition: transform 200ms ease-out;
+.tilt-button:not(:disabled):active .tilt-button-face {
+  transform: translate(0, 0) rotate(0deg);
+  background-color: var(--card-background);
+  border-color: black;
+  transition: transform 50ms ease-out;
 }
 
-.back-button:hover .back-button-arrow {
+.tilt-button-arrow {
+  transition: transform 150ms ease-out;
+}
+
+.tilt-button:not(:disabled):hover .tilt-button-arrow {
   transform: translateX(-2px);
 }
 
+.tilt-button:not(:disabled):active .tilt-button-arrow {
+  transform: translateX(0);
+}
+
 @media (prefers-color-scheme: dark) {
-  .back-button-shadow {
+  .tilt-button-shadow {
     background: var(--foreground);
     border-color: var(--foreground);
   }
 
-  .back-button:hover .back-button-face {
+  .tilt-button:not(:disabled):hover .tilt-button-face,
+  .tilt-button:not(:disabled):active .tilt-button-face {
     border-color: var(--foreground);
   }
 }
+
 
 /* Skeleton shimmer animation */
 @keyframes skeleton-shimmer {
