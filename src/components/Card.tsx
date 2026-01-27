@@ -185,8 +185,8 @@ export function Card({
 
 export function CardDetailSeparator() {
   return (
-    <svg className="shrink-0" width="3" height="3" viewBox="0 0 3 3" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <circle cx="3" cy="3" r="2.5" fill="currentColor" className="text-[var(--foreground-secondary)]" />
+    <svg className="shrink-0 text-[var(--foreground-secondary)]" width="6" height="6" viewBox="26 4 18 18" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+      <path d="M43.221,12.039c-5.292-1.195-6.035-1.938-7.23-7.229-.104-.456-.508-.779-.976-.779s-.872.323-.976.779c-1.195,5.291-1.938,6.034-7.229,7.229-.456.104-.779.508-.779.976s.323.872.779.976c5.291,1.195,6.034,1.938,7.229,7.23.104.455.508.779.976.779s.872-.324.976-.779c1.195-5.292,1.938-6.035,7.23-7.23.455-.104.779-.508.779-.976s-.324-.872-.779-.976Z" />
     </svg>
   );
 }

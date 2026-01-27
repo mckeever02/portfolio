@@ -7,7 +7,7 @@ export const metadata: Metadata = {
   title: "Michael McKeever - Software Designer",
   description: "Product design portfolio of Michael McKeever, a product designer based in Belfast, Northern Ireland.",
   icons: {
-    icon: "/images/favicon.svg",
+    icon: "/favicon.ico",
   },
   openGraph: {
     title: "Michael McKeever - Software Designer",
