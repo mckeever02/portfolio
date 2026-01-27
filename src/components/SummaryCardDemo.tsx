@@ -1099,7 +1099,7 @@ export function SummaryCardDemo() {
   return (
     <div 
       ref={containerRef}
-      className="w-full p-6 md:p-16"
+      className="w-full p-3 sm:p-6 md:p-8 lg:p-12 xl:p-16"
       style={{ 
         backgroundImage: "url('/images/work/sentinel/agent-bg.png')",
         backgroundSize: "cover",

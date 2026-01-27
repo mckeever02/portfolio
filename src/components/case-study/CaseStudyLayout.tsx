@@ -48,20 +48,22 @@ function LayoutContent({ caseStudy, children }: CaseStudyLayoutProps) {
             </div>
 
             {/* Hero + Content Wrapper */}
-            <div className="flex flex-col gap-10">
-              {/* Hero Image/Video */}
-              <div className="mx-auto w-full max-w-[1240px] px-4 md:px-8">
-                <HeroImage bgColor={caseStudy.heroColor} imageSrc={caseStudy.heroVideo || caseStudy.heroImage} videoPoster={caseStudy.heroVideoPoster} />
-              </div>
+            <div className="flex flex-col gap-6 sm:gap-10">
+              <div className="flex flex-col gap-0 sm:gap-0">
+                {/* Hero Image/Video */}
+                <div className="mx-auto w-full max-w-[1240px] px-4 md:px-8">
+                  <HeroImage bgColor={caseStudy.heroColor} imageSrc={caseStudy.heroVideo || caseStudy.heroImage} videoPoster={caseStudy.heroVideoPoster} />
+                </div>
 
-              {/* Project Metadata - overlaps hero */}
-              <div className="mx-auto w-full max-w-[800px] px-4 md:px-8 md:-mt-[130px] relative z-10">
-                <ProjectMeta
-                  subtitle={caseStudy.subtitle}
-                  timeline={caseStudy.timeline}
-                  role={caseStudy.role}
-                  team={caseStudy.team}
-                />
+                {/* Project Metadata - overlaps hero */}
+                <div className="mx-auto w-full max-w-[800px] px-4 md:px-8 md:-mt-[130px] relative z-10">
+                  <ProjectMeta
+                    subtitle={caseStudy.subtitle}
+                    timeline={caseStudy.timeline}
+                    role={caseStudy.role}
+                    team={caseStudy.team}
+                  />
+                </div>
               </div>
 
               {/* Case Study Content */}

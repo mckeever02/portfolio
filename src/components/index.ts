@@ -24,6 +24,7 @@ export { FuzzyText } from "./FuzzyText";
 export { ASCIIText } from "./ASCIIText";
 export { Button } from "./Button";
 export { SummaryCardDemo } from "./SummaryCardDemo";
+export { SkewedTag } from "./SkewedTag";
 export {
   Skeleton,
   SkeletonRect,

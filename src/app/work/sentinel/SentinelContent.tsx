@@ -21,6 +21,7 @@ import { ZigZagDivider } from "@/components/ZigZagDivider";
 import { SpotlightEffect } from "@/components/SpotlightEffect";
 import { TextCarousel, QuoteProgressIndicator } from "@/components/TextCarousel";
 import { SummaryCardDemo } from "@/components/SummaryCardDemo";
+import { SkewedTag } from "@/components/SkewedTag";
 import { motion, AnimatePresence } from "framer-motion";
 
 type StickyNote = { src: string; alt: string; rotation: number; delay: number; position: { top?: string; bottom?: string; left: string; translateX: string; translateY: string } };
@@ -362,37 +363,186 @@ const imageTransforms: Record<NonNullable<ImageFocus>, string> = {
   support: "scale(2) translate(-25%, -15%)",
 };
 
+// Order of auto-cycling: 1. insights, 2. tasks, 3. support
+const FOCUS_ORDER: NonNullable<ImageFocus>[] = ["insights", "support", "tasks"];
+
 function SolutionSection() {
   const [imageFocus, setImageFocus] = useState<ImageFocus>(null);
+  const [isManualHover, setIsManualHover] = useState(false);
+  const [autoCycleIndex, setAutoCycleIndex] = useState(0);
+  const [progress, setProgress] = useState(100);
+  const [phase, setPhase] = useState<"waiting" | "expanding" | "paused" | "shrinking">("waiting");
+  const [expandProgress, setExpandProgress] = useState(0); // 0 to 100 for expansion
+  const [isInView, setIsInView] = useState(false);
+  const sectionRef = useRef<HTMLDivElement>(null);
+  const INITIAL_DELAY = 3000; // 3 second delay before cycle starts
+  const EXPAND_DURATION = 500; // 0.5 seconds for expansion
+  const PAUSE_DURATION = 1200; // 1.2 second pause at top before shrinking
+  const SHRINK_DURATION = 5500; // 5.5 seconds for the shrink animation
+  const TICK_INTERVAL = 16; // ~60fps for smooth animation
+  
+  // Spring-like overshoot easing for expansion
+  const easeOutBack = (t: number) => {
+    const c1 = 1.70158;
+    const c3 = c1 + 1;
+    return 1 + c3 * Math.pow(t - 1, 3) + c1 * Math.pow(t - 1, 2);
+  };
+  
+  // Track when section is in view
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          setIsInView(entry.isIntersecting && entry.intersectionRatio >= 0.5);
+        });
+      },
+      { threshold: 0.5 }
+    );
+    
+    if (sectionRef.current) {
+      observer.observe(sectionRef.current);
+    }
+    
+    return () => observer.disconnect();
+  }, []);
+  
+  // Initial waiting phase (3s delay before starting)
+  useEffect(() => {
+    if (isManualHover || !isInView || phase !== "waiting") return;
+    
+    const timeout = setTimeout(() => {
+      setPhase("expanding");
+    }, INITIAL_DELAY);
+    
+    return () => clearTimeout(timeout);
+  }, [phase, isManualHover, isInView]);
+  
+  // Expansion phase
+  useEffect(() => {
+    if (isManualHover || !isInView || phase !== "expanding") return;
+    
+    const tickAmount = (TICK_INTERVAL / EXPAND_DURATION) * 100;
+    
+    const interval = setInterval(() => {
+      setExpandProgress((prev) => {
+        const next = prev + tickAmount;
+        if (next >= 100) {
+          setPhase("paused");
+          return 100;
+        }
+        return next;
+      });
+    }, TICK_INTERVAL);
+    
+    return () => clearInterval(interval);
+  }, [phase, isManualHover, isInView]);
+  
+  // Pause phase
+  useEffect(() => {
+    if (isManualHover || !isInView || phase !== "paused") return;
+    
+    const timeout = setTimeout(() => {
+      setPhase("shrinking");
+    }, PAUSE_DURATION);
+    
+    return () => clearTimeout(timeout);
+  }, [phase, isManualHover, isInView]);
+  
+  // Shrinking phase
+  useEffect(() => {
+    if (isManualHover || !isInView || phase !== "shrinking") return;
+    
+    const tickAmount = (TICK_INTERVAL / SHRINK_DURATION) * 100;
+    
+    const interval = setInterval(() => {
+      setProgress((prev) => {
+        const next = prev - tickAmount;
+        if (next <= 0) {
+          // Move to next highlight
+          setAutoCycleIndex((prevIndex) => (prevIndex + 1) % FOCUS_ORDER.length);
+          setPhase("expanding");
+          setExpandProgress(0);
+          return 100;
+        }
+        return next;
+      });
+    }, TICK_INTERVAL);
+    
+    return () => clearInterval(interval);
+  }, [phase, isManualHover, isInView]);
+  
+  // Determine the active focus (manual hover takes priority, null during waiting)
+  const activeFocus = isManualHover ? imageFocus : (phase === "waiting" ? null : FOCUS_ORDER[autoCycleIndex]);
+  
+  // Calculate the visual progress based on current phase
+  const getVisualProgress = () => {
+    if (phase === "waiting") {
+      return 0; // No highlight during initial delay
+    } else if (phase === "expanding") {
+      // Animate from 0 to 100 with spring easing
+      return easeOutBack(expandProgress / 100) * 100;
+    } else if (phase === "paused") {
+      return 100; // Full height during pause
+    } else {
+      // Shrinking - linear countdown
+      return progress;
+    }
+  };
+  
+  const visualProgress = getVisualProgress();
+  
+  // Handle manual hover - pause auto cycle
+  const handleMouseEnter = (focus: ImageFocus) => {
+    setIsManualHover(true);
+    setImageFocus(focus);
+  };
+  
+  const handleMouseLeave = () => {
+    setIsManualHover(false);
+    setImageFocus(null);
+    // Reset to expanding phase when leaving hover
+    setProgress(100);
+    setExpandProgress(0);
+    setPhase("expanding");
+  };
 
   return (
     <FullWidthContent className="mt-0">
-      <div className="grid grid-cols-1 bg-[var(--background)] border border-[var(--foreground)]/20 lg:grid-cols-2 items-center">
-        <div className="p-12">
-          <section id="exploration" className="flex flex-col gap-6 scroll-mt-8">
-            <span className="font-bold tracking-wide py-1 px-2 uppercase -skew-x-8 transform inline-block w-fit bg-[var(--foreground)]/10 text-[var(--foreground)]">The solution</span>
+      <div 
+        ref={sectionRef}
+        className="grid grid-cols-1 bg-[var(--background)] border border-[var(--foreground)]/20 lg:grid-cols-2 items-center"
+      >
+        <div className="p-6 xs:p-8 sm:p-12">
+          <section id="exploration" className="flex flex-col gap-4 xs:gap-5 sm:gap-6 scroll-mt-8">
+            <SkewedTag as="h3" className="text-lg lg:text-xl">The solution</SkewedTag>
             <p className="text-[var(--foreground)] text-2xl md:text-3xl lg:text-4xl leading-relaxed">
               An AI Agent which can{" "}
               <HighlightText
                 color="blue"
-                onMouseEnter={() => setImageFocus("insights")}
-                onMouseLeave={() => setImageFocus(null)}
+                onMouseEnter={() => handleMouseEnter("insights")}
+                onMouseLeave={handleMouseLeave}
+                isActive={activeFocus === "insights"}
+                progress={!isManualHover && activeFocus === "insights" ? visualProgress : undefined}
               >
                 generate insights
               </HighlightText>
               ,{" "}
               <HighlightText
                 color="purple"
-                onMouseEnter={() => setImageFocus("tasks")}
-                onMouseLeave={() => setImageFocus(null)}
+                onMouseEnter={() => handleMouseEnter("tasks")}
+                onMouseLeave={handleMouseLeave}
+                isActive={activeFocus === "tasks"}
+                progress={!isManualHover && activeFocus === "tasks" ? visualProgress : undefined}
               >
                 automate tasks
               </HighlightText>{" "}
               and{" "}
               <HighlightText
                 color="brown"
-                onMouseEnter={() => setImageFocus("support")}
-                onMouseLeave={() => setImageFocus(null)}
+                onMouseEnter={() => handleMouseEnter("support")}
+                onMouseLeave={handleMouseLeave}
+                isActive={activeFocus === "support"}
+                progress={!isManualHover && activeFocus === "support" ? visualProgress : undefined}
               >
                 provide support
               </HighlightText>
@@ -426,16 +576,16 @@ function SolutionSection() {
                 fill
                 className="object-cover transition-transform duration-700 ease-out"
                 style={{
-                  transform: imageFocus ? imageTransforms[imageFocus] : "scale(1) translate(0%, 0%)",
+                  transform: activeFocus ? imageTransforms[activeFocus] : "scale(1) translate(0%, 0%)",
                 }}
               />
             </motion.div>
             
             {/* Sticky notes that pop in on hover */}
             <AnimatePresence mode="popLayout">
-              {imageFocus && stickyNotes[imageFocus].map((sticky, index) => (
+              {activeFocus && stickyNotes[activeFocus].map((sticky, index) => (
                 <motion.div
-                  key={`${imageFocus}-${index}`}
+                  key={`${activeFocus}-${index}`}
                   className="absolute w-[40%] aspect-square pointer-events-none"
                   style={{
                     top: sticky.position.top,
@@ -501,7 +651,7 @@ const insights = [
       </>
     ),
     quote: {
-      text: (<>I don&apos;t have time to dig through a bunch of separate reports. I just need a <span className="bg-[#A99BEA]/25 px-1 -skew-x-6 inline-block transform">clear answer to simple questions</span> like &apos;Are we safer than last quarter?&apos; without spending half my day in dashboards.</>),
+      text: (<>I don&apos;t have time to dig through a bunch of separate reports. I just need a <span className="bg-[#A99BEA]/30 py-0.5" style={{ boxDecorationBreak: 'clone', WebkitBoxDecorationBreak: 'clone' }}>clear answer to simple questions</span> like &apos;Are we safer than last quarter?&apos; without spending half my day in dashboards.</>),
       attribution: "IT Manager at a Mid-market SaaS company",
     },
   },
@@ -516,7 +666,7 @@ const insights = [
       </>
     ),
     quote: {
-      text: (<>What I am looking for is <span className="bg-[#F9DAEF]/40 px-1 -skew-x-6 inline-block transform">automation.</span> The automation piece means your life is going to get easier. Do this and there&apos;s less work for you.</>),
+      text: (<>What I am looking for is <span className="bg-[#F9DAEF]/50 py-0.5" style={{ boxDecorationBreak: 'clone', WebkitBoxDecorationBreak: 'clone' }}>automation.</span> The automation piece means your life is going to get easier. Do this and there&apos;s less work for you.</>),
       attribution: "InfoSec Manager at an SMB",
     },
   },
@@ -598,10 +748,10 @@ const timelineItems = [
 
 function TimelineCard({ item }: { item: typeof timelineItems[0] }) {
   return (
-    <div className="bg-[var(--background)] border border-[var(--foreground)]/20 flex overflow-hidden">
+    <div className="bg-[var(--background)] border border-[var(--foreground)]/20 flex flex-col sm:flex-row overflow-hidden">
         <div className="p-1">
             <div 
-                className="relative aspect-square shrink-0 flex items-center justify-center self-stretch w-32"
+                className="relative py-4 sm:py-0 sm:aspect-square shrink-0 flex items-center justify-center w-full sm:w-32"
                 style={{
                 backgroundImage: `url('${item.bannerBg}')`,
                 backgroundSize: "cover",
@@ -615,7 +765,7 @@ function TimelineCard({ item }: { item: typeof timelineItems[0] }) {
                 </div>
             </div>
         </div>
-      <div className="p-6 flex-1">
+      <div className="p-4 sm:p-6 flex-1">
         <h3 className="text-xl font-bold mb-2 text-[var(--foreground)] leading-tight">{item.title}</h3>
         <p className="text-[var(--foreground)] text-lg">{item.description}</p>
       </div>
@@ -703,10 +853,11 @@ export function SentinelContent({ caseStudy }: { caseStudy: CaseStudy }) {
 
       <WideContent className="mt-0">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          {adminReasons.map((reason) => (
+          {adminReasons.map((reason, index) => (
             <FlipCard
               key={reason.title}
               className="h-[340px]"
+              autoFlipHint={index === 0}
               front={
                 <CardFace
                   icon={reason.icon}
@@ -817,24 +968,7 @@ export function SentinelContent({ caseStudy }: { caseStudy: CaseStudy }) {
       </FullWidthContent>
 
 
-        {/* Zig-zag divider */}
-        <div className="flex justify-center py-16">
-            <svg
-                className="w-24 h-3"
-                viewBox="0 0 96 12"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-            >
-                <path
-                    d="M0 6L8 11L16 6L24 11L32 6L40 11L48 6L56 11L64 6L72 11L80 6L88 11L96 6"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    className="text-[var(--foreground)]/30"
-                />
-            </svg>
-        </div>
+        <ZigZagDivider />
 
       {/* User Testing Section */}
       <NarrowContent>
@@ -848,7 +982,7 @@ export function SentinelContent({ caseStudy }: { caseStudy: CaseStudy }) {
       {/* Full Width Quote Section */}
       <WideContent>
           <div 
-            className="w-full flex items-center justify-center px-16 py-24"
+            className="w-full flex items-center justify-center p-3 sm:p-6 md:px-16 md:py-24"
             style={{
               backgroundImage: "url('/images/work/sentinel/quote-bg-5.png')",
               backgroundSize: "cover",
@@ -893,7 +1027,7 @@ export function SentinelContent({ caseStudy }: { caseStudy: CaseStudy }) {
 
       <FlipCarousel items={hesitations} />
 
-      <ZigZagDivider className="my-16" />
+      <ZigZagDivider />
 
       {/* Prototype Story Section */}
       <NarrowContent>

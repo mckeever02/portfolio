@@ -6,7 +6,7 @@ interface ZigZagDividerProps {
 
 export function ZigZagDivider({ className = "" }: ZigZagDividerProps) {
   return (
-    <div className={`flex justify-center ${className}`}>
+    <div className={`flex justify-center py-12 ${className}`.trim()}>
       <svg
         className="w-24 h-3"
         viewBox="0 0 96 12"
@@ -19,7 +19,7 @@ export function ZigZagDivider({ className = "" }: ZigZagDividerProps) {
           strokeWidth="2"
           strokeLinecap="round"
           strokeLinejoin="round"
-          className="text-[var(--foreground)]/30"
+          className="text-[var(--foreground)]"
         />
       </svg>
     </div>

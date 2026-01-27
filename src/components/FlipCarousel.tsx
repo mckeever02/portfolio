@@ -1,8 +1,9 @@
 "use client";
 
-import { useState, useRef, ReactNode } from "react";
+import { useState, useRef, useEffect, ReactNode } from "react";
 import { motion } from "framer-motion";
 import { HoverCursor, useHoverCursor, RotateIcon, ArrowIcon } from "./HoverCursor";
+import { SkewedTag } from "./SkewedTag";
 
 interface FlipCarouselItem {
   tag: string;
@@ -18,6 +19,91 @@ interface FlipCarouselProps<T extends FlipCarouselItem> {
   items: T[];
 }
 
+// Simple stacked card for mobile - each card manages its own flip state
+function StackedCard<T extends FlipCarouselItem>({ 
+  item,
+  autoFlipHint = false,
+}: { 
+  item: T;
+  autoFlipHint?: boolean;
+}) {
+  const [isFlipped, setIsFlipped] = useState(false);
+  const [hasAutoFlipped, setHasAutoFlipped] = useState(false);
+  const cardRef = useRef<HTMLDivElement>(null);
+
+  // Auto-flip hint
+  useEffect(() => {
+    if (!autoFlipHint || hasAutoFlipped) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting && entry.intersectionRatio >= 0.7) {
+            setHasAutoFlipped(true);
+            setTimeout(() => {
+              setIsFlipped(true);
+              setTimeout(() => setIsFlipped(false), 1200);
+            }, 500);
+            observer.disconnect();
+          }
+        });
+      },
+      { threshold: 0.7, rootMargin: "-10% 0px -10% 0px" }
+    );
+
+    if (cardRef.current) observer.observe(cardRef.current);
+    return () => observer.disconnect();
+  }, [autoFlipHint, hasAutoFlipped]);
+
+  return (
+    <div
+      ref={cardRef}
+      onClick={() => setIsFlipped(!isFlipped)}
+      className="cursor-pointer relative h-[320px]"
+      style={{ perspective: "1000px" }}
+    >
+      <div
+        className="relative w-full h-full"
+        style={{
+          transformStyle: "preserve-3d",
+          transition: "transform 0.6s cubic-bezier(0.4, 0, 0.2, 1)",
+          transform: isFlipped ? "rotateY(180deg)" : "rotateY(0deg)",
+        }}
+      >
+        {/* Front */}
+        <div
+          className="absolute inset-0 w-full h-full bg-[var(--background)] p-6 border border-[var(--foreground)]/20 flex flex-col"
+          style={{ backfaceVisibility: "hidden", WebkitBackfaceVisibility: "hidden" }}
+        >
+          <SkewedTag variant="colored" bgColor={item.tagBg}>
+            {item.tag}
+          </SkewedTag>
+          <p className="text-[var(--foreground)] text-xl mt-4 leading-normal">
+            {item.content}
+          </p>
+        </div>
+        
+        {/* Back */}
+        <div
+          className="absolute inset-0 w-full h-full bg-[var(--background)] p-6 border border-[var(--foreground)]/20 flex flex-col"
+          style={{ backfaceVisibility: "hidden", WebkitBackfaceVisibility: "hidden", transform: "rotateY(180deg)" }}
+        >
+          <svg className="w-6 h-6 text-[var(--foreground)]/20 mb-3 shrink-0" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z" />
+          </svg>
+          <p className="text-[var(--foreground)] text-lg leading-relaxed flex-1 not-italic">
+            {item.quote.text}
+          </p>
+          <p className="text-[var(--foreground)]/60 uppercase font-bold tracking-wider text-xs mt-3 not-italic">
+            {item.quote.attribution}
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// Desktop carousel card with hover effects
 function CarouselCard<T extends FlipCarouselItem>({ 
   item, 
   onNavigate,
@@ -27,7 +113,6 @@ function CarouselCard<T extends FlipCarouselItem>({
   isActive,
   isFlipped,
   onFlip,
-  contentLineHeight = "leading-relaxed",
 }: { 
   item: T;
   onNavigate: () => void;
@@ -43,17 +128,14 @@ function CarouselCard<T extends FlipCarouselItem>({
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
     onMouseMove(e);
-
     if (!cardRef.current || isFlipped) return;
     const rect = cardRef.current.getBoundingClientRect();
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;
     const centerX = rect.width / 2;
     const centerY = rect.height / 2;
-
     const rotateX = ((y - centerY) / centerY) * -4;
     const rotateY = ((x - centerX) / centerX) * 4;
-
     setTransform(`perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.01, 1.01, 1.01)`);
   };
 
@@ -81,53 +163,38 @@ function CarouselCard<T extends FlipCarouselItem>({
       onMouseEnter={() => onHoverChange(true)}
       onMouseLeave={handleMouseLeave}
       className="cursor-pointer relative h-full"
-      style={{
-        perspective: "1000px",
-        cursor: isHovered ? "none" : "pointer",
-      }}
+      style={{ perspective: "1000px", cursor: isHovered ? "none" : "pointer" }}
     >
       <div
         className="relative w-full h-full"
         style={{
           transformStyle: "preserve-3d",
           transition: "transform 0.6s cubic-bezier(0.4, 0, 0.2, 1)",
-          transform: isFlipped 
-            ? "rotateY(180deg)" 
-            : transform,
+          transform: isFlipped ? "rotateY(180deg)" : transform,
         }}
       >
         {/* Front */}
         <div
-          className="relative w-full h-full bg-[var(--background)] p-10 md:p-12 border border-[var(--foreground)]/20 flex flex-col"
-          style={{
-            backfaceVisibility: "hidden",
-            WebkitBackfaceVisibility: "hidden",
-          }}
+          className="relative w-full h-full bg-[var(--background)] p-10 lg:p-12 border border-[var(--foreground)]/20 flex flex-col"
+          style={{ backfaceVisibility: "hidden", WebkitBackfaceVisibility: "hidden" }}
         >
-          <span 
-            className="text-white font-bold tracking-wide py-1 px-2 uppercase -skew-x-8 transform relative inline-block w-fit"
-            style={{ backgroundColor: item.tagBg }}
-          >
+          <SkewedTag variant="colored" bgColor={item.tagBg}>
             {item.tag}
-          </span>
-          <p className="text-[var(--foreground)] text-2xl md:text-3xl lg:text-4xl mt-6 leading-normal">
+          </SkewedTag>
+          <p className="text-[var(--foreground)] text-2xl lg:text-3xl xl:text-4xl mt-6 leading-normal">
             {item.content}
           </p>
         </div>
         
-        {/* Back - Quote */}
+        {/* Back */}
         <div
-          className="absolute inset-0 w-full h-full bg-[var(--background)] p-10 md:p-12 border border-[var(--foreground)]/20 flex flex-col"
-          style={{
-            backfaceVisibility: "hidden",
-            WebkitBackfaceVisibility: "hidden",
-            transform: "rotateY(180deg)",
-          }}
+          className="absolute inset-0 w-full h-full bg-[var(--background)] p-10 lg:p-12 border border-[var(--foreground)]/20 flex flex-col"
+          style={{ backfaceVisibility: "hidden", WebkitBackfaceVisibility: "hidden", transform: "rotateY(180deg)" }}
         >
           <svg className="w-8 h-8 text-[var(--foreground)]/20 mb-4 shrink-0" viewBox="0 0 24 24" fill="currentColor">
             <path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z" />
           </svg>
-          <p className="text-[var(--foreground)] text-xl md:text-2xl leading-relaxed flex-1">
+          <p className="text-[var(--foreground)] text-xl lg:text-2xl leading-relaxed flex-1 not-italic">
             {item.quote.text}
           </p>
           <p className="text-[var(--foreground)]/60 uppercase font-bold tracking-wider text-sm mt-4">
@@ -147,11 +214,49 @@ export function FlipCarousel<T extends FlipCarouselItem>({
   const [hoveredCardIndex, setHoveredCardIndex] = useState<number | null>(null);
   const [isFlipped, setIsFlipped] = useState(false);
   const [flipCount, setFlipCount] = useState(0);
+  const [hasAutoFlipped, setHasAutoFlipped] = useState(false);
+  const [isDesktop, setIsDesktop] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
+
+  // Track screen size - lg breakpoint is 1024px
+  useEffect(() => {
+    const checkDesktop = () => setIsDesktop(window.innerWidth >= 1024);
+    checkDesktop();
+    window.addEventListener('resize', checkDesktop);
+    return () => window.removeEventListener('resize', checkDesktop);
+  }, []);
   
   const { cursorX, cursorY, handleMouseMove } = useHoverCursor({
     containerRef,
   });
+
+  // Auto-flip hint for desktop carousel
+  useEffect(() => {
+    if (!isDesktop || hasAutoFlipped) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting && entry.intersectionRatio >= 0.7) {
+            setHasAutoFlipped(true);
+            setTimeout(() => {
+              setIsFlipped(true);
+              setFlipCount((prev) => prev + 1);
+              setTimeout(() => {
+                setIsFlipped(false);
+                setFlipCount((prev) => prev + 1);
+              }, 1200);
+            }, 500);
+            observer.disconnect();
+          }
+        });
+      },
+      { threshold: 0.7, rootMargin: "-10% 0px -10% 0px" }
+    );
+
+    if (containerRef.current) observer.observe(containerRef.current);
+    return () => observer.disconnect();
+  }, [hasAutoFlipped, isDesktop]);
 
   const toggleSlide = () => {
     setActiveIndex((prev) => (prev === 0 ? 1 : 0));
@@ -165,13 +270,30 @@ export function FlipCarousel<T extends FlipCarouselItem>({
     setFlipCount((prev) => prev + 1);
   };
 
-  // Card width (800px) + gap (48px for gap-12)
-  const slideOffset = 848;
   const isHoveringActiveCard = hoveredCardIndex === activeIndex;
+  const slideOffset = 848; // 800px card + 48px gap
 
+  // Mobile/Tablet: Stacked cards
+  if (!isDesktop) {
+    return (
+      <div className="w-full px-4 md:px-8">
+        <div className="flex flex-col gap-4 max-w-[800px] mx-auto">
+          {items.map((item, index) => (
+            <StackedCard 
+              key={index} 
+              item={item} 
+              autoFlipHint={index === 0}
+            />
+          ))}
+        </div>
+      </div>
+    );
+  }
+
+  // Desktop: Carousel
   return (
     <div className="w-full mt-0 -my-8">
-      <div ref={containerRef} className="relative px-4 md:px-8 py-8 overflow-x-clip overflow-y-visible">
+      <div ref={containerRef} className="relative px-8 py-8 overflow-x-clip overflow-y-visible">
         <motion.div 
           className="grid grid-cols-[800px_800px] gap-12"
           animate={{ x: activeIndex === 0 ? 0 : -slideOffset }}

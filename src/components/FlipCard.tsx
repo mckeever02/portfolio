@@ -1,28 +1,71 @@
 "use client";
 
-import { useState, useRef, ReactNode } from "react";
+import { useState, useRef, useEffect, ReactNode } from "react";
 import { HoverCursor, useHoverCursor, RotateIcon } from "./HoverCursor";
 
 interface FlipCardProps {
   front: ReactNode;
   back: ReactNode;
   className?: string;
+  autoFlipHint?: boolean;
 }
 
 export function FlipCard({ 
   front, 
   back, 
   className = "",
+  autoFlipHint = false,
 }: FlipCardProps) {
   const [isFlipped, setIsFlipped] = useState(false);
   const [flipCount, setFlipCount] = useState(0);
   const [transform, setTransform] = useState("perspective(1000px) rotateX(0deg) rotateY(0deg)");
   const [isHovered, setIsHovered] = useState(false);
+  const [hasAutoFlipped, setHasAutoFlipped] = useState(false);
   const cardRef = useRef<HTMLDivElement>(null);
   
   const { cursorX, cursorY, handleMouseMove: updateCursor, handleMouseEnter: initCursor } = useHoverCursor({
     containerRef: cardRef,
   });
+
+  // Auto-flip hint to show users cards are interactive
+  useEffect(() => {
+    if (!autoFlipHint || hasAutoFlipped) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting && entry.intersectionRatio >= 0.7) {
+            // Card is mostly visible - trigger auto-flip sequence
+            setHasAutoFlipped(true);
+            
+            // Small delay before flipping
+            setTimeout(() => {
+              setIsFlipped(true);
+              setFlipCount((prev) => prev + 1);
+              
+              // Flip back after a pause
+              setTimeout(() => {
+                setIsFlipped(false);
+                setFlipCount((prev) => prev + 1);
+              }, 1200);
+            }, 500);
+            
+            observer.disconnect();
+          }
+        });
+      },
+      {
+        threshold: 0.7,
+        rootMargin: "-10% 0px -10% 0px", // Trigger when card is near center
+      }
+    );
+
+    if (cardRef.current) {
+      observer.observe(cardRef.current);
+    }
+
+    return () => observer.disconnect();
+  }, [autoFlipHint, hasAutoFlipped]);
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
     updateCursor(e);

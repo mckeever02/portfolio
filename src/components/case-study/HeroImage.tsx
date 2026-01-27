@@ -16,7 +16,7 @@ function isVideo(src: string): boolean {
 export function HeroImage({ bgColor, imageSrc, videoPoster, children }: HeroImageProps) {
   return (
     <div
-      className="relative w-full aspect-[1800/1110] overflow-hidden border border-black/20 dark:border-white/10"
+      className="relative w-full aspect-[1800/1110] overflow-hidden border border-black/20 dark:border-white/10 border-b-0 md:border-b-1"
     >
       {imageSrc && isVideo(imageSrc) ? (
         <video

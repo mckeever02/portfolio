@@ -15,6 +15,7 @@ import {
 } from "@/components/case-study";
 import Image from "next/image";
 import { motion, useScroll, useTransform } from "framer-motion";
+import { ZigZagDivider } from "@/components/ZigZagDivider";
 
 // Extracted to its own component so useScroll only runs when mounted
 function ScrollScaleVideo({ src }: { src: string }) {
@@ -115,22 +116,7 @@ export function VerifierContent({ caseStudy }: { caseStudy: CaseStudy }) {
       <NarrowContent>
         {/* RSA Challenge Quote */}
         <section className="flex flex-col items-center gap-4 py-8 scroll-mt-8">
-          {/* Zig-zag divider */}
-          <svg
-            className="w-24 h-3 mb-4"
-            viewBox="0 0 96 12"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="M0 6L8 11L16 6L24 11L32 6L40 11L48 6L56 11L64 6L72 11L80 6L88 11L96 6"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              className="text-[var(--foreground)]/30"
-            />
-          </svg>
+          <ZigZagDivider />
           <p className="text-[24px] md:text-[28px] leading-[1.4] tracking-[-0.28px] text-[var(--foreground)] text-center max-w-[640px]">
             &ldquo;It&apos;s 4 weeks until RSA, can you have something built and demo-able by then?&rdquo;
           </p>
@@ -148,22 +134,7 @@ export function VerifierContent({ caseStudy }: { caseStudy: CaseStudy }) {
               <span className="text-sm text-[var(--foreground)]">Sr. Director, End-User Experience</span>
             </div>
           </div>
-          {/* Zig-zag divider */}
-          <svg
-            className="w-24 h-3 mt-4"
-            viewBox="0 0 96 12"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="M0 6L8 11L16 6L24 11L32 6L40 11L48 6L56 11L64 6L72 11L80 6L88 11L96 6"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              className="text-[var(--foreground)]/30"
-            />
-          </svg>
+          <ZigZagDivider />
           {/* Panic video */}
           <ScrollScaleVideo src="/images/work/verifier/rowoon-panic.mp4" />
         </section>
