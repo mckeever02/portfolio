@@ -1,7 +1,7 @@
 "use client";
 
 import { CaseStudy } from "@/data/case-studies";
-import { PageTransition, PasswordGate } from "@/components";
+import { PasswordGate } from "@/components";
 import { BackButton } from "./BackButton";
 import { HeroImage } from "./HeroImage";
 import { ProjectMeta } from "./ProjectMeta";
@@ -38,44 +38,42 @@ export function FullWidthContent({ children, className = "" }: { children: React
 
 function LayoutContent({ caseStudy, children }: CaseStudyLayoutProps) {
   return (
-    <PageTransition>
-      <div className="min-h-screen bg-[var(--page-background)]">
-        <div className="py-4 md:py-8">
-          <main className="flex flex-col gap-10 py-4 min-w-0">
-            {/* Back Button */}
-            <div className="mx-auto w-full max-w-[800px] px-4 md:px-8">
-              <BackButton />
-            </div>
+    <div className="min-h-screen bg-[var(--page-background)]">
+      <div className="py-4 md:py-8">
+        <main className="flex flex-col gap-10 py-4 min-w-0">
+          {/* Back Button */}
+          <div className="mx-auto w-full max-w-[800px] px-4 md:px-8">
+            <BackButton />
+          </div>
 
-            {/* Hero + Content Wrapper */}
-            <div className="flex flex-col gap-6 sm:gap-10">
-              <div className="flex flex-col gap-0 sm:gap-0">
-                {/* Hero Image/Video */}
-                <div className="mx-auto w-full max-w-[1240px] px-4 md:px-8">
-                  <HeroImage bgColor={caseStudy.heroColor} imageSrc={caseStudy.heroVideo || caseStudy.heroImage} videoPoster={caseStudy.heroVideoPoster} />
-                </div>
-
-                {/* Project Metadata - overlaps hero */}
-                <div className="mx-auto w-full max-w-[800px] px-4 md:px-8 md:-mt-[130px] relative z-10">
-                  <ProjectMeta
-                    subtitle={caseStudy.subtitle}
-                    timeline={caseStudy.timeline}
-                    role={caseStudy.role}
-                    team={caseStudy.team}
-                  />
-                </div>
+          {/* Hero + Content Wrapper */}
+          <div className="flex flex-col gap-6 sm:gap-10">
+            <div className="flex flex-col gap-0 sm:gap-0">
+              {/* Hero Image/Video */}
+              <div className="mx-auto w-full max-w-[1240px] px-4 md:px-8">
+                <HeroImage bgColor={caseStudy.heroColor} imageSrc={caseStudy.heroVideo || caseStudy.heroImage} videoPoster={caseStudy.heroVideoPoster} />
               </div>
 
-              {/* Case Study Content */}
-              {children}
-
-              {/* Bottom spacer */}
-              <div className="h-[200px]" />
+              {/* Project Metadata - overlaps hero */}
+              <div className="mx-auto w-full max-w-[800px] px-4 md:px-8 md:-mt-[130px] relative z-10">
+                <ProjectMeta
+                  subtitle={caseStudy.subtitle}
+                  timeline={caseStudy.timeline}
+                  role={caseStudy.role}
+                  team={caseStudy.team}
+                />
+              </div>
             </div>
-          </main>
-        </div>
+
+            {/* Case Study Content */}
+            {children}
+
+            {/* Bottom spacer */}
+            <div className="h-[200px]" />
+          </div>
+        </main>
       </div>
-    </PageTransition>
+    </div>
   );
 }
 

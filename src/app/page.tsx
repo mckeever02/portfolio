@@ -10,7 +10,6 @@ import {
   ProjectCard,
   ImageCarousel,
   Timeline,
-  PageTransition,
 } from "@/components";
 import { useActiveSection } from "@/hooks/useActiveSection";
 import { caseStudies } from "@/data/case-studies";
@@ -21,14 +20,7 @@ export default function Home() {
   const activeSection = useActiveSection(sections);
 
   return (
-    <PageTransition direction="back">
-      <a 
-        href="#works" 
-        className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:bg-[var(--foreground)] focus:text-[var(--background)] focus:px-4 focus:py-2 focus:rounded"
-      >
-        Skip to content
-      </a>
-      <div className="min-h-screen bg-[var(--page-background)]">
+    <div className="min-h-screen bg-[var(--page-background)]">
       <div className="mx-auto max-w-[1280px] grid grid-cols-1 md:grid-cols-[300px_1fr] gap-8 lg:gap-24 xl:gap-32 p-4 lg:p-8">
         {/* Fixed Left Sidebar */}
         <aside aria-label="Profile and navigation" className="md:sticky md:top-4 lg:top-8 h-fit flex flex-col gap-10 md:gap-16 px-1 py-4 lg:py-8">
@@ -193,6 +185,5 @@ export default function Home() {
         </main>
       </div>
     </div>
-    </PageTransition>
   );
 }

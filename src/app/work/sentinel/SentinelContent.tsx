@@ -841,7 +841,7 @@ export function SentinelContent({ caseStudy }: { caseStudy: CaseStudy }) {
       <NarrowContent>
         <ContentSection id="overview" title="Overview">
           <BodyText>
-            Sentinel is an AI-powered admin copilot designed to help 1Password administrators manage their organization more efficiently. The project explores how conversational AI can simplify complex administrative tasks, surface insights, and reduce the cognitive load of managing enterprise security at scale.
+            Sentinel was a vision project exploring how an AI-powered copilot could help 1Password administrators manage their organizations more efficiently. Through research, prototyping, and internal advocacy, I worked to demonstrate how conversational AI could simplify complex administrative tasks, surface actionable insights, and reduce the cognitive load of managing enterprise security at scale.
           </BodyText>
         </ContentSection>
       </NarrowContent>
@@ -859,7 +859,20 @@ export function SentinelContent({ caseStudy }: { caseStudy: CaseStudy }) {
       <NarrowContent className="mt-16">
         <ContentSection id="making-the-case" title="Making a case for Agentic AI in 1Password">
           <BodyText>
-            As AI capabilities rapidly evolved across the industry, 1Password risked falling behind competitors who were already shipping AI-powered features. I conducted a competitive analysis to understand where the market was heading and identify the opportunity for 1Password to differentiate.
+            As AI capabilities rapidly evolved across the industry, 1Password risked falling behind competitors who were already shipping AI-powered features. I conducted{" "}
+            <HoverImageText
+              images={[
+                {
+                  src: "/images/work/sentinel/comparative-audit-preview.png",
+                  alt: "Comparative audit preview",
+                  width: 1000,
+                  height: 490,
+                  offset: { x: -350, y: 200 },
+                  rotation: -1,
+                },
+              ]}
+            >a comparative analysis</HoverImageText>{" "}
+            to understand where the market was heading and identify the opportunity for 1Password to differentiate.
           </BodyText>
         </ContentSection>
       </NarrowContent>
@@ -955,7 +968,7 @@ export function SentinelContent({ caseStudy }: { caseStudy: CaseStudy }) {
       <NarrowContent className="mt-16">
         <ContentSection id="proof-of-concept" title="Vibe-coding a proof of concept">
           <BodyText>
-            I vibe-coded a proof of concept to help validate the idea and demonstrate the potential capabilities.
+            To help validate the idea and demonstrate the potential capabilities, I vibe-coded a proof of concept to share with stakeholders and the AI team.
           </BodyText>
         </ContentSection>
       </NarrowContent>
@@ -1015,7 +1028,7 @@ export function SentinelContent({ caseStudy }: { caseStudy: CaseStudy }) {
       <NarrowContent>
         <ContentSection id="user-testing" title="User testing">
           <BodyText>
-            To validate our designs and ensure the AI assistant met real user needs, we conducted moderated usability testing sessions with administrators from various organization sizes.
+            I partnered with a researcher to run a study to validate the concept and get insights into how organisation's are using AI internally to help them manage their security.
           </BodyText>
         </ContentSection>
       </NarrowContent>
@@ -1061,7 +1074,7 @@ export function SentinelContent({ caseStudy }: { caseStudy: CaseStudy }) {
       <NarrowContent className="mt-16">
         <ContentSection id="ai-hesitations" title="AI Hesitations?">
           <BodyText>
-            Of course it's not all sunshine and rainbows. During the research we also asked candidates questions around their hesitations and concerns about AI to get a sense of where AI could be a friction point for admins.
+            During the research we also asked candidates questions around their hesitations and concerns about AI to get a sense of where AI could be a friction point for admins and end-users.
           </BodyText>
         </ContentSection>
       </NarrowContent>
@@ -1075,7 +1088,7 @@ export function SentinelContent({ caseStudy }: { caseStudy: CaseStudy }) {
         <ContentSection id="prototype" title="Telling Sonja's story">
           <BodyText>
             To bring the vision to life and build alignment across stakeholders, I created a high-fidelity prototype that followed <HoverImageText
-              highlightColor="purple"
+              highlightColor="neutral"
               images={[
                 {
                   src: "/images/work/sentinel/sonja-front.png",
@@ -1094,20 +1107,14 @@ export function SentinelContent({ caseStudy }: { caseStudy: CaseStudy }) {
                   rotation: 4,
                 },
               ]}
-            >Sonja—our B2B admin persona</HoverImageText>—through a realistic day-in-the-life scenario.
-          </BodyText>
-          <BodyText>
-            The prototype demonstrated how Sentinel could help Sonja tackle her most pressing challenges: responding to security alerts, onboarding new team members, and maintaining compliance—all while juggling the demands of a growing organization.
-          </BodyText>
-          <BodyText>
-            By grounding the demo in Sonja&apos;s actual workflows and pain points, we could show stakeholders not just what the feature does, but why it matters for the people we&apos;re building for.
+            >Sonja—our B2B admin persona</HoverImageText>—through a day-in-the-life scenario of a security administrator trying to solve a security incident.
           </BodyText>
         </ContentSection>
       </NarrowContent>
 
       {/* Sonja Story Carousel - outside width wrappers like FlipCarousel */}
       <div
-        className="w-full py-16 mt-8"
+        className="w-full py-16"
         style={{
           backgroundImage: "url('/images/work/sentinel/sonja-story-bg.png')",
           backgroundSize: "cover",
@@ -1172,6 +1179,42 @@ export function SentinelContent({ caseStudy }: { caseStudy: CaseStudy }) {
             />
           </ComicSlide>
         </MediaCarousel>
+        </div>
+
+        <ZigZagDivider />
+
+        <div className="flex flex-col items-center justify-center gap-8">
+          <FlipCard
+            className="w-full max-w-md aspect-square"
+            front={
+              <div className="w-full h-full bg-[var(--background)] flex items-center justify-center p-8 border border-[var(--foreground)]">
+                <h2 className="text-4xl md:text-5xl font-normal text-[var(--foreground)] text-center">
+                  Did it ship?
+                </h2>
+              </div>
+            }
+            back={
+              <div className="w-full h-full bg-[var(--foreground)] flex items-center justify-center overflow-hidden border border-[var(--foreground)]">
+                <video
+                  src="/images/work/sentinel/no.mp4"
+                  autoPlay
+                  loop
+                  muted
+                  playsInline
+                  className="w-full h-full object-cover"
+                />
+              </div>
+            }
+            autoFlipHint
+          />
+          <NarrowContent>
+            <BodyText>
+              Despite strong internal and external signals that an agentic AI system like Sentinel within the 1Password admin console would be a valuable undertaking, the AI team was ultimately repurposed and Sentinel was paused to focus on external AI security efforts.
+            </BodyText>
+            <BodyText>
+              Still, I'm proud of the work that went into crafting and selling this vision. As the underlying technology matures and becomes more secure and easier to integrate, I'm confident something like Sentinel will find its way into the product in the future.
+            </BodyText>
+          </NarrowContent>
         </div>
     </CaseStudyLayout>
   );
