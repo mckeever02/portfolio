@@ -655,12 +655,14 @@ export function SentinelContent({ caseStudy }: { caseStudy: CaseStudy }) {
         </ContentSection>
       </NarrowContent>
 
-      <LightboxImage
-        src="/images/work/sentinel/sentinel.jpg"
-        alt="Sentinel AI-powered admin copilot"
-        maxWidth="1000px"
-        aspectRatio="2880/1768"
-      />
+      <WideContent>
+        <LightboxImage
+          src="/images/work/sentinel/sentinel.jpg"
+          alt="Sentinel AI-powered admin copilot"
+          maxWidth="1000px"
+          aspectRatio="2880/1768"
+        />
+      </WideContent>
 
       {/* Making a case for Agentic AI */}
       <NarrowContent className="mt-16">

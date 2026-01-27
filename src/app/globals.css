@@ -392,10 +392,7 @@ body {
 }
 
 [data-rmiz-btn-unzoom] {
-  background-color: rgba(255, 255, 255, 0.1) !important;
-  border-radius: 50%;
-  color: white !important;
-  transition: background-color 0.2s ease;
+  @apply absolute top-6 right-6 w-12 h-12 flex items-center justify-center bg-white/10 hover:bg-white/20 rounded-full transition-colors cursor-pointer text-white;
 }
 
 [data-rmiz-btn-unzoom]:hover {
