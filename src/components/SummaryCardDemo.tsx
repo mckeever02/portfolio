@@ -561,7 +561,7 @@ const cardConfigs: Record<Exclude<CardType, "skeleton">, CardConfig> = {
           {["Email addresses", "Passwords", "IP addresses", "Usernames"].map((label, i) => (
             <span 
               key={i}
-              className="text-[12px] py-1 px-2 rounded-full leading-[1.2] flex items-center bg-red-500/20 text-red-400"
+              className="text-[12px] py-1 px-2 rounded-full leading-[1.2] flex items-center bg-[#FFEFEB] text-[#A32600] dark:bg-[#2F150E] dark:text-[#FEBEAE]"
               style={{ letterSpacing: "0.01px" }}
             >
               {label}
@@ -604,16 +604,16 @@ const cardConfigs: Record<Exclude<CardType, "skeleton">, CardConfig> = {
     header: {
       icon: (
         <Image 
-          src="/images/work/sentinel/logo-netsuite.png" 
-          alt="NetSuite" 
+          src="/images/work/sentinel/sentinel-tasks-icon.png" 
+          alt="Sentinel tasks" 
           width={32} 
           height={32}
           className="rounded-[8px]"
         />
       ),
       iconBg: "",
-      title: "NetSuite",
-      subtitle: "Work4WorkFinance",
+      title: "Sentinel tasks",
+      subtitle: "3 tasks",
       actions: (
         <>
           <IconBtn>
@@ -637,7 +637,7 @@ const cardConfigs: Record<Exclude<CardType, "skeleton">, CardConfig> = {
       <div>
         <StepList steps={[
           <Step number={1}>
-            Send a notification to <span className="font-semibold">Emma Brown</span> to change her password for the <span className="font-semibold">Plex</span> login
+            Send a notification to <span className="font-semibold">Emma Brown</span> to change her <span className="font-semibold">Plex</span> password
           </Step>,
           <Step number={2}>
             Rotate the password for the <span className="font-semibold">NetSuite</span> login
@@ -1099,17 +1099,19 @@ export function SummaryCardDemo() {
   return (
     <div 
       ref={containerRef}
-      className="w-full p-3 sm:p-6 md:p-8 lg:p-12 xl:p-16"
-      style={{ 
-        backgroundImage: "url('/images/work/sentinel/agent-bg.png')",
-        backgroundSize: "cover",
-        backgroundPosition: "center",
-        transform: "translateZ(0)",
-      }}
+      className="relative w-full p-3 sm:p-6 md:p-8 lg:p-12 xl:p-16 overflow-hidden"
     >
+      {/* Background image - optimized by Next.js */}
+      <Image
+        src="/images/work/sentinel/agent-bg.png"
+        alt=""
+        fill
+        className="object-cover"
+        sizes="100vw"
+      />
       {/* Outer blur wrapper */}
       <div 
-        className="rounded-[16px] p-2 backdrop-blur-md border border-white/30"
+        className="relative z-10 rounded-[16px] p-2 backdrop-blur-md border border-white/30"
         style={{ 
           backgroundColor: "rgba(255, 255, 255, 0.3)",
           maxWidth: "416px",

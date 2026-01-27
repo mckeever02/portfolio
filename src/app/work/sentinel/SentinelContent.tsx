@@ -1035,17 +1035,17 @@ export function SentinelContent({ caseStudy }: { caseStudy: CaseStudy }) {
 
       {/* Full Width Quote Section */}
       <WideContent>
-          <div 
-            className="w-full flex items-center justify-center p-3 sm:p-6 md:px-16 md:py-24"
-            style={{
-              backgroundImage: "url('/images/work/sentinel/quote-bg-5.png')",
-              backgroundSize: "cover",
-              backgroundPosition: "center",
-              transform: "translateZ(0)",
-            }}
-          >
+          <div className="relative w-full flex items-center justify-center p-3 sm:p-6 md:px-16 md:py-24 overflow-hidden">
+            {/* Background image - optimized by Next.js */}
+            <Image
+              src="/images/work/sentinel/quote-bg-5.png"
+              alt=""
+              fill
+              className="object-cover"
+              sizes="100vw"
+            />
             {/* Outer frosted glass wrapper */}
-            <div className="bg-white/20 backdrop-blur-xl rounded-2xl p-2 max-w-2xl w-full border border-white/30">
+            <div className="relative z-10 bg-white/20 backdrop-blur-xl rounded-2xl p-2 max-w-2xl w-full border border-white/30">
               {/* Inner container */}
               <div className="bg-[var(--background)] rounded-xl p-8 md:p-10 h-[280px] flex flex-col">
               <TextCarousel
@@ -1113,15 +1113,16 @@ export function SentinelContent({ caseStudy }: { caseStudy: CaseStudy }) {
       </NarrowContent>
 
       {/* Sonja Story Carousel - outside width wrappers like FlipCarousel */}
-      <div
-        className="w-full py-16"
-        style={{
-          backgroundImage: "url('/images/work/sentinel/sonja-story-bg.png')",
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-        }}
-      >
-        <MediaCarousel cardWidth={1000} gap={48}>
+      <div className="relative w-full py-16 overflow-hidden">
+        {/* Background image - optimized by Next.js */}
+        <Image
+          src="/images/work/sentinel/sonja-story-bg.jpg"
+          alt=""
+          fill
+          className="object-cover"
+          sizes="100vw"
+        />
+        <MediaCarousel cardWidth={1000} gap={48} className="relative z-10">
           {/* Slide 1: Comic intro */}
           <ComicSlide>
             <Image
