@@ -1,7 +1,26 @@
 "use client";
 
-import { useRef, useEffect, RefObject, ReactNode } from "react";
+import { useRef, useEffect, useState, RefObject, ReactNode } from "react";
 import { motion, MotionValue, useMotionValue } from "framer-motion";
+
+// Hook to detect touch devices
+function useIsTouchDevice() {
+  const [isTouchDevice, setIsTouchDevice] = useState(false);
+
+  useEffect(() => {
+    const checkTouchDevice = () => {
+      setIsTouchDevice(
+        'ontouchstart' in window ||
+        navigator.maxTouchPoints > 0 ||
+        window.matchMedia('(hover: none)').matches
+      );
+    };
+    
+    checkTouchDevice();
+  }, []);
+
+  return isTouchDevice;
+}
 
 interface UseHoverCursorOptions {
   containerRef: RefObject<HTMLElement | null>;
@@ -84,6 +103,13 @@ export function HoverCursor({
   className = "",
   label,
 }: HoverCursorProps) {
+  const isTouchDevice = useIsTouchDevice();
+
+  // Don't render on touch devices
+  if (isTouchDevice) {
+    return null;
+  }
+
   return (
     <motion.div
       className="absolute top-0 left-0 pointer-events-none z-10"

@@ -67,6 +67,7 @@ export function Timeline() {
                   width={32}
                   height={32}
                   className="w-full h-full object-cover"
+                  loading="eager"
                 />
               </div>
               {/* Divider (not on last item) */}
