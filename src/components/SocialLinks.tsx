@@ -151,7 +151,7 @@ function HorizontalLink({ link, showCheck, onCopy }: HorizontalLinkProps) {
   const [isHovered, setIsHovered] = useState(false);
   const isEmail = link.type === "copy";
 
-  const instantTransition = { duration: 0.15, ease: "easeOut" };
+  const instantTransition = { duration: 0.15, ease: "easeOut" as const };
   
   // Determine which icon to show and use a unique key for each state
   const getIconKey = () => {
