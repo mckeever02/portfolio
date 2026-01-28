@@ -74,7 +74,8 @@ export default function Home() {
                 role={caseStudies.verifier.role}
                 company={caseStudies.verifier.company}
                 bgColor={caseStudies.verifier.heroColor}
-                imageUrl={caseStudies.verifier.heroImage}
+                videoUrl={caseStudies.verifier.heroVideo}
+                videoPoster={caseStudies.verifier.heroVideoPoster}
                 href={`/work/${caseStudies.verifier.slug}`}
               />
               <WorkCard

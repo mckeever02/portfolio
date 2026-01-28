@@ -72,7 +72,7 @@ export function VerifierContent({ caseStudy }: { caseStudy: CaseStudy }) {
               image: "/images/work/verifier/shiner.jpg",
             },
           ]}
-          resultImage="/images/work/verifier/deepfake-danny.gif"
+          resultImage="/images/work/verifier/deepfake-danny.mp4"
           resultLabel="Deepfake Danny"
           headline="Deepfake scams and AI-based fraud amounted to over $1bn in losses in 2025."
           body="Employees can no longer be certain if the colleague they are interacting with is who they say they are."

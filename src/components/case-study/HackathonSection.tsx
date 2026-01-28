@@ -81,12 +81,23 @@ export function HackathonSection({
         {/* Result */}
         <div className="flex flex-col items-center gap-4 w-full md:w-auto px-8 md:px-0">
           <div className="relative w-full md:w-[346px] aspect-[346/196] border-[5px] border-[rgba(0,0,0,0.5)] overflow-hidden">
-            <Image
-              src={resultImage}
-              alt={resultLabel}
-              fill
-              className="object-cover"
-            />
+            {resultImage.endsWith(".mp4") ? (
+              <video
+                src={resultImage}
+                autoPlay
+                loop
+                muted
+                playsInline
+                className="w-full h-full object-cover"
+              />
+            ) : (
+              <Image
+                src={resultImage}
+                alt={resultLabel}
+                fill
+                className="object-cover"
+              />
+            )}
           </div>
           <p className="text-xl text-[var(--foreground)]">{resultLabel}</p>
         </div>

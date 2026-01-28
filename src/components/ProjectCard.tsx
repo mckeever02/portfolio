@@ -10,6 +10,7 @@ interface ProjectCardProps {
   href: string;
   imageUrl?: string;
   videoUrl?: string;
+  videoPoster?: string;
   externalLink?: boolean;
 }
 
@@ -21,6 +22,7 @@ export function ProjectCard({
   href,
   imageUrl,
   videoUrl,
+  videoPoster,
   externalLink = false,
 }: ProjectCardProps) {
   return (
@@ -31,6 +33,7 @@ export function ProjectCard({
       href={href}
       imageUrl={imageUrl}
       videoUrl={videoUrl}
+      videoPoster={videoPoster}
       externalLink={externalLink}
       hoverLabel="View project"
       details={
