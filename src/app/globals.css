@@ -1,38 +1,6 @@
 @import "tailwindcss";
 
-/* Font Face Declarations - Add your font files to /public/fonts/ */
-@font-face {
-  font-family: 'GT Cinetype';
-  src: url('/fonts/GT-Cinetype-Light.woff2') format('woff2');
-  font-weight: 300;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: 'GT Cinetype';
-  src: url('/fonts/GT-Cinetype-Regular.woff2') format('woff2');
-  font-weight: 400;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: 'GT Cinetype';
-  src: url('/fonts/GT-Cinetype-Bold.woff2') format('woff2');
-  font-weight: 700;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: 'GT Era Display';
-  src: url('/fonts/GT-Era-Display-Bold.woff2') format('woff2');
-  font-weight: 700;
-  font-style: normal;
-  font-display: swap;
-}
-
+/* Anime Ace font - only used for specific comic-style text */
 @font-face {
   font-family: 'Anime Ace';
   src: url('/fonts/AnimeAce20BB.woff2') format('woff2'),
@@ -60,6 +28,8 @@
   font-display: swap;
 }
 
+/* GT Cinetype and GT Era Display are loaded via next/font/local in layout.tsx */
+
 :root {
   /* Design Tokens from Figma */
   --page-background: #f2ede6;
@@ -82,9 +52,8 @@
   --skeleton-base: #e5e5e5;
   --skeleton-highlight: #f0f0f0;
   
-  /* Fonts - GT Cinetype and GT Era Display with system fallbacks */
-  --font-cinetype: 'GT Cinetype', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  --font-era: 'GT Era Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  /* Fonts - GT Cinetype and GT Era Display loaded via next/font with system fallbacks */
+  /* --font-cinetype and --font-era CSS variables are set by next/font/local in layout.tsx */
 }
 
 @theme inline {
@@ -95,8 +64,6 @@
   --color-border: var(--border);
   --color-border-darker: var(--border-darker);
   --color-card: var(--card-background);
-  --font-cinetype: var(--font-cinetype);
-  --font-era: var(--font-era);
 }
 
 /* Dark mode - triggered by system preference */
@@ -134,8 +101,8 @@ html {
 body {
   background: var(--page-background);
   color: var(--foreground);
-  font-family: var(--font-cinetype);
   min-height: 100vh;
+  /* font-family is applied via next/font className in layout.tsx */
 }
 
 /* Text selection highlight */

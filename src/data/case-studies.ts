@@ -48,7 +48,7 @@ export const caseStudies: Record<string, CaseStudy> = {
     subtitle: "Identity verification in the age of AI fraud and deepfakes",
     description: "0 → 1 design for a verification system to combat deepfakes and AI fraud",
     heroColor: "#c9e8e3",
-    heroImage: "/images/verifier-hero.jpg",
+    heroImage: "/images/verifier-hero-4.png",
     timeline: "H1 2025",
     role: "Lead Designer",
     team: [
