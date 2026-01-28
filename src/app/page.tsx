@@ -27,10 +27,6 @@ export default function Home() {
           <ProfileHeader />
           <StatusInfo />
           <SectionNav activeSection={activeSection} />
-          {/* Social links - hidden on mobile, shown in sidebar on desktop */}
-          <div className="hidden md:block">
-            <SocialLinks />
-          </div>
         </aside>
 
         {/* Scrollable Right Content */}
@@ -55,7 +51,7 @@ export default function Home() {
                 role="Design Lead"
                 company="1Password"
                 bgColor="#DD4825"
-                imageUrl="/images/agentic-autofill-hero.jpg"
+                imageUrl="/images/agentic-autofill-hero-3.png"
                 href="https://www.youtube.com/watch?v=c3tqMe2_UwQ"
                 externalLink
               />
@@ -167,6 +163,10 @@ export default function Home() {
                 I’m a product designer with over 11 years of experience designing and shipping products used by millions of people. I enjoy working at both ends of the spectrum—building new products from the ground up and improving existing ones through continuous iteration and research.
             </p>
 
+            <p className="text-lg leading-relaxed text-[var(--foreground)]">
+              I believe in prototypes over PRDs as a method of collaboration and experimentation. I'm inspired by deep curiosity in the unknown and a strong conviction that craft is a durable differentiator, particularly in the age of AI.
+            </p>
+
               <p className="text-lg leading-relaxed text-[var(--foreground)]">
                 At 1Password, I lead design for AI, shaping security features for AI Agents and guiding how AI is integrated into the product in a thoughtful, security-first way.
               </p>
@@ -175,15 +175,15 @@ export default function Home() {
             <Timeline />
           </section>
 
-          {/* Social links - shown at bottom on mobile, hidden on desktop */}
-          <div className="lg:hidden pt-8 border-t border-[var(--border)]">
-            <SocialLinks />
-          </div>
-
-          {/* Bottom spacer */}
-          <div className="h-[200px]" />
         </main>
       </div>
+
+      {/* Footer - full width, centered below sidebar and main */}
+      <footer className="py-8">
+        <div className="mx-auto max-w-[1280px] px-4 md:px-8 flex justify-center">
+          <SocialLinks horizontal />
+        </div>
+      </footer>
     </div>
   );
 }

@@ -3,11 +3,13 @@
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { useState } from "react";
+import * as Tooltip from "@radix-ui/react-tooltip";
+import "./case-study/tooltip.css";
 
 const LinkedInIcon = () => (
   <svg
-    width="16"
-    height="16"
+    width="20"
+    height="20"
     viewBox="0 0 20 20"
     fill="none"
     xmlns="http://www.w3.org/2000/svg"
@@ -21,8 +23,8 @@ const LinkedInIcon = () => (
 
 const GitHubIcon = () => (
   <svg
-    width="16"
-    height="16"
+    width="20"
+    height="20"
     viewBox="0 0 20 20"
     fill="none"
     xmlns="http://www.w3.org/2000/svg"
@@ -38,8 +40,8 @@ const GitHubIcon = () => (
 
 const EmailIcon = () => (
   <svg
-    width="16"
-    height="16"
+    width="20"
+    height="20"
     viewBox="0 0 20 20"
     fill="none"
     xmlns="http://www.w3.org/2000/svg"
@@ -55,15 +57,15 @@ const ExternalArrow = () => (
   <svg
     width="20"
     height="20"
-    viewBox="0 0 24 24"
+    viewBox="0 0 20 20"
     fill="none"
     stroke="currentColor"
-    strokeWidth="2"
+    strokeWidth="1.75"
     strokeLinecap="round"
     strokeLinejoin="round"
   >
-    <path d="M7 17L17 7" />
-    <path d="M7 7h10v10" />
+    <path d="M5 15L15 5" />
+    <path d="M5 5h10v10" />
   </svg>
 );
 
@@ -71,15 +73,15 @@ const CopyIcon = () => (
   <svg
     width="20"
     height="20"
-    viewBox="0 0 24 24"
+    viewBox="0 0 20 20"
     fill="none"
     stroke="currentColor"
-    strokeWidth="2"
+    strokeWidth="1.75"
     strokeLinecap="round"
     strokeLinejoin="round"
   >
-    <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
-    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
+    <rect x="7.5" y="7.5" width="10" height="10" rx="1.5" ry="1.5" />
+    <path d="M4 12.5H3.5a1.5 1.5 0 0 1-1.5-1.5v-8a1.5 1.5 0 0 1 1.5-1.5h8a1.5 1.5 0 0 1 1.5 1.5V3" />
   </svg>
 );
 
@@ -87,14 +89,14 @@ const CheckIcon = () => (
   <svg
     width="20"
     height="20"
-    viewBox="0 0 24 24"
+    viewBox="0 0 20 20"
     fill="none"
     stroke="currentColor"
-    strokeWidth="2"
+    strokeWidth="1.75"
     strokeLinecap="round"
     strokeLinejoin="round"
   >
-    <polyline points="20 6 9 17 4 12" />
+    <polyline points="16 5 7.5 14 4 10" />
   </svg>
 );
 
@@ -135,7 +137,94 @@ const springTransition = {
   damping: 25,
 };
 
-export function SocialLinks() {
+interface SocialLinksProps {
+  horizontal?: boolean;
+}
+
+interface HorizontalLinkProps {
+  link: typeof links[number];
+  showCheck: boolean;
+  onCopy: () => void;
+}
+
+function HorizontalLink({ link, showCheck, onCopy }: HorizontalLinkProps) {
+  const [isHovered, setIsHovered] = useState(false);
+  const isEmail = link.type === "copy";
+
+  const instantTransition = { duration: 0.15, ease: "easeOut" as const };
+  
+  // Determine which icon to show and use a unique key for each state
+  const getIconKey = () => {
+    if (showCheck) return "check";
+    if (isHovered) return "hover";
+    return "default";
+  };
+
+  const getIcon = () => {
+    if (showCheck) return <CheckIcon />;
+    if (isHovered) return isEmail ? <CopyIcon /> : <ExternalArrow />;
+    return <link.icon />;
+  };
+
+  const content = (
+    <div className="relative w-5 h-5 flex items-center justify-center">
+      <AnimatePresence mode="popLayout" initial={false}>
+        <motion.div
+          key={getIconKey()}
+          initial={{ scale: 0.5, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          exit={{ scale: 0.5, opacity: 0 }}
+          transition={instantTransition}
+        >
+          {getIcon()}
+        </motion.div>
+      </AnimatePresence>
+    </div>
+  );
+
+  if (isEmail) {
+    return (
+      <Tooltip.Root open={showCheck}>
+        <Tooltip.Trigger asChild>
+          <button
+            onClick={onCopy}
+            onMouseEnter={() => setIsHovered(true)}
+            onMouseLeave={() => setIsHovered(false)}
+            className="text-[var(--foreground)] cursor-pointer"
+            aria-label={link.label}
+          >
+            {content}
+          </button>
+        </Tooltip.Trigger>
+        <Tooltip.Portal>
+          <Tooltip.Content
+            className="TooltipContent"
+            sideOffset={8}
+          >
+            Copied
+            <Tooltip.Arrow className="TooltipArrow" />
+          </Tooltip.Content>
+        </Tooltip.Portal>
+      </Tooltip.Root>
+    );
+  }
+
+  return (
+    <Link
+      href={link.href!}
+      target="_blank"
+      rel="noopener noreferrer"
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+      className="text-[var(--foreground)]"
+      aria-label={link.label}
+    >
+      {content}
+    </Link>
+  );
+}
+
+export function SocialLinks({ horizontal = false }: SocialLinksProps) {
   const [copied, setCopied] = useState(false);
 
   const handleCopy = async (email: string) => {
@@ -143,6 +232,28 @@ export function SocialLinks() {
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
+
+  if (horizontal) {
+    return (
+      <Tooltip.Provider delayDuration={0}>
+        <div className="flex items-center gap-6">
+          {links.map((link) => {
+            const isEmail = link.type === "copy";
+            const showCheck = isEmail && copied;
+            
+            return (
+              <HorizontalLink
+                key={link.label}
+                link={link}
+                showCheck={showCheck}
+                onCopy={() => handleCopy(link.email!)}
+              />
+            );
+          })}
+        </div>
+      </Tooltip.Provider>
+    );
+  }
 
   return (
     <div className="flex flex-col gap-2">

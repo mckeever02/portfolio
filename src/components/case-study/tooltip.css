@@ -1,6 +1,6 @@
 .TooltipContent {
-  padding: 4px 8px;
-  border-radius: 4px;
+  padding: 6px 12px;
+  border-radius: 8px;
   background-color: var(--foreground);
   color: var(--background);
   font-size: 12px;
@@ -11,7 +11,8 @@
   animation-timing-function: ease-out;
 }
 
-.TooltipContent[data-state="delayed-open"] {
+.TooltipContent[data-state="delayed-open"],
+.TooltipContent[data-state="instant-open"] {
   animation-name: tooltipIn;
 }
 
