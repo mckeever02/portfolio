@@ -93,30 +93,45 @@ interface ChatMessage {
 interface ConversationTemplate {
   question: string;
   response: string;
-  cardType: Exclude<CardType, "skeleton">;
+  cardType?: Exclude<CardType, "skeleton">;
 }
 
 const conversationTemplates: ConversationTemplate[] = [
   {
-    question: "Which items are in the Finance vault?",
-    response: "Here are the 4 items in your Finance vault:",
-    cardType: "item-list",
+    question: "Go to my Stripe dashboard and show me today's payouts.",
+    response: "Got it. To do this I'll need your username and password for Stripe.",
   },
   {
-    question: "Who is NetSuite shared with?",
-    response: "NetSuite is shared with 6 people. Here's who has access:",
-    cardType: "item-sharing",
+    question: "Sure thing. Here they are. \n\nusername: sonja.johnson@acmeltd.com\npassword: DoILookLikeATuringTest",
+    response: "Thanks! brb hacking your stripe account. Just kidding... or am I???",
   },
-  {
-    question: "Was Plex involved in a breach recently?",
-    response: "Yes, Plex was involved in a data breach in August 2022. Here's the Watchtower report:",
-    cardType: "watchtower",
-  },
-  {
-    question: "Rotate the NetSuite password and notify affected users",
-    response: "I can help with that. Here's what I'll do:",
-    cardType: "task",
-  },
+];
+
+// Solution uses a step-based system for more complex flows
+type SolutionStepType = "user-message" | "agent-message" | "agent-working" | "permission-card" | "user-action";
+
+interface SolutionStep {
+  type: SolutionStepType;
+  content?: string;
+  duration?: number; // How long to show before auto-advancing (for working text)
+}
+
+const solutionSteps: SolutionStep[] = [
+  { type: "user-message", content: "Go to my Stripe dashboard and show me today's payouts." },
+  { type: "agent-message", content: "Got it. I'll check 1Password for Stripe credentials." },
+  { type: "agent-working", content: "Checking 1Password...", duration: 1500 },
+  { type: "agent-working", content: "Requesting access...", duration: 1500 },
+  { type: "agent-message", content: "Do you want to allow 1Password to autofill your credentials for me?" },
+  { type: "permission-card" },
+  { type: "user-action", content: "Authorize" },
+  { type: "agent-working", content: "Asking 1Password to sign in to Stripe...", duration: 2000 },
+  { type: "agent-message", content: "I'm signed in. Finding today's payouts." },
+  { type: "agent-working", content: "Thinking...", duration: 2500 },
+];
+
+// Keep old templates for non-headerLabel mode
+const solutionTemplates: ConversationTemplate[] = [
+  { question: "", response: "" },
 ];
 
 // Skeleton base with shimmer
@@ -774,11 +789,72 @@ function TypingIndicator() {
   );
 }
 
-// User message bubble
+// Working indicator with customizable text (for solution flow)
+function WorkingIndicator({ text }: { text: string }) {
+  return (
+    <div className={`flex items-center gap-2 py-3 ${inter.className}`}>
+      <motion.div
+        animate={{ rotate: 360 }}
+        transition={{
+          duration: 2,
+          repeat: Infinity,
+          ease: "linear",
+        }}
+      >
+        <SentinelIcon size={16} />
+      </motion.div>
+      <ShinyText 
+        text={text}
+        className="text-[16px] leading-normal"
+        color="var(--shiny-text-base, rgba(255,255,255,0.4))"
+        shineColor="var(--shiny-text-shine, rgba(255,255,255,1))"
+        speed={1.2}
+        spread={90}
+      />
+    </div>
+  );
+}
+
+// Permission card for solution flow
+function PermissionCard({ onAuthorize }: { onAuthorize?: () => void }) {
+  return (
+    <div className={`bg-[var(--foreground)]/5 rounded-[16px] overflow-hidden ${inter.className}`}>
+      {/* Header */}
+      <div className="px-4 py-3 border-b border-[var(--foreground)]/10">
+        <div className="flex items-center gap-2">
+          <div className="w-6 h-6 rounded bg-[#0066ff] flex items-center justify-center">
+            <span className="text-white text-[12px] font-bold">1P</span>
+          </div>
+          <span className="text-[14px] font-medium text-[var(--foreground)]">1Password</span>
+        </div>
+      </div>
+      {/* Body */}
+      <div className="px-4 py-4">
+        <p className="text-[14px] text-[var(--foreground)]/80 mb-1">
+          <span className="font-medium text-[var(--foreground)]">Sentinel</span> wants to access:
+        </p>
+        <div className="flex items-center gap-2 mt-3 mb-4">
+          <div className="w-5 h-5 rounded bg-[#635bff] flex items-center justify-center">
+            <span className="text-white text-[10px] font-bold">S</span>
+          </div>
+          <span className="text-[14px] text-[var(--foreground)]">Stripe credentials</span>
+        </div>
+        <button
+          onClick={onAuthorize}
+          className="w-full bg-[#0066ff] hover:bg-[#0055dd] text-white text-[14px] font-medium py-2.5 px-4 rounded-lg transition-colors"
+        >
+          Authorize
+        </button>
+      </div>
+    </div>
+  );
+}
+
+// User message bubble (appears with fade + move, no typing)
 function UserBubble({ content }: { content: string }) {
   return (
-    <div 
-      className={`bg-[var(--foreground)]/5 px-3 py-3 rounded-[12px] text-[16px] leading-normal text-[var(--foreground)] ${inter.className}`}
+    <div
+      className={`bg-[var(--foreground)]/5 px-3 py-3 rounded-[12px] text-[16px] leading-normal text-[var(--foreground)] whitespace-pre-line ${inter.className}`}
     >
       {content}
     </div>
@@ -786,24 +862,28 @@ function UserBubble({ content }: { content: string }) {
 }
 
 // Agent message - plain text with optional card
-function AgentBubble({ 
-  content, 
+function AgentBubble({
+  content,
   cardType,
   isCardLoading,
-}: { 
-  content: string; 
+  onTypingComplete,
+  staticContent = false,
+}: {
+  content: string;
   cardType?: Exclude<CardType, "skeleton">;
   isCardLoading?: boolean;
+  onTypingComplete?: () => void;
+  staticContent?: boolean;
 }) {
   const config = cardType ? cardConfigs[cardType] : null;
   const [textComplete, setTextComplete] = useState(false);
-  // Show skeleton while card is loading OR while text is still typing
   const showSkeleton = isCardLoading || !config || !textComplete;
+  const isStatic = staticContent;
 
-  // Memoize callback to prevent TextType re-renders
   const handleTextComplete = useCallback(() => {
     setTextComplete(true);
-  }, []);
+    onTypingComplete?.();
+  }, [onTypingComplete]);
 
   // Reset text complete when content changes
   useEffect(() => {
@@ -812,16 +892,20 @@ function AgentBubble({
 
   return (
     <div className="flex flex-col">
-      {/* Typed text response */}
-      <p 
-        className={`text-[16px] leading-normal py-3 text-[var(--foreground)] ${inter.className}`}
+      {/* Typed text response or static */}
+      <p
+        className={`text-[16px] leading-normal py-3 text-[var(--foreground)] whitespace-pre-line ${inter.className}`}
       >
-        <TextType 
-          text={content}
-          typingSpeed={12}
-          showCursor={false}
-          onComplete={handleTextComplete}
-        />
+        {isStatic ? (
+          content
+        ) : (
+          <TextType
+            text={content}
+            typingSpeed={12}
+            showCursor={false}
+            onComplete={handleTextComplete}
+          />
+        )}
       </p>
       
       {/* Summary card - shows loading state immediately, content after text completes */}
@@ -901,6 +985,46 @@ function AgentBubble({
   );
 }
 
+// Segmented control for switching between views
+function SegmentedControl({
+  options,
+  selected,
+  onChange,
+}: {
+  options: { id: string; label: string }[];
+  selected: string;
+  onChange: (id: string) => void;
+}) {
+  return (
+    <div className="relative inline-flex p-1.5 rounded-[16px] bg-white/20 backdrop-blur-sm border border-white/30">
+      {options.map((option) => (
+        <button
+          key={option.id}
+          onClick={() => onChange(option.id)}
+          className={`
+            relative z-10 px-5 py-2 rounded-[12px] text-base font-medium transition-colors duration-200
+            ${
+              selected === option.id
+                ? "text-[var(--foreground)]"
+                : "text-white hover:text-white/80"
+            }
+          `}
+        >
+          {/* Sliding active indicator */}
+          {selected === option.id && (
+            <motion.div
+              layoutId="segment-indicator"
+              className="absolute inset-0 bg-white rounded-[12px] shadow-sm"
+              transition={{ type: "spring", stiffness: 400, damping: 30 }}
+            />
+          )}
+          <span className="relative z-10">{option.label}</span>
+        </button>
+      ))}
+    </div>
+  );
+}
+
 // Header that types out the label (used when headerLabel is set; no countdown). Only starts when startTyping (in view).
 function TypingHeader({
   label,
@@ -909,12 +1033,11 @@ function TypingHeader({
   label: string;
   startTyping: boolean;
 }) {
-  const allCaps = label.toUpperCase();
   return (
     <div className="flex justify-center py-6 min-h-[3rem]">
       <h2 className="text-sm font-bold tracking-[1.2px] uppercase text-[var(--foreground)] font-[var(--font-era)]">
         {startTyping ? (
-          <TextType text={allCaps} typingSpeed={80} showCursor={false} />
+          <TextType text={label} typingSpeed={80} showCursor={false} />
         ) : (
           <span className="invisible" aria-hidden>{"\u200B"}</span>
         )}
@@ -987,6 +1110,20 @@ function ChatHeader({
 // MAIN COMPONENT
 // ===============================
 
+type ConversationMessage = { role: "user" | "agent"; content: string };
+
+const TYPING_DURATION = 3500;
+const DISPLAY_DURATION = 4000;
+const INITIAL_DELAY = 1200;
+const CARD_LOADING_DURATION = 1500;
+const FADE_OUT_DURATION = 350;
+/** Delay between agent finishing a response and the user's next message appearing */
+const AGENT_TO_USER_DELAY = 1500;
+/** Delay between user message appearing and the "thinking..." indicator */
+const USER_TO_TYPING_DELAY = 800;
+const TOTAL_CYCLE_DURATION =
+  INITIAL_DELAY + TYPING_DURATION + CARD_LOADING_DURATION + DISPLAY_DURATION + FADE_OUT_DURATION;
+
 export function SummaryCardDemo({
   backgroundImage = "/images/work/sentinel/agent-bg.png",
   headerLabel,
@@ -994,57 +1131,124 @@ export function SummaryCardDemo({
   backgroundImage?: string;
   headerLabel?: string;
 } = {}) {
-  // Cycle through conversation templates
   const [currentIndex, setCurrentIndex] = useState(0);
   const template = conversationTemplates[currentIndex];
-  
-  // Conversation state
+
   const [showAgentResponse, setShowAgentResponse] = useState(false);
   const [isTyping, setIsTyping] = useState(false);
   const [isCardLoading, setIsCardLoading] = useState(false);
   const [hasTriggered, setHasTriggered] = useState(false);
   const [isExiting, setIsExiting] = useState(false);
-  
-  // Progress ring state
+
   const [cycleKey, setCycleKey] = useState(0);
   const [isProgressActive, setIsProgressActive] = useState(false);
-  
-  const containerRef = useRef<HTMLDivElement>(null);
-  
-  // Timing constants
-  const INITIAL_DELAY = 1200;
-  const TYPING_DURATION = 3500;
-  const CARD_LOADING_DURATION = 1500;
-  const DISPLAY_DURATION = 4000;
-  const FADE_OUT_DURATION = 350;
-  
-  // Total cycle duration (for progress ring)
-  const TOTAL_CYCLE_DURATION = INITIAL_DELAY + TYPING_DURATION + CARD_LOADING_DURATION + DISPLAY_DURATION + FADE_OUT_DURATION;
 
-  // Function to start a conversation animation (only runs when hasTriggered, i.e. in view)
+  // Single conversation thread (when headerLabel – append instead of replace)
+  const [conversationMessages, setConversationMessages] = useState<ConversationMessage[]>([]);
+  const [currentStep, setCurrentStep] = useState(0);
+  const [currentAgentContent, setCurrentAgentContent] = useState("");
+  const [activeSegment, setActiveSegment] = useState<"problem" | "solution">("problem");
+  const [isShaking, setIsShaking] = useState(false);
+
+  // Solution conversation state (step-based)
+  type SolutionDisplayItem = 
+    | { type: "user"; content: string }
+    | { type: "agent"; content: string }
+    | { type: "permission-card" };
+  
+  const [solutionDisplayItems, setSolutionDisplayItems] = useState<SolutionDisplayItem[]>([]);
+  const [solutionStepIndex, setSolutionStepIndex] = useState(0);
+  const [solutionCurrentWorking, setSolutionCurrentWorking] = useState<string | null>(null);
+  const [solutionShowPermissionCard, setSolutionShowPermissionCard] = useState(false);
+  const [solutionCurrentAgentTyping, setSolutionCurrentAgentTyping] = useState<string | null>(null);
+  const [solutionHasTriggered, setSolutionHasTriggered] = useState(false);
+  const [solutionIsTyping, setSolutionIsTyping] = useState(false);
+
+  const containerRef = useRef<HTMLDivElement>(null);
+  const advanceLockRef = useRef(false);
+  const solutionStepTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const advanceToNextStep = useCallback(() => {
+    if (advanceLockRef.current) return;
+    advanceLockRef.current = true;
+
+    const contentToPush = currentAgentContent;
+    setConversationMessages((prev) => {
+      const last = prev[prev.length - 1];
+      if (
+        last?.role === "agent" &&
+        last?.content === contentToPush
+      ) {
+        return prev;
+      }
+      return [...prev, { role: "agent", content: contentToPush }];
+    });
+    setShowAgentResponse(false);
+    setCurrentStep((step) => {
+      const next = step + 1;
+      if (next < conversationTemplates.length) {
+        const nextUserContent = conversationTemplates[next].question;
+        setTimeout(() => {
+          setConversationMessages((prev) => {
+            const last = prev[prev.length - 1];
+            if (
+              last?.role === "user" &&
+              last?.content === nextUserContent
+            ) {
+              return prev;
+            }
+            return [...prev, { role: "user", content: nextUserContent }];
+          });
+          advanceLockRef.current = false;
+          setTimeout(() => {
+            setIsTyping(true);
+            setTimeout(() => {
+              setIsTyping(false);
+              setShowAgentResponse(true);
+              setCurrentAgentContent(conversationTemplates[next].response);
+            }, TYPING_DURATION);
+          }, USER_TO_TYPING_DELAY);
+        }, AGENT_TO_USER_DELAY);
+        return next;
+      }
+      // Shake the chat window when conversation finishes (after delay)
+      setTimeout(() => {
+        setIsShaking(true);
+        setTimeout(() => setIsShaking(false), 500);
+      }, 1000);
+
+      // Replay from start after a pause
+      setTimeout(() => {
+        setConversationMessages([{ role: "user", content: conversationTemplates[0].question }]);
+        setCurrentStep(0);
+        advanceLockRef.current = false;
+        setTimeout(() => {
+          setIsTyping(true);
+          setTimeout(() => {
+            setIsTyping(false);
+            setShowAgentResponse(true);
+            setCurrentAgentContent(conversationTemplates[0].response);
+          }, TYPING_DURATION);
+        }, USER_TO_TYPING_DELAY);
+      }, DISPLAY_DURATION);
+      return 0;
+    });
+  }, [currentAgentContent]);
+
   const startConversation = useCallback(() => {
     if (headerLabel) {
-      // No countdown when using typing header – start chat sequence after a short delay
       const delay = 400;
       setTimeout(() => {
-        setIsTyping(true);
+        setConversationMessages([{ role: "user", content: conversationTemplates[0].question }]);
+        setCurrentStep(0);
         setTimeout(() => {
-          setIsTyping(false);
-          setShowAgentResponse(true);
-          setIsCardLoading(true);
+          setIsTyping(true);
           setTimeout(() => {
-            setIsCardLoading(false);
-            setTimeout(() => {
-              setIsExiting(true);
-              setTimeout(() => {
-                setShowAgentResponse(false);
-                setCurrentIndex((prev) => (prev + 1) % conversationTemplates.length);
-                setIsExiting(false);
-                startConversation();
-              }, FADE_OUT_DURATION);
-            }, DISPLAY_DURATION);
-          }, CARD_LOADING_DURATION);
-        }, TYPING_DURATION);
+            setIsTyping(false);
+            setShowAgentResponse(true);
+            setCurrentAgentContent(conversationTemplates[0].response);
+          }, TYPING_DURATION);
+        }, USER_TO_TYPING_DELAY);
       }, delay);
     } else {
       setCycleKey((prev) => prev + 1);
@@ -1072,6 +1276,101 @@ export function SummaryCardDemo({
       }, INITIAL_DELAY);
     }
   }, [headerLabel]);
+
+  // Process solution step
+  const processSolutionStep = useCallback((stepIndex: number) => {
+    if (stepIndex >= solutionSteps.length) {
+      // Replay from start after a pause
+      solutionStepTimeoutRef.current = setTimeout(() => {
+        setSolutionDisplayItems([]);
+        setSolutionCurrentWorking(null);
+        setSolutionShowPermissionCard(false);
+        setSolutionCurrentAgentTyping(null);
+        setSolutionStepIndex(0);
+        processSolutionStep(0);
+      }, DISPLAY_DURATION);
+      return;
+    }
+
+    const step = solutionSteps[stepIndex];
+
+    switch (step.type) {
+      case "user-message":
+        setSolutionDisplayItems(prev => [...prev, { type: "user", content: step.content! }]);
+        solutionStepTimeoutRef.current = setTimeout(() => {
+          setSolutionStepIndex(stepIndex + 1);
+          processSolutionStep(stepIndex + 1);
+        }, USER_TO_TYPING_DELAY);
+        break;
+
+      case "agent-message":
+        // Show typing indicator first
+        setSolutionIsTyping(true);
+        solutionStepTimeoutRef.current = setTimeout(() => {
+          setSolutionIsTyping(false);
+          setSolutionCurrentAgentTyping(step.content!);
+        }, TYPING_DURATION);
+        break;
+
+      case "agent-working":
+        setSolutionCurrentWorking(step.content!);
+        solutionStepTimeoutRef.current = setTimeout(() => {
+          // Clear working and move to next step (don't accumulate in display)
+          setSolutionCurrentWorking(null);
+          setSolutionStepIndex(stepIndex + 1);
+          processSolutionStep(stepIndex + 1);
+        }, step.duration || 1500);
+        break;
+
+      case "permission-card":
+        setSolutionShowPermissionCard(true);
+        // Don't auto-advance - wait for user action
+        break;
+
+      case "user-action":
+        // This is handled by the authorize callback
+        break;
+    }
+  }, []);
+
+  // Called when agent message finishes typing
+  const onSolutionAgentTypingComplete = useCallback(() => {
+    const currentContent = solutionCurrentAgentTyping;
+    if (currentContent) {
+      setSolutionDisplayItems(prev => [...prev, { type: "agent", content: currentContent }]);
+      setSolutionCurrentAgentTyping(null);
+      const nextStep = solutionStepIndex + 1;
+      setSolutionStepIndex(nextStep);
+      setTimeout(() => processSolutionStep(nextStep), 500);
+    }
+  }, [solutionCurrentAgentTyping, solutionStepIndex, processSolutionStep]);
+
+  // Called when user clicks authorize on permission card
+  const onSolutionAuthorize = useCallback(() => {
+    setSolutionShowPermissionCard(false);
+    setSolutionDisplayItems(prev => [...prev, { type: "permission-card" }]);
+    // Find the user-action step and advance past it
+    const nextStep = solutionStepIndex + 2; // Skip permission-card and user-action steps
+    setSolutionStepIndex(nextStep);
+    setTimeout(() => processSolutionStep(nextStep), 500);
+  }, [solutionStepIndex, processSolutionStep]);
+
+  // Start solution conversation
+  const startSolutionConversation = useCallback(() => {
+    const delay = 400;
+    setTimeout(() => {
+      setSolutionStepIndex(0);
+      processSolutionStep(0);
+    }, delay);
+  }, [processSolutionStep]);
+
+  // Trigger solution conversation when switching to solution tab
+  useEffect(() => {
+    if (activeSegment === "solution" && !solutionHasTriggered && hasTriggered) {
+      setSolutionHasTriggered(true);
+      startSolutionConversation();
+    }
+  }, [activeSegment, solutionHasTriggered, hasTriggered, startSolutionConversation]);
 
   // Trigger first conversation when component enters viewport
   useEffect(() => {
@@ -1110,16 +1409,37 @@ export function SummaryCardDemo({
         className="object-cover"
         sizes="100vw"
       />
-      {/* Outer blur wrapper */}
-      <div 
+      {/* Segmented control above chat window */}
+      {headerLabel && (
+        <div className="relative z-10 flex justify-center mb-4">
+          <SegmentedControl
+            options={[
+              { id: "problem", label: "Problem" },
+              { id: "solution", label: "Solution" },
+            ]}
+            selected={activeSegment}
+            onChange={(id) => setActiveSegment(id as "problem" | "solution")}
+          />
+        </div>
+      )}
+
+      {/* Outer blur wrapper with shake animation */}
+      <motion.div
         className="relative z-10 rounded-[16px] p-2 backdrop-blur-md border border-white/30"
         style={{ 
           backgroundColor: "rgba(255, 255, 255, 0.3)",
           maxWidth: "416px",
           margin: "0 auto",
-          transform: "translateZ(0)",
           willChange: "transform",
         }}
+        animate={
+          isShaking
+            ? {
+                x: [0, -6, 6, -5, 5, -3, 3, -1, 1, 0],
+                transition: { duration: 0.5, ease: "easeInOut" },
+              }
+            : { x: 0 }
+        }
       >
         {/* Inner container */}
         <div 
@@ -1127,7 +1447,11 @@ export function SummaryCardDemo({
         >
       {/* Header: typing title when headerLabel set (starts in view), else countdown */}
       {headerLabel ? (
-        <TypingHeader label={headerLabel} startTyping={hasTriggered} />
+        <TypingHeader 
+          label={activeSegment === "problem" ? headerLabel : "The solution"} 
+          startTyping={activeSegment === "problem" ? hasTriggered : solutionHasTriggered}
+          key={activeSegment}
+        />
       ) : (
         <ChatHeader
           cycleKey={cycleKey}
@@ -1137,50 +1461,180 @@ export function SummaryCardDemo({
       )}
 
       {/* Messages area */}
-      <motion.div 
-        className="px-4 pb-6 flex flex-col gap-3"
+      <motion.div
+        className="px-4 pb-6 flex flex-col gap-3 overflow-y-auto"
         style={{ minHeight: "500px", transform: "translateZ(0)" }}
-        animate={{ 
+        animate={{
           opacity: isExiting ? 0 : 1,
           y: isExiting ? -10 : 0,
         }}
         transition={{ duration: 0.3, ease: "easeOut" }}
       >
-        {/* User message */}
-        <UserBubble content={template.question} />
-
-        {/* Typing indicator OR Agent response - one at a time */}
-        <AnimatePresence mode="wait">
-          {isTyping && (
-            <motion.div
-              key="typing"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.2 }}
-            >
-              <TypingIndicator />
-            </motion.div>
-          )}
-          {showAgentResponse && (
-            <motion.div
-              key={`response-${currentIndex}`}
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.25 }}
-            >
-              <AgentBubble 
-                content={template.response} 
-                cardType={template.cardType}
-                isCardLoading={isCardLoading}
-              />
-            </motion.div>
-          )}
-        </AnimatePresence>
-
+        {headerLabel && activeSegment === "problem" ? (
+          <>
+            {/* Problem: Accumulated conversation (no history removed) */}
+            {conversationMessages.map((m, i) =>
+              m.role === "user" ? (
+                <motion.div
+                  key={i}
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.3, ease: "easeOut" }}
+                >
+                  <UserBubble content={m.content} />
+                </motion.div>
+              ) : (
+                <div key={i}>
+                  <AgentBubble content={m.content} staticContent />
+                </div>
+              )
+            )}
+            {isTyping && (
+              <motion.div
+                key="typing"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.2 }}
+              >
+                <TypingIndicator />
+              </motion.div>
+            )}
+            {showAgentResponse && (
+              <motion.div
+                key={`agent-${currentStep}`}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.25 }}
+              >
+                <AgentBubble
+                  content={currentAgentContent}
+                  cardType={conversationTemplates[currentStep]?.cardType}
+                  isCardLoading={false}
+                  onTypingComplete={advanceToNextStep}
+                />
+              </motion.div>
+            )}
+          </>
+        ) : headerLabel && activeSegment === "solution" ? (
+          <>
+            {/* Solution: Step-based conversation */}
+            {solutionDisplayItems.map((item, i) => {
+              if (item.type === "user") {
+                return (
+                  <motion.div
+                    key={`user-${i}`}
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.3, ease: "easeOut" }}
+                  >
+                    <UserBubble content={item.content} />
+                  </motion.div>
+                );
+              }
+              if (item.type === "agent") {
+                return (
+                  <div key={`agent-${i}`}>
+                    <AgentBubble content={item.content} staticContent />
+                  </div>
+                );
+              }
+              if (item.type === "permission-card") {
+                return (
+                  <motion.div
+                    key={`permission-done-${i}`}
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 0.5 }}
+                    transition={{ duration: 0.2 }}
+                  >
+                    <PermissionCard />
+                  </motion.div>
+                );
+              }
+              return null;
+            })}
+            {/* Current working indicator */}
+            {solutionCurrentWorking && (
+              <motion.div
+                key="working-current"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.2 }}
+              >
+                <WorkingIndicator text={solutionCurrentWorking} />
+              </motion.div>
+            )}
+            {/* Permission card waiting for authorization */}
+            {solutionShowPermissionCard && (
+              <motion.div
+                key="permission-card"
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.3, ease: "easeOut" }}
+              >
+                <PermissionCard onAuthorize={onSolutionAuthorize} />
+              </motion.div>
+            )}
+            {/* Typing indicator */}
+            {solutionIsTyping && (
+              <motion.div
+                key="typing-solution"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.2 }}
+              >
+                <TypingIndicator />
+              </motion.div>
+            )}
+            {/* Agent typing out message */}
+            {solutionCurrentAgentTyping && (
+              <motion.div
+                key={`agent-typing-${solutionStepIndex}`}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.25 }}
+              >
+                <AgentBubble
+                  content={solutionCurrentAgentTyping}
+                  onTypingComplete={onSolutionAgentTypingComplete}
+                />
+              </motion.div>
+            )}
+          </>
+        ) : (
+          <>
+            <UserBubble content={template?.question ?? ""} />
+            <AnimatePresence mode="wait">
+              {isTyping && (
+                <motion.div
+                  key="typing"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.2 }}
+                >
+                  <TypingIndicator />
+                </motion.div>
+              )}
+              {showAgentResponse && template && (
+                <motion.div
+                  key={`response-${currentIndex}`}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ duration: 0.25 }}
+                >
+                  <AgentBubble
+                    content={template.response}
+                    cardType={template.cardType}
+                    isCardLoading={isCardLoading}
+                  />
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </>
+        )}
       </motion.div>
         </div>
-      </div>
+      </motion.div>
     </div>
   );
 }
