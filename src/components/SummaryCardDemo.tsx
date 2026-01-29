@@ -901,12 +901,34 @@ function AgentBubble({
   );
 }
 
-// Chat header with countdown progress ring (CSS transition based)
-function ChatHeader({ 
+// Header that types out the label (used when headerLabel is set; no countdown). Only starts when startTyping (in view).
+function TypingHeader({
+  label,
+  startTyping,
+}: {
+  label: string;
+  startTyping: boolean;
+}) {
+  const allCaps = label.toUpperCase();
+  return (
+    <div className="flex justify-center py-6 min-h-[3rem]">
+      <h2 className="text-sm font-bold tracking-[1.2px] uppercase text-[var(--foreground)] font-[var(--font-era)]">
+        {startTyping ? (
+          <TextType text={allCaps} typingSpeed={80} showCursor={false} />
+        ) : (
+          <span className="invisible" aria-hidden>{"\u200B"}</span>
+        )}
+      </h2>
+    </div>
+  );
+}
+
+// Chat header with countdown progress ring (CSS transition based) – used when no headerLabel
+function ChatHeader({
   cycleKey,
   totalDuration,
   isActive,
-}: { 
+}: {
   cycleKey: number;
   totalDuration: number;
   isActive: boolean;
@@ -915,26 +937,21 @@ function ChatHeader({
   const strokeWidth = 1;
   const radius = (size - strokeWidth) / 2;
   const circumference = 2 * Math.PI * radius;
-  
-  // When active, animate from 0 to 100% over totalDuration
-  // cycleKey forces remount to reset the animation
+
   const strokeDashoffset = isActive ? 0 : circumference;
 
   return (
     <div className="flex items-center justify-center py-6">
-      {/* Sentinel icon in circle with progress ring */}
-      <div 
+      <div
         className="relative flex items-center justify-center"
         style={{ width: size, height: size }}
       >
-        {/* Progress ring SVG - key forces remount on new cycle */}
         <svg
           key={cycleKey}
           className="absolute inset-0 -rotate-90"
           width={size}
           height={size}
         >
-          {/* Background circle (light) */}
           <circle
             cx={size / 2}
             cy={size / 2}
@@ -944,7 +961,6 @@ function ChatHeader({
             strokeWidth={strokeWidth}
             className="text-[var(--foreground)]/20"
           />
-          {/* Progress circle (dark, fills up over time) */}
           <circle
             cx={size / 2}
             cy={size / 2}
@@ -957,11 +973,10 @@ function ChatHeader({
             style={{
               strokeDasharray: circumference,
               strokeDashoffset: strokeDashoffset,
-              transition: isActive ? `stroke-dashoffset ${totalDuration}ms linear` : 'none',
+              transition: isActive ? `stroke-dashoffset ${totalDuration}ms linear` : "none",
             }}
           />
         </svg>
-        {/* Icon */}
         <SentinelIcon size={16} />
       </div>
     </div>
@@ -972,7 +987,13 @@ function ChatHeader({
 // MAIN COMPONENT
 // ===============================
 
-export function SummaryCardDemo() {
+export function SummaryCardDemo({
+  backgroundImage = "/images/work/sentinel/agent-bg.png",
+  headerLabel,
+}: {
+  backgroundImage?: string;
+  headerLabel?: string;
+} = {}) {
   // Cycle through conversation templates
   const [currentIndex, setCurrentIndex] = useState(0);
   const template = conversationTemplates[currentIndex];
@@ -1000,51 +1021,57 @@ export function SummaryCardDemo() {
   // Total cycle duration (for progress ring)
   const TOTAL_CYCLE_DURATION = INITIAL_DELAY + TYPING_DURATION + CARD_LOADING_DURATION + DISPLAY_DURATION + FADE_OUT_DURATION;
 
-  // Function to start a conversation animation
-  const startConversation = () => {
-    // Increment cycle key to remount progress ring, then activate it
-    setCycleKey(prev => prev + 1);
-    // Small delay to ensure SVG remounts before starting animation
-    requestAnimationFrame(() => {
-      setIsProgressActive(true);
-    });
-    
-    // Start typing indicator after initial delay
-    setTimeout(() => {
-      setIsTyping(true);
-      
-      // After typing delay, show agent response with loading card
+  // Function to start a conversation animation (only runs when hasTriggered, i.e. in view)
+  const startConversation = useCallback(() => {
+    if (headerLabel) {
+      // No countdown when using typing header – start chat sequence after a short delay
+      const delay = 400;
       setTimeout(() => {
-        setIsTyping(false);
-        setShowAgentResponse(true);
-        setIsCardLoading(true);
-        
-        // After another delay, finish loading the card
+        setIsTyping(true);
         setTimeout(() => {
-          setIsCardLoading(false);
-          
-          // After displaying the complete card, wait then cycle to next
+          setIsTyping(false);
+          setShowAgentResponse(true);
+          setIsCardLoading(true);
           setTimeout(() => {
-            // Fade out entire conversation
-            setIsExiting(true);
-            
-            // After fade out, swap content and fade in
+            setIsCardLoading(false);
             setTimeout(() => {
-              // Reset progress
-              setIsProgressActive(false);
-              
-              setShowAgentResponse(false);
-              setCurrentIndex((prev) => (prev + 1) % conversationTemplates.length);
-              setIsExiting(false);
-              
-              // Start next conversation
-              startConversation();
-            }, FADE_OUT_DURATION);
-          }, DISPLAY_DURATION);
-        }, CARD_LOADING_DURATION);
-      }, TYPING_DURATION);
-    }, INITIAL_DELAY);
-  };
+              setIsExiting(true);
+              setTimeout(() => {
+                setShowAgentResponse(false);
+                setCurrentIndex((prev) => (prev + 1) % conversationTemplates.length);
+                setIsExiting(false);
+                startConversation();
+              }, FADE_OUT_DURATION);
+            }, DISPLAY_DURATION);
+          }, CARD_LOADING_DURATION);
+        }, TYPING_DURATION);
+      }, delay);
+    } else {
+      setCycleKey((prev) => prev + 1);
+      requestAnimationFrame(() => setIsProgressActive(true));
+      setTimeout(() => {
+        setIsTyping(true);
+        setTimeout(() => {
+          setIsTyping(false);
+          setShowAgentResponse(true);
+          setIsCardLoading(true);
+          setTimeout(() => {
+            setIsCardLoading(false);
+            setTimeout(() => {
+              setIsExiting(true);
+              setTimeout(() => {
+                setIsProgressActive(false);
+                setShowAgentResponse(false);
+                setCurrentIndex((prev) => (prev + 1) % conversationTemplates.length);
+                setIsExiting(false);
+                startConversation();
+              }, FADE_OUT_DURATION);
+            }, DISPLAY_DURATION);
+          }, CARD_LOADING_DURATION);
+        }, TYPING_DURATION);
+      }, INITIAL_DELAY);
+    }
+  }, [headerLabel]);
 
   // Trigger first conversation when component enters viewport
   useEffect(() => {
@@ -1077,7 +1104,7 @@ export function SummaryCardDemo() {
     >
       {/* Background image - optimized by Next.js */}
       <Image
-        src="/images/work/sentinel/agent-bg.png"
+        src={backgroundImage}
         alt=""
         fill
         className="object-cover"
@@ -1098,12 +1125,16 @@ export function SummaryCardDemo() {
         <div 
           className="rounded-[12px] overflow-hidden flex flex-col bg-[var(--background)] h-[660px]"
         >
-      {/* Chat header with countdown */}
-      <ChatHeader 
-        cycleKey={cycleKey} 
-        totalDuration={TOTAL_CYCLE_DURATION} 
-        isActive={isProgressActive} 
-      />
+      {/* Header: typing title when headerLabel set (starts in view), else countdown */}
+      {headerLabel ? (
+        <TypingHeader label={headerLabel} startTyping={hasTriggered} />
+      ) : (
+        <ChatHeader
+          cycleKey={cycleKey}
+          totalDuration={TOTAL_CYCLE_DURATION}
+          isActive={isProgressActive}
+        />
+      )}
 
       {/* Messages area */}
       <motion.div 

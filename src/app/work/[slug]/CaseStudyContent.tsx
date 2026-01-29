@@ -16,6 +16,7 @@ import {
 import Image from "next/image";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { ZigZagDivider } from "@/components/ZigZagDivider";
+import { SummaryCardDemo } from "@/components/SummaryCardDemo";
 
 // Extracted to its own component so useScroll only runs when mounted
 function ScrollScaleVideo({ src }: { src: string }) {
@@ -245,6 +246,14 @@ export function AgenticAutofillContent({ caseStudy }: { caseStudy: CaseStudy }) 
           />
         </div>
       </WideContent>
+
+      {/* Interactive Summary Card Demo – variation with different bg and "The problem" label */}
+      <FullWidthContent className="-mt-8">
+        <SummaryCardDemo
+          backgroundImage="/images/work/sentinel/agent-bg-2.png"
+          headerLabel="The problem"
+        />
+      </FullWidthContent>
 
       <NarrowContent className="mt-6">
         <ContentSection id="the-problem" title="The problem">

@@ -53,8 +53,9 @@ export default function Home() {
                 bgColor="#DD4825"
                 videoUrl="/images/agentic-autofill-card-hero.mp4"
                 videoPoster="/images/agentic-autofill-card-hero.jpg"
-                href="/work/agentic-autofill"
-                comingSoon
+                videoPreload="metadata"
+                href="https://www.youtube.com/watch?v=c3tqMe2_UwQ"
+                externalLink
               />
               <WorkCard
                 title={caseStudies.sentinel.title}
