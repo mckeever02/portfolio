@@ -224,3 +224,33 @@ export function VerifierContent({ caseStudy }: { caseStudy: CaseStudy }) {
     </CaseStudyLayout>
   );
 }
+
+export function AgenticAutofillContent({ caseStudy }: { caseStudy: CaseStudy }) {
+  return (
+    <CaseStudyLayout caseStudy={caseStudy}>
+      <NarrowContent>
+        <ContentSection id="overview" title="Overview">
+          <BodyText>{caseStudy.description}</BodyText>
+        </ContentSection>
+      </NarrowContent>
+
+      <WideContent className="mt-6">
+        <div className="aspect-video w-full overflow-hidden rounded-lg">
+          <iframe
+            src="https://www.youtube.com/embed/c3tqMe2_UwQ"
+            title="Autofill for AI Agents"
+            className="w-full h-full border-0"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+            allowFullScreen
+          />
+        </div>
+      </WideContent>
+
+      <NarrowContent className="mt-6">
+        <ContentSection id="the-problem" title="The problem">
+          <BodyText>Add your problem statement here.</BodyText>
+        </ContentSection>
+      </NarrowContent>
+    </CaseStudyLayout>
+  );
+}

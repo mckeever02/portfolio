@@ -1,7 +1,8 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, useMotionValue, useTransform } from "framer-motion";
+import type { MotionValue } from "framer-motion";
 
 interface CarouselItem {
   quote: React.ReactNode;
@@ -16,17 +17,99 @@ interface TextCarouselProps {
   className?: string;
 }
 
-// Combined quote icon with progress ring - exported for external use
-export function QuoteProgressIndicator({ progress, variant = "default" }: { progress: number; variant?: "default" | "light" }) {
-  const size = 32;
-  const strokeWidth = 1;
-  const radius = (size - strokeWidth) / 2;
-  const circumference = 2 * Math.PI * radius;
-  const strokeDashoffset = circumference * (1 - progress);
+const QUOTE_INDICATOR_SIZE = 32;
+const QUOTE_INDICATOR_STROKE = 1;
+const QUOTE_INDICATOR_RADIUS = (QUOTE_INDICATOR_SIZE - QUOTE_INDICATOR_STROKE) / 2;
+const QUOTE_INDICATOR_CIRCUMFERENCE = 2 * Math.PI * QUOTE_INDICATOR_RADIUS;
 
-  const colors = variant === "light" 
-    ? { ring: "text-white/30", progress: "text-white", icon: "text-white" }
-    : { ring: "text-[var(--foreground)]/20", progress: "text-[var(--foreground)]", icon: "text-[var(--foreground)]" };
+// Progress ring driven by a motion value (no re-renders per frame)
+function MotionProgressRing({
+  progress,
+  variant,
+}: {
+  progress: MotionValue<number>;
+  variant: "default" | "light";
+}) {
+  const strokeDashoffset = useTransform(
+    progress,
+    (p) => QUOTE_INDICATOR_CIRCUMFERENCE * (1 - p)
+  );
+  const colors =
+    variant === "light"
+      ? { ring: "text-white/30", progress: "text-white", icon: "text-white" }
+      : {
+          ring: "text-[var(--foreground)]/20",
+          progress: "text-[var(--foreground)]",
+          icon: "text-[var(--foreground)]",
+        };
+
+  return (
+    <div
+      className="relative flex items-center justify-center"
+      style={{ width: QUOTE_INDICATOR_SIZE, height: QUOTE_INDICATOR_SIZE }}
+    >
+      <svg
+        className="absolute inset-0 -rotate-90"
+        width={QUOTE_INDICATOR_SIZE}
+        height={QUOTE_INDICATOR_SIZE}
+      >
+        <circle
+          cx={QUOTE_INDICATOR_SIZE / 2}
+          cy={QUOTE_INDICATOR_SIZE / 2}
+          r={QUOTE_INDICATOR_RADIUS}
+          fill="none"
+          stroke="currentColor"
+          strokeWidth={QUOTE_INDICATOR_STROKE}
+          className={colors.ring}
+        />
+        <motion.circle
+          cx={QUOTE_INDICATOR_SIZE / 2}
+          cy={QUOTE_INDICATOR_SIZE / 2}
+          r={QUOTE_INDICATOR_RADIUS}
+          fill="none"
+          stroke="currentColor"
+          strokeWidth={QUOTE_INDICATOR_STROKE}
+          strokeLinecap="round"
+          className={colors.progress}
+          style={{
+            strokeDasharray: QUOTE_INDICATOR_CIRCUMFERENCE,
+            strokeDashoffset,
+          }}
+        />
+      </svg>
+      <svg className={`w-4 h-4 ${colors.icon}`} viewBox="0 0 24 24" fill="currentColor">
+        <path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z" />
+      </svg>
+    </div>
+  );
+}
+
+// Combined quote icon with progress ring - exported for external use
+export function QuoteProgressIndicator({
+  progress,
+  variant = "default",
+}: {
+  progress: number | MotionValue<number>;
+  variant?: "default" | "light";
+}) {
+  const size = QUOTE_INDICATOR_SIZE;
+  const strokeWidth = QUOTE_INDICATOR_STROKE;
+  const radius = QUOTE_INDICATOR_RADIUS;
+  const circumference = QUOTE_INDICATOR_CIRCUMFERENCE;
+
+  if (typeof progress !== "number") {
+    return <MotionProgressRing progress={progress} variant={variant} />;
+  }
+
+  const strokeDashoffset = circumference * (1 - progress);
+  const colors =
+    variant === "light"
+      ? { ring: "text-white/30", progress: "text-white", icon: "text-white" }
+      : {
+          ring: "text-[var(--foreground)]/20",
+          progress: "text-[var(--foreground)]",
+          icon: "text-[var(--foreground)]",
+        };
 
   return (
     <div
@@ -76,9 +159,11 @@ export function TextCarousel({
   interval = 3000,
   className = "",
   renderIndicator,
-}: TextCarouselProps & { renderIndicator?: (progress: number) => React.ReactNode }) {
+}: TextCarouselProps & {
+  renderIndicator?: (progress: MotionValue<number>) => React.ReactNode;
+}) {
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [progress, setProgress] = useState(0);
+  const progress = useMotionValue(0);
   const animationRef = useRef<number | null>(null);
   const startTimeRef = useRef<number>(Date.now());
 
@@ -88,11 +173,11 @@ export function TextCarousel({
     const animate = () => {
       const elapsed = Date.now() - startTimeRef.current;
       const newProgress = Math.min(elapsed / interval, 1);
-      setProgress(newProgress);
+      progress.set(newProgress);
 
       if (newProgress >= 1) {
         startTimeRef.current = Date.now();
-        setProgress(0);
+        progress.set(0);
         setCurrentIndex((prev) => {
           if (prev >= items.length - 1) {
             return loop ? 0 : prev;
@@ -111,7 +196,7 @@ export function TextCarousel({
         cancelAnimationFrame(animationRef.current);
       }
     };
-  }, [autoplay, interval, items.length, loop]);
+  }, [autoplay, interval, items.length, loop, progress]);
 
   return (
     <>

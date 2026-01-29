@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef, useCallback } from "react";
-import { motion, AnimatePresence, useMotionValue, useAnimationFrame, useTransform } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
 import { Inter } from "next/font/google";
 
@@ -707,7 +707,7 @@ function SentinelIcon({ size = 16 }: { size?: number }) {
   );
 }
 
-// Shiny text component from React Bits (https://github.com/davidhdev/react-bits)
+// Shiny text component - CSS keyframes animation to avoid per-frame JS updates and flashing
 interface ShinyTextProps {
   text: string;
   disabled?: boolean;
@@ -727,50 +727,24 @@ function ShinyText({
   shineColor = '#000000',
   spread = 120,
 }: ShinyTextProps) {
-  const progress = useMotionValue(0);
-  const elapsedRef = useRef(0);
-  const lastTimeRef = useRef<number | null>(null);
-
-  const animationDuration = speed * 1000;
-
-  useAnimationFrame(time => {
-    if (disabled) {
-      lastTimeRef.current = null;
-      return;
-    }
-
-    if (lastTimeRef.current === null) {
-      lastTimeRef.current = time;
-      return;
-    }
-
-    const deltaTime = time - lastTimeRef.current;
-    lastTimeRef.current = time;
-
-    elapsedRef.current += deltaTime;
-
-    const cycleTime = elapsedRef.current % animationDuration;
-    const p = (cycleTime / animationDuration) * 100;
-    progress.set(p);
-  });
-
-  const backgroundPosition = useTransform(progress, p => `${150 - p * 2}% center`);
-
   const gradientStyle: React.CSSProperties = {
     backgroundImage: `linear-gradient(${spread}deg, ${color} 0%, ${color} 35%, ${shineColor} 50%, ${color} 65%, ${color} 100%)`,
     backgroundSize: '200% auto',
+    backgroundPosition: '150% center',
     WebkitBackgroundClip: 'text',
     backgroundClip: 'text',
-    WebkitTextFillColor: 'transparent'
+    WebkitTextFillColor: 'transparent',
+    ['--shiny-duration' as string]: `${speed}s`,
+    ...(disabled && { animation: 'none' }),
   };
 
   return (
-    <motion.span
-      className={`inline-block ${className}`}
-      style={{ ...gradientStyle, backgroundPosition }}
+    <span
+      className={`inline-block ${className} ${disabled ? '' : 'shiny-text-animate'}`}
+      style={gradientStyle}
     >
       {text}
-    </motion.span>
+    </span>
   );
 }
 

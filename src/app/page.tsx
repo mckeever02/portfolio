@@ -51,10 +51,10 @@ export default function Home() {
                 role="Design Lead"
                 company="1Password"
                 bgColor="#DD4825"
-                videoUrl="/images/agentic-autofill-hero-2-1080p.mp4"
-                videoPoster="/images/agentic-autofill-hero-2-1080p-poster.jpg"
-                href="https://www.youtube.com/watch?v=c3tqMe2_UwQ"
-                externalLink
+                videoUrl="/images/agentic-autofill-card-hero.mp4"
+                videoPoster="/images/agentic-autofill-card-hero.jpg"
+                href="/work/agentic-autofill"
+                comingSoon
               />
               <WorkCard
                 title={caseStudies.sentinel.title}
@@ -85,8 +85,8 @@ export default function Home() {
                 role="Design Lead"
                 company="1Password"
                 bgColor="#0B185A"
-                videoUrl="/images/1password-account-management.mp4"
-                videoPoster="/images/1password-account-management-poster.jpg"
+                videoUrl="/images/account-management-card-hero.mp4"
+                videoPoster="/images/account-management-card-hero.jpg"
                 href="https://1password.com/blog/manage-accounts-in-the-1password-app"
                 externalLink
               />
@@ -97,8 +97,8 @@ export default function Home() {
                 role="Product Design"
                 company="1Password"
                 bgColor="#367BD9"
-                videoUrl="/images/1p8-mobile.mp4"
-                videoPoster="/images/1p8-mobile-poster.jpg"
+                videoUrl="/images/1p8-mobile-card-hero.mp4"
+                videoPoster="/images/1p8-mobile-card-hero.jpg"
                 href="https://1password.com/blog/1password-8-ios-android"
                 externalLink
               />
@@ -109,8 +109,8 @@ export default function Home() {
                 role="Product Design & frontend development"
                 company="Sweepr"
                 bgColor="#8FC2A5"
-                videoUrl="/images/sweepr-splash.mp4"
-                videoPoster="/images/sweepr-splash-poster.jpg"
+                videoUrl="/images/sweepr-card-hero.mp4"
+                videoPoster="/images/sweepr-card-hero.jpg"
                 href="https://v3.mckvr.design/case-studies/multimodal-design-system"
                 externalLink
                 hoverLabel="View case study"
@@ -130,8 +130,8 @@ export default function Home() {
                 year="2025"
                 role="Side project"
                 bgColor="#000000"
-                videoUrl="/images/pilgrim-hero.mp4"
-                videoPoster="/images/pilgrim-poster.jpg"
+                videoUrl="/images/pilgrim-card-hero.mp4"
+                videoPoster="/images/pilgrim-card-hero.jpg"
                 href="https://pilgrim.click"
                 externalLink
               />
@@ -140,7 +140,7 @@ export default function Home() {
                 description="A Chrome extension that replaces the default new tab page with a simple, customizable todo app."
                 year="2023"
                 bgColor="#f5f0e8"
-                imageUrl="/images/headway-splash.jpg"
+                imageUrl="/images/headway-card-hero.jpg"
                 href="https://chromewebstore.google.com/detail/headway-%E2%80%94-new-tab-todo-li/nnmkipmghijjolehhibjjmmlpdgnkpgi"
                 externalLink
               />
@@ -149,7 +149,7 @@ export default function Home() {
                 description="A weekend project that turned into the most popular mailto link generator. Acquired in 2022."
                 year="2019"
                 bgColor="#c8f0e8"
-                imageUrl="/images/mailtolink.png"
+                imageUrl="/images/mailtolink-card-hero.png"
                 href="https://mailtolink.me"
                 externalLink
               />

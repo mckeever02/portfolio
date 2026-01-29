@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 import { Metadata } from "next";
 import { getCaseStudy, getAllCaseStudySlugs } from "@/data/case-studies";
-import { VerifierContent } from "./CaseStudyContent";
+import { VerifierContent, AgenticAutofillContent } from "./CaseStudyContent";
 
 interface PageProps {
   params: Promise<{ slug: string }>;
@@ -52,6 +52,10 @@ export default async function CaseStudyPage({ params }: PageProps) {
   // Route to specific content based on slug
   if (slug === "verifier") {
     return <VerifierContent caseStudy={caseStudy} />;
+  }
+
+  if (slug === "agentic-autofill") {
+    return <AgenticAutofillContent caseStudy={caseStudy} />;
   }
 
   // Fallback for unknown slugs

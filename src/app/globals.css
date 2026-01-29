@@ -562,6 +562,20 @@ body {
   animation: skeleton-shimmer 2s ease-in-out infinite;
 }
 
+@keyframes shiny-text-shine {
+  0% {
+    background-position: 150% center;
+  }
+  100% {
+    background-position: -50% center;
+  }
+}
+
+/* Referenced in ShinyText so keyframes are not purged */
+.shiny-text-animate {
+  animation: shiny-text-shine var(--shiny-duration, 2s) linear infinite;
+}
+
 /* Hide scrollbar while keeping functionality */
 .scrollbar-hide {
   -ms-overflow-style: none;  /* IE and Edge */
