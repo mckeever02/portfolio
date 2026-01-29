@@ -128,8 +128,9 @@ export default function Home() {
                 title="Pilgrim"
                 description="Virtual mentors for those feeling lost. An experiment in designing and building for Generative AI."
                 year="2025"
+                role="Side project"
                 bgColor="#000000"
-                videoUrl="/images/pilgrim.mp4"
+                videoUrl="/images/pilgrim-hero.mp4"
                 videoPoster="/images/pilgrim-poster.jpg"
                 href="https://pilgrim.click"
                 externalLink

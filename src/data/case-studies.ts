@@ -26,6 +26,20 @@ export interface CaseStudy {
 }
 
 export const caseStudies: Record<string, CaseStudy> = {
+  pilgrim: {
+    slug: "pilgrim",
+    title: "Pilgrim",
+    company: "Pilgrim",
+    subtitle: "",
+    description: "",
+    heroColor: "#000000",
+    heroVideo: "/images/pilgrim-hero.mp4",
+    heroVideoPoster: "/images/pilgrim-hero-poster.jpg",
+    timeline: "",
+    role: "",
+    team: [],
+    sections: [],
+  },
   sentinel: {
     slug: "sentinel",
     title: "1Password Sentinel: Copilot for Admins",
