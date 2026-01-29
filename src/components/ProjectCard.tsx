@@ -6,6 +6,7 @@ interface ProjectCardProps {
   title: string;
   description: string;
   year: string;
+  role?: string;
   bgColor: string;
   href: string;
   imageUrl?: string;
@@ -18,6 +19,7 @@ export function ProjectCard({
   title,
   description,
   year,
+  role,
   bgColor,
   href,
   imageUrl,
@@ -37,8 +39,14 @@ export function ProjectCard({
       externalLink={externalLink}
       hoverLabel="View project"
       details={
-        <div className="flex items-center">
+        <div className="flex items-center gap-2">
           <CardDetailText>{year}</CardDetailText>
+          {role && (
+            <>
+              <span className="text-muted-foreground">·</span>
+              <CardDetailText>{role}</CardDetailText>
+            </>
+          )}
         </div>
       }
     />
