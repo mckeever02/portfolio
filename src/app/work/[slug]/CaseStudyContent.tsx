@@ -248,12 +248,14 @@ export function AgenticAutofillContent({ caseStudy }: { caseStudy: CaseStudy }) 
       </WideContent>
 
       {/* Interactive Summary Card Demo – variation with different bg and "The problem" label */}
-      <FullWidthContent className="-mt-8">
+      <div className="w-screen relative left-1/2 -translate-x-1/2 -mt-8">
         <SummaryCardDemo
-          backgroundImage="/images/work/sentinel/agent-bg-2.png"
+          variant="agentic-autofill"
+          backgroundImage="/images/work/agentic-autofill/problem-solution-bg-6.png"
+          backgroundPosition="bottom center"
           headerLabel="The problem"
         />
-      </FullWidthContent>
+      </div>
 
       <NarrowContent className="mt-6">
         <ContentSection id="the-problem" title="The problem">

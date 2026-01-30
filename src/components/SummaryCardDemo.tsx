@@ -96,7 +96,32 @@ interface ConversationTemplate {
   cardType?: Exclude<CardType, "skeleton">;
 }
 
-const conversationTemplates: ConversationTemplate[] = [
+// Sentinel conversation templates - admin copilot use cases
+const sentinelConversationTemplates: ConversationTemplate[] = [
+  {
+    question: "Which items are in the Finance vault?",
+    response: "Here are the 4 items in your Finance vault:",
+    cardType: "item-list",
+  },
+  {
+    question: "Who is NetSuite shared with?",
+    response: "NetSuite is shared with 6 people. Here's who has access:",
+    cardType: "item-sharing",
+  },
+  {
+    question: "Was Plex involved in a breach recently?",
+    response: "Yes, Plex was involved in a data breach in August 2022. Here's the Watchtower report:",
+    cardType: "watchtower",
+  },
+  {
+    question: "Rotate the NetSuite password and notify affected users",
+    response: "I can help with that. Here's what I'll do:",
+    cardType: "task",
+  },
+];
+
+// Agentic Autofill conversation templates - "problem" view showing insecure credential sharing
+const agenticAutofillConversationTemplates: ConversationTemplate[] = [
   {
     question: "Go to my Stripe dashboard and show me today's payouts.",
     response: "Got it. To do this I'll need your username and password for Stripe.",
@@ -815,38 +840,199 @@ function WorkingIndicator({ text }: { text: string }) {
   );
 }
 
-// Permission card for solution flow
-function PermissionCard({ onAuthorize }: { onAuthorize?: () => void }) {
+// Logo URLs from logo.dev
+const LOGO_URLS = {
+  onePassword: "/images/1password-app-icon.png",
+  browserbase: "/images/logo-browserbase.png",
+  stripe: "/images/logo-stripe.png",
+};
+
+// Checkmark icon for the connection line - green success color
+function CheckmarkIcon() {
   return (
-    <div className={`bg-[var(--foreground)]/5 rounded-[16px] overflow-hidden ${inter.className}`}>
-      {/* Header */}
-      <div className="px-4 py-3 border-b border-[var(--foreground)]/10">
-        <div className="flex items-center gap-2">
-          <div className="w-6 h-6 rounded bg-[#0066ff] flex items-center justify-center">
-            <span className="text-white text-[12px] font-bold">1P</span>
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="8" cy="8" r="8" fill="#2C6419" />
+      <path d="M4.5 8L7 10.5L11.5 6" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
+// Chevron down icon for dropdown
+function ChevronDownIcon() {
+  return (
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M4 6L8 10L12 6" stroke="rgba(0,0,0,0.62)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
+// Overflow menu icon (three dots)
+function OverflowIcon() {
+  return (
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="8" cy="3" r="1.5" fill="rgba(0,0,0,0.62)" />
+      <circle cx="8" cy="8" r="1.5" fill="rgba(0,0,0,0.62)" />
+      <circle cx="8" cy="13" r="1.5" fill="rgba(0,0,0,0.62)" />
+    </svg>
+  );
+}
+
+// Permission card content - Figma accurate design with gray bg and shadow
+function PermissionCardContent({ onAuthorize }: { onAuthorize?: () => void }) {
+  return (
+    <div 
+      className={`backdrop-blur-[22px] bg-[#ededed] rounded-[8px] overflow-hidden w-full max-w-[396px] ${inter.className}`}
+      style={{
+        boxShadow: "0px 0px 0px 1px rgba(0,0,0,0.1), 0px 4px 16px rgba(0,0,0,0.06), 0px 8px 40px rgba(0,0,0,0.1)",
+      }}
+    >
+      {/* Content */}
+      <div className="flex flex-col gap-6 items-center pt-[30px] pb-5 px-5">
+        {/* Header Section */}
+        <div className="flex flex-col gap-6 items-center w-full">
+          {/* Title */}
+          <h3 className="text-[20px] font-semibold leading-[1.2] text-center text-[rgba(0,0,0,0.82)] tracking-[-0.33px]">
+            1Password Access Requested
+          </h3>
+          
+          {/* Access Content: Icon Row + Description */}
+          <div className="flex flex-col gap-3 items-center w-full">
+            {/* Icon Row with Connector - gap-[1px] between sections */}
+            <div className="flex items-center gap-1">
+              {/* Browserbase Logo - 64px container, flush */}
+              <div className="w-15 h-15 rounded-[12px] overflow-hidden bg-white flex items-center justify-center">
+                <img 
+                  src={LOGO_URLS.browserbase} 
+                  alt="Browserbase" 
+                  className="object-cover w-full h-full"
+                />
+              </div>
+              
+              {/* Connector Line with Checkmark - 64px wide, gap-[4px] */}
+              <div className="flex items-center gap-1 w-16">
+                <div className="flex-1 h-[2px] rounded-full bg-black opacity-20" />
+                <CheckmarkIcon />
+                <div className="flex-1 h-[2px] rounded-full bg-black opacity-20" />
+              </div>
+              
+              {/* 1Password Logo - 64px container, flush */}
+              <div className="w-15 h-15 rounded-[12px] overflow-hidden bg-white flex items-center justify-center">
+                <img 
+                  src={LOGO_URLS.onePassword} 
+                  alt="1Password" 
+                  className="object-cover w-full h-full"
+                />
+              </div>
+            </div>
+            
+            {/* Description with line break */}
+            <p className="text-[16px] leading-[1.2] text-center text-[rgba(0,0,0,0.82)] px-1">
+              Allow <span className="font-semibold text-[15.5px] tracking-[-0.17px]">Browserbase</span> to use 1Password to<br />
+              autofill <span className="font-semibold text-[15.5px] tracking-[-0.17px]">Stripe</span> on your behalf
+            </p>
           </div>
-          <span className="text-[14px] font-medium text-[var(--foreground)]">1Password</span>
         </div>
-      </div>
-      {/* Body */}
-      <div className="px-4 py-4">
-        <p className="text-[14px] text-[var(--foreground)]/80 mb-1">
-          <span className="font-medium text-[var(--foreground)]">Sentinel</span> wants to access:
-        </p>
-        <div className="flex items-center gap-2 mt-3 mb-4">
-          <div className="w-5 h-5 rounded bg-[#635bff] flex items-center justify-center">
-            <span className="text-white text-[10px] font-bold">S</span>
+        
+        {/* Credential Row */}
+        <div className="flex flex-col gap-4 items-start w-full">
+          <div className="bg-[#fafafa] border border-[rgba(0,0,0,0.13)] rounded-[8px] w-full">
+            <div className="flex items-center gap-3 px-3 py-2">
+              {/* Stripe Logo */}
+              <div className="w-8 h-8 rounded-[6px] overflow-hidden bg-white flex items-center justify-center">
+                <img 
+                  src={LOGO_URLS.stripe} 
+                  alt="Stripe" 
+                  className="w-[30px] h-[30px] object-contain"
+                />
+              </div>
+              
+              {/* Text Content */}
+              <div className="flex-1 flex flex-col gap-0.5">
+                <span className="text-[14px] leading-[1.2] text-[rgba(0,0,0,0.82)] tracking-[-0.09px]">
+                  Stripe
+                </span>
+                <span className="text-[12px] leading-[1.2] text-[rgba(0,0,0,0.62)] tracking-[0.01px]">
+                  sonja.johnson@acmeltd.com
+                </span>
+              </div>
+              
+              {/* Overflow Menu */}
+              <button className="p-1.5 rounded-[8px] hover:bg-[rgba(0,0,0,0.05)] transition-colors">
+                <OverflowIcon />
+              </button>
+            </div>
           </div>
-          <span className="text-[14px] text-[var(--foreground)]">Stripe credentials</span>
+          
+          {/* Access Duration Row */}
+          <div className="flex items-center justify-between w-full">
+            <span className="text-[14px] leading-[1.2] text-[rgba(0,0,0,0.82)] tracking-[-0.09px]">
+              Allow access for:
+            </span>
+            <div className="bg-white border border-[rgba(0,0,0,0.13)] rounded-[8px] px-2 py-1.5 flex items-center gap-2 min-w-[143px]">
+              <span className="flex-1 text-[14px] leading-[1.2] text-[rgba(0,0,0,0.82)] tracking-[-0.09px]">
+                Just this task
+              </span>
+              <ChevronDownIcon />
+            </div>
+          </div>
         </div>
-        <button
-          onClick={onAuthorize}
-          className="w-full bg-[#0066ff] hover:bg-[#0055dd] text-white text-[14px] font-medium py-2.5 px-4 rounded-lg transition-colors"
-        >
-          Authorize
-        </button>
+        
+        {/* Buttons */}
+        <div className="flex items-center justify-end gap-3 w-full">
+          <button className="px-2 py-1.5 rounded-[8px] border border-[rgba(0,0,0,0.13)] text-[14px] leading-[1.2] text-[rgba(0,0,0,0.82)] tracking-[-0.09px] hover:bg-[rgba(0,0,0,0.05)] transition-colors">
+            Cancel
+          </button>
+          <button
+            onClick={onAuthorize}
+            className="px-2 py-1.5 rounded-[8px] bg-[#0570eb] text-[14px] leading-[1.2] text-white tracking-[-0.09px] hover:bg-[#0560d0] transition-colors"
+          >
+            Authorize
+          </button>
+        </div>
       </div>
     </div>
+  );
+}
+
+// Authorization modal with backdrop blur overlay and pop animations
+function AuthorizationModal({ 
+  isOpen, 
+  onAuthorize 
+}: { 
+  isOpen: boolean; 
+  onAuthorize: () => void;
+}) {
+  return (
+    <AnimatePresence>
+      {isOpen && (
+        <motion.div
+          className="absolute inset-0 z-50 flex items-center justify-center"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.2 }}
+        >
+          {/* Backdrop with blur */}
+          <motion.div 
+            className="absolute inset-0 bg-black/30 backdrop-blur-md"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+          />
+          
+          {/* Modal card with scale animation */}
+          <motion.div
+            className="relative z-10"
+            initial={{ scale: 0.9, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            exit={{ scale: 0.9, opacity: 0 }}
+            transition={{ type: "spring", damping: 25, stiffness: 300 }}
+          >
+            <PermissionCardContent onAuthorize={onAuthorize} />
+          </motion.div>
+        </motion.div>
+      )}
+    </AnimatePresence>
   );
 }
 
@@ -1025,22 +1211,12 @@ function SegmentedControl({
   );
 }
 
-// Header that types out the label (used when headerLabel is set; no countdown). Only starts when startTyping (in view).
-function TypingHeader({
-  label,
-  startTyping,
-}: {
-  label: string;
-  startTyping: boolean;
-}) {
+// Static header label (used when headerLabel is set; no countdown)
+function StaticHeader({ label }: { label: string }) {
   return (
     <div className="flex justify-center py-6 min-h-[3rem]">
       <h2 className="text-sm font-bold tracking-[1.2px] uppercase text-[var(--foreground)] font-[var(--font-era)]">
-        {startTyping ? (
-          <TextType text={label} typingSpeed={80} showCursor={false} />
-        ) : (
-          <span className="invisible" aria-hidden>{"\u200B"}</span>
-        )}
+        {label}
       </h2>
     </div>
   );
@@ -1126,11 +1302,20 @@ const TOTAL_CYCLE_DURATION =
 
 export function SummaryCardDemo({
   backgroundImage = "/images/work/sentinel/agent-bg.png",
+  backgroundPosition = "center",
   headerLabel,
+  variant = "sentinel",
 }: {
   backgroundImage?: string;
+  backgroundPosition?: string;
   headerLabel?: string;
+  variant?: "sentinel" | "agentic-autofill";
 } = {}) {
+  // Select conversation templates based on variant
+  const conversationTemplates = variant === "sentinel" 
+    ? sentinelConversationTemplates 
+    : agenticAutofillConversationTemplates;
+  
   const [currentIndex, setCurrentIndex] = useState(0);
   const template = conversationTemplates[currentIndex];
 
@@ -1153,20 +1338,21 @@ export function SummaryCardDemo({
   // Solution conversation state (step-based)
   type SolutionDisplayItem = 
     | { type: "user"; content: string }
-    | { type: "agent"; content: string }
-    | { type: "permission-card" };
+    | { type: "agent"; content: string };
   
   const [solutionDisplayItems, setSolutionDisplayItems] = useState<SolutionDisplayItem[]>([]);
   const [solutionStepIndex, setSolutionStepIndex] = useState(0);
   const [solutionCurrentWorking, setSolutionCurrentWorking] = useState<string | null>(null);
-  const [solutionShowPermissionCard, setSolutionShowPermissionCard] = useState(false);
+  const [showAuthModal, setShowAuthModal] = useState(false);
   const [solutionCurrentAgentTyping, setSolutionCurrentAgentTyping] = useState<string | null>(null);
-  const [solutionHasTriggered, setSolutionHasTriggered] = useState(false);
   const [solutionIsTyping, setSolutionIsTyping] = useState(false);
+  const [solutionIsExiting, setSolutionIsExiting] = useState(false);
 
   const containerRef = useRef<HTMLDivElement>(null);
   const advanceLockRef = useRef(false);
   const solutionStepTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const segmentChangeTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const solutionStartTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const advanceToNextStep = useCallback(() => {
     if (advanceLockRef.current) return;
@@ -1280,14 +1466,21 @@ export function SummaryCardDemo({
   // Process solution step
   const processSolutionStep = useCallback((stepIndex: number) => {
     if (stepIndex >= solutionSteps.length) {
-      // Replay from start after a pause
+      // Replay from start after a pause - animate out first, then reset
       solutionStepTimeoutRef.current = setTimeout(() => {
-        setSolutionDisplayItems([]);
-        setSolutionCurrentWorking(null);
-        setSolutionShowPermissionCard(false);
-        setSolutionCurrentAgentTyping(null);
-        setSolutionStepIndex(0);
-        processSolutionStep(0);
+        // Start exit animation
+        setSolutionIsExiting(true);
+        
+        // After exit animation completes, reset and start fresh
+        solutionStepTimeoutRef.current = setTimeout(() => {
+          setSolutionDisplayItems([]);
+          setSolutionCurrentWorking(null);
+          setShowAuthModal(false);
+          setSolutionCurrentAgentTyping(null);
+          setSolutionIsExiting(false);
+          setSolutionStepIndex(0);
+          processSolutionStep(0);
+        }, 300); // Exit animation duration
       }, DISPLAY_DURATION);
       return;
     }
@@ -1323,7 +1516,7 @@ export function SummaryCardDemo({
         break;
 
       case "permission-card":
-        setSolutionShowPermissionCard(true);
+        setShowAuthModal(true);
         // Don't auto-advance - wait for user action
         break;
 
@@ -1347,30 +1540,76 @@ export function SummaryCardDemo({
 
   // Called when user clicks authorize on permission card
   const onSolutionAuthorize = useCallback(() => {
-    setSolutionShowPermissionCard(false);
-    setSolutionDisplayItems(prev => [...prev, { type: "permission-card" }]);
-    // Find the user-action step and advance past it
-    const nextStep = solutionStepIndex + 2; // Skip permission-card and user-action steps
+    setShowAuthModal(false);
+    // Advance past permission-card and user-action steps after exit animation
+    const nextStep = solutionStepIndex + 2;
     setSolutionStepIndex(nextStep);
-    setTimeout(() => processSolutionStep(nextStep), 500);
+    setTimeout(() => processSolutionStep(nextStep), 300); // Delay for exit animation
   }, [solutionStepIndex, processSolutionStep]);
 
   // Start solution conversation
   const startSolutionConversation = useCallback(() => {
+    // Clear any existing start timeout
+    if (solutionStartTimeoutRef.current) {
+      clearTimeout(solutionStartTimeoutRef.current);
+    }
     const delay = 400;
-    setTimeout(() => {
+    solutionStartTimeoutRef.current = setTimeout(() => {
+      solutionStartTimeoutRef.current = null;
       setSolutionStepIndex(0);
       processSolutionStep(0);
     }, delay);
   }, [processSolutionStep]);
 
-  // Trigger solution conversation when switching to solution tab
-  useEffect(() => {
-    if (activeSegment === "solution" && !solutionHasTriggered && hasTriggered) {
-      setSolutionHasTriggered(true);
-      startSolutionConversation();
+  // Handle segment change - reset and restart conversation from scratch
+  const handleSegmentChange = useCallback((newSegment: "problem" | "solution") => {
+    if (newSegment === activeSegment) return;
+    
+    // Clear ALL active timeouts to prevent any pending operations
+    if (solutionStepTimeoutRef.current) {
+      clearTimeout(solutionStepTimeoutRef.current);
+      solutionStepTimeoutRef.current = null;
     }
-  }, [activeSegment, solutionHasTriggered, hasTriggered, startSolutionConversation]);
+    if (solutionStartTimeoutRef.current) {
+      clearTimeout(solutionStartTimeoutRef.current);
+      solutionStartTimeoutRef.current = null;
+    }
+    if (segmentChangeTimeoutRef.current) {
+      clearTimeout(segmentChangeTimeoutRef.current);
+      segmentChangeTimeoutRef.current = null;
+    }
+    
+    // Reset problem conversation state
+    setConversationMessages([]);
+    setCurrentStep(0);
+    setCurrentAgentContent("");
+    setIsTyping(false);
+    setShowAgentResponse(false);
+    setIsShaking(false);
+    advanceLockRef.current = false;
+    
+    // Reset solution conversation state
+    setSolutionDisplayItems([]);
+    setSolutionStepIndex(0);
+    setSolutionCurrentWorking(null);
+    setSolutionCurrentAgentTyping(null);
+    setSolutionIsTyping(false);
+    setSolutionIsExiting(false);
+    setShowAuthModal(false);
+    
+    // Switch segment
+    setActiveSegment(newSegment);
+    
+    // Start the appropriate conversation fresh after animation completes
+    segmentChangeTimeoutRef.current = setTimeout(() => {
+      segmentChangeTimeoutRef.current = null;
+      if (newSegment === "problem") {
+        startConversation();
+      } else {
+        startSolutionConversation();
+      }
+    }, 350); // Wait for exit animation
+  }, [activeSegment, startConversation, startSolutionConversation]);
 
   // Trigger first conversation when component enters viewport
   useEffect(() => {
@@ -1407,6 +1646,7 @@ export function SummaryCardDemo({
         alt=""
         fill
         className="object-cover"
+        style={{ objectPosition: backgroundPosition }}
         sizes="100vw"
       />
       {/* Segmented control above chat window */}
@@ -1418,7 +1658,7 @@ export function SummaryCardDemo({
               { id: "solution", label: "Solution" },
             ]}
             selected={activeSegment}
-            onChange={(id) => setActiveSegment(id as "problem" | "solution")}
+            onChange={(id) => handleSegmentChange(id as "problem" | "solution")}
           />
         </div>
       )}
@@ -1443,13 +1683,13 @@ export function SummaryCardDemo({
       >
         {/* Inner container */}
         <div 
-          className="rounded-[12px] overflow-hidden flex flex-col bg-[var(--background)] h-[660px]"
+          className="rounded-[12px] overflow-hidden flex flex-col h-[660px]"
+          style={{ backgroundColor: "#ffffff" }}
         >
-      {/* Header: typing title when headerLabel set (starts in view), else countdown */}
+      {/* Header: static title when headerLabel set, else countdown */}
       {headerLabel ? (
-        <TypingHeader 
+        <StaticHeader 
           label={activeSegment === "problem" ? headerLabel : "The solution"} 
-          startTyping={activeSegment === "problem" ? hasTriggered : solutionHasTriggered}
           key={activeSegment}
         />
       ) : (
@@ -1461,127 +1701,117 @@ export function SummaryCardDemo({
       )}
 
       {/* Messages area */}
-      <motion.div
-        className="px-4 pb-6 flex flex-col gap-3 overflow-y-auto"
+      <div
+        className="px-4 pb-6 overflow-y-auto"
         style={{ minHeight: "500px", transform: "translateZ(0)" }}
-        animate={{
-          opacity: isExiting ? 0 : 1,
-          y: isExiting ? -10 : 0,
-        }}
-        transition={{ duration: 0.3, ease: "easeOut" }}
       >
-        {headerLabel && activeSegment === "problem" ? (
-          <>
-            {/* Problem: Accumulated conversation (no history removed) */}
-            {conversationMessages.map((m, i) =>
-              m.role === "user" ? (
-                <motion.div
-                  key={i}
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.3, ease: "easeOut" }}
-                >
-                  <UserBubble content={m.content} />
-                </motion.div>
-              ) : (
-                <div key={i}>
-                  <AgentBubble content={m.content} staticContent />
-                </div>
-              )
-            )}
-            {isTyping && (
-              <motion.div
-                key="typing"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ duration: 0.2 }}
-              >
-                <TypingIndicator />
-              </motion.div>
-            )}
-            {showAgentResponse && (
-              <motion.div
-                key={`agent-${currentStep}`}
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ duration: 0.25 }}
-              >
-                <AgentBubble
-                  content={currentAgentContent}
-                  cardType={conversationTemplates[currentStep]?.cardType}
-                  isCardLoading={false}
-                  onTypingComplete={advanceToNextStep}
-                />
-              </motion.div>
-            )}
-          </>
-        ) : headerLabel && activeSegment === "solution" ? (
-          <>
-            {/* Solution: Step-based conversation */}
-            {solutionDisplayItems.map((item, i) => {
-              if (item.type === "user") {
-                return (
+        <AnimatePresence mode="wait">
+          {headerLabel && activeSegment === "problem" ? (
+            <motion.div
+              key="problem-conversation"
+              className="flex flex-col gap-3"
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              transition={{ duration: 0.3, ease: "easeOut" }}
+            >
+              {/* Problem: Accumulated conversation (no history removed) */}
+              {conversationMessages.map((m, i) =>
+                m.role === "user" ? (
                   <motion.div
-                    key={`user-${i}`}
+                    key={i}
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.3, ease: "easeOut" }}
                   >
-                    <UserBubble content={item.content} />
+                    <UserBubble content={m.content} />
                   </motion.div>
-                );
-              }
-              if (item.type === "agent") {
-                return (
-                  <div key={`agent-${i}`}>
-                    <AgentBubble content={item.content} staticContent />
+                ) : (
+                  <div key={i}>
+                    <AgentBubble content={m.content} staticContent />
                   </div>
-                );
-              }
-              if (item.type === "permission-card") {
-                return (
-                  <motion.div
-                    key={`permission-done-${i}`}
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 0.5 }}
-                    transition={{ duration: 0.2 }}
-                  >
-                    <PermissionCard />
-                  </motion.div>
-                );
-              }
-              return null;
-            })}
-            {/* Current working indicator */}
-            {solutionCurrentWorking && (
-              <motion.div
-                key="working-current"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ duration: 0.2 }}
-              >
-                <WorkingIndicator text={solutionCurrentWorking} />
-              </motion.div>
-            )}
-            {/* Permission card waiting for authorization */}
-            {solutionShowPermissionCard && (
-              <motion.div
-                key="permission-card"
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.3, ease: "easeOut" }}
-              >
-                <PermissionCard onAuthorize={onSolutionAuthorize} />
-              </motion.div>
-            )}
-            {/* Typing indicator */}
-            {solutionIsTyping && (
-              <motion.div
-                key="typing-solution"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ duration: 0.2 }}
-              >
+                )
+              )}
+              {isTyping && (
+                <motion.div
+                  key="typing"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ duration: 0.2 }}
+                >
+                  <TypingIndicator />
+                </motion.div>
+              )}
+              {showAgentResponse && (
+                <motion.div
+                  key={`agent-${currentStep}`}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ duration: 0.25 }}
+                >
+                  <AgentBubble
+                    content={currentAgentContent}
+                    cardType={conversationTemplates[currentStep]?.cardType}
+                    isCardLoading={false}
+                    onTypingComplete={advanceToNextStep}
+                  />
+                </motion.div>
+              )}
+            </motion.div>
+          ) : headerLabel && activeSegment === "solution" ? (
+            <motion.div
+              key="solution-conversation"
+              className="flex flex-col gap-3"
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ 
+                opacity: solutionIsExiting ? 0 : 1, 
+                y: solutionIsExiting ? -10 : 0 
+              }}
+              exit={{ opacity: 0, y: -10 }}
+              transition={{ duration: 0.3, ease: "easeOut" }}
+            >
+              {/* Solution: Step-based conversation */}
+              {solutionDisplayItems.map((item, i) => {
+                if (item.type === "user") {
+                  return (
+                    <motion.div
+                      key={`user-${i}`}
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.3, ease: "easeOut" }}
+                    >
+                      <UserBubble content={item.content} />
+                    </motion.div>
+                  );
+                }
+                if (item.type === "agent") {
+                  return (
+                    <div key={`agent-${i}`}>
+                      <AgentBubble content={item.content} staticContent />
+                    </div>
+                  );
+                }
+                return null;
+              })}
+              {/* Current working indicator */}
+              {solutionCurrentWorking && (
+                <motion.div
+                  key="working-current"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ duration: 0.2 }}
+                >
+                  <WorkingIndicator text={solutionCurrentWorking} />
+                </motion.div>
+              )}
+              {/* Typing indicator */}
+              {solutionIsTyping && (
+                <motion.div
+                  key="typing-solution"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ duration: 0.2 }}
+                >
                 <TypingIndicator />
               </motion.div>
             )}
@@ -1599,42 +1829,58 @@ export function SummaryCardDemo({
                 />
               </motion.div>
             )}
-          </>
-        ) : (
-          <>
-            <UserBubble content={template?.question ?? ""} />
-            <AnimatePresence mode="wait">
-              {isTyping && (
-                <motion.div
-                  key="typing"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  transition={{ duration: 0.2 }}
-                >
-                  <TypingIndicator />
-                </motion.div>
-              )}
-              {showAgentResponse && template && (
-                <motion.div
-                  key={`response-${currentIndex}`}
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ duration: 0.25 }}
-                >
-                  <AgentBubble
-                    content={template.response}
-                    cardType={template.cardType}
-                    isCardLoading={isCardLoading}
-                  />
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </>
-        )}
+            </motion.div>
+          ) : (
+            <motion.div
+              key="default-conversation"
+              className="flex flex-col gap-3"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.25, ease: "easeOut" }}
+            >
+              <UserBubble content={template?.question ?? ""} />
+              <AnimatePresence mode="wait">
+                {isTyping && (
+                  <motion.div
+                    key="typing"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 0.2 }}
+                  >
+                    <TypingIndicator />
+                  </motion.div>
+                )}
+                {showAgentResponse && template && (
+                  <motion.div
+                    key={`response-${currentIndex}`}
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ duration: 0.25 }}
+                  >
+                    <AgentBubble
+                      content={template.response}
+                      cardType={template.cardType}
+                      isCardLoading={isCardLoading}
+                    />
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
+      </div>
       </motion.div>
-        </div>
-      </motion.div>
+      
+      {/* Authorization Modal Overlay */}
+      {headerLabel && (
+        <AuthorizationModal 
+          isOpen={showAuthModal} 
+          onAuthorize={onSolutionAuthorize} 
+        />
+      )}
     </div>
   );
 }
