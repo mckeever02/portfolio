@@ -30,7 +30,7 @@ export function WideContent({ children, className = "" }: { children: React.Reac
 
 export function FullWidthContent({ children, className = "" }: { children: React.ReactNode; className?: string }) {
   return (
-    <div className={`w-full max-w-[1920px] mx-auto px-4 md:px-8 lg:px-12 ${className}`}>
+    <div className={`w-full max-w-[1920px] mx-auto px-4 md:px-8 ${className}`}>
       {children}
     </div>
   );
@@ -38,7 +38,7 @@ export function FullWidthContent({ children, className = "" }: { children: React
 
 function LayoutContent({ caseStudy, children }: CaseStudyLayoutProps) {
   return (
-    <div className="min-h-screen bg-[var(--page-background)]">
+    <div className="min-h-screen bg-[var(--page-background)] overflow-x-hidden">
       <div className="py-4 md:py-8">
         <main className="flex flex-col gap-10 py-4 min-w-0">
           {/* Back Button */}

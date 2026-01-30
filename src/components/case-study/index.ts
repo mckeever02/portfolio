@@ -12,3 +12,7 @@ export { QuoteCard } from "./QuoteCard";
 export { HackathonSection } from "./HackathonSection";
 export { BodyText } from "./BodyText";
 export { StickyNotesGrid } from "./StickyNotesGrid";
+export { FeatureCard, FeatureCardConnector, FeatureCardList } from "./FeatureCard";
+export type { FeatureCardItem } from "./FeatureCard";
+export { GridCard, GridCardList } from "./GridCard";
+export type { GridCardItem } from "./GridCard";
