@@ -13,6 +13,7 @@ import {
   BodyText,
   StickyNotesGrid,
   FeatureCardList,
+  StatCard,
 } from "@/components/case-study";
 import type { FeatureCardItem } from "@/components/case-study";
 import Image from "next/image";
@@ -405,27 +406,34 @@ export function AgenticAutofillContent({ caseStudy }: { caseStudy: CaseStudy }) 
     <CaseStudyLayout caseStudy={caseStudy}>
       <NarrowContent>
         <ContentSection id="overview" title="Overview">
-          <BodyText>{caseStudy.description}</BodyText>
+          <BodyText>
+            As the design lead on this project, I partnered with our PM and engineering team to define and ship a 0→1 product that enables AI agents to securely authenticate on behalf of users—without ever exposing their credentials.
+          </BodyText>
+          <BodyText>
+            The result was 1Password&apos;s first integration purpose-built for agentic AI—launched in partnership with Browserbase and covered by major tech publications including The Verge and TechRadar.
+          </BodyText>
+
+          <div className="aspect-video w-full overflow-hidden rounded-lg border border-[var(--border-darker)]">
+            <iframe
+              src="https://www.youtube.com/embed/c3tqMe2_UwQ"
+              title="Introducing 1Password Secure Agentic Autofill for Browserbase"
+              className="w-full h-full border-0"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+              allowFullScreen
+            />
+          </div>
         </ContentSection>
       </NarrowContent>
 
-      <WideContent className="mt-6">
-        <div className="aspect-video w-full overflow-hidden rounded-lg">
-          <iframe
-            src="https://www.youtube.com/embed/c3tqMe2_UwQ"
-            title="Autofill for AI Agents"
-            className="w-full h-full border-0"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-            allowFullScreen
-          />
-        </div>
-      </WideContent>
+      <NarrowContent>
+        <ZigZagDivider />
+      </NarrowContent>
 
-
-      <NarrowContent className="mt-6">
+      <NarrowContent>
         <ContentSection id="the-problem">
-           <h2 className="text-xl font-bold text-[var(--foreground)] uppercase tracking-wider opacity-80 mb-2">The problem</h2>
-          <BodyText className="text-3xl leading-normal">There is currently no secure way for AI agents to authenticate and act online using 1Password.</BodyText>
+          <SkewedTag size="lg">The Problem</SkewedTag>
+
+          <BodyText className="text-3xl leading-normal my-3">Users want AI agents to automate tasks for them, but have limited options to grant access without exposing their credentials.</BodyText>
 
           <BodyText>Users are forced to hand over credentials directly to AI agents in order for them to act on their behalf. This creates inherent risks and vulnerabilities as credentials are exchanged and utilised over insecure channels.</BodyText>
 
@@ -438,7 +446,7 @@ export function AgenticAutofillContent({ caseStudy }: { caseStudy: CaseStudy }) 
       </NarrowContent>
 
       {/* Interactive Summary Card Demo – variation with different bg and "The problem" label */}
-      <div className="w-screen relative left-1/2 -translate-x-1/2 mt-8">
+      <div className="w-screen relative left-1/2 -translate-x-1/2 -mt-8">
         <SummaryCardDemo
           variant="agentic-autofill"
           backgroundImage="/images/work/agentic-autofill/problem-solution-bg-6.png"
@@ -533,7 +541,7 @@ export function AgenticAutofillContent({ caseStudy }: { caseStudy: CaseStudy }) 
       <NarrowContent className="mt-16">
         <ContentSection id="research" title="Research Insights">
           <BodyText>
-            We teamed up with the Browserbase team to conduct a research study with 6 of their customers to understand how they are currently handling credentials when using agentic AI. Three distinct user personas emerged:
+            We teamed up with the Browserbase team to conduct a research study with 6 of their customers to understand how they are using Browserbase and how they are currently handling credentials when using agentic AI. Three distinct personas emerged from the research:
           </BodyText>
         </ContentSection>
       </NarrowContent>
@@ -541,54 +549,181 @@ export function AgenticAutofillContent({ caseStudy }: { caseStudy: CaseStudy }) 
       {/* User Personas - FlipCarousel style */}
       <FlipCarousel items={researchPersonas} />
 
-      {/* Key Insight */}
-      <NarrowContent className="mt-8">
-        <div className="bg-[var(--foreground)]/5 border-l-4 border-[var(--accent-orange)] p-6">
-          <p className="text-lg text-[var(--foreground)] font-medium">
-            Individual users will sacrifice security for automation. Admins will sacrifice automation for security.
-          </p>
-        </div>
-      </NarrowContent>
 
       {/* Findings Summary */}
       <NarrowContent className="mt-12">
-        <h3 className="text-xl font-bold text-[var(--foreground)] mb-6">What we learned</h3>
-        <div className="flex flex-col gap-4">
-          <div className="flex gap-4 items-start">
-            <div className="w-8 h-8 rounded-full bg-[var(--foreground)]/10 flex items-center justify-center shrink-0 mt-1">
-              <span className="text-sm font-bold text-[var(--foreground)]">1</span>
+        <ContentSection title="What we learned">
+        <div className="flex flex-col mt-6">
+          {[
+            {
+              num: 1,
+              title: "MFA is a major pain point",
+              description: "Multi-factor authentication consistently disrupts automation flows for all user types.",
+              bannerBg: "/images/shared/pixel-forest-sky.png",
+            },
+            {
+              num: 2,
+              title: "Current methods are insecure or complex",
+              description: "Users either give plain text passwords to LLMs (insecure) or build complex integrations that are hard to maintain.",
+              bannerBg: "/images/shared/pixel-clouds-blue.png",
+            },
+            {
+              num: 3,
+              title: "Brand trust matters",
+              description: "Users trust well-known security brands like 1Password over lesser-known alternatives.",
+              bannerBg: "/images/shared/pixel-field-clouds.png",
+            },
+          ].map((item, index, arr) => (
+            <div key={item.num}>
+              <div className="bg-[var(--background)] border border-[var(--foreground)]/20 flex flex-col sm:flex-row overflow-hidden">
+                <div className="p-1 sm:self-stretch">
+                  <div className="relative py-4 sm:py-0 shrink-0 flex items-center justify-center w-full sm:w-32 sm:h-full sm:min-h-[128px] overflow-hidden">
+                    <Image
+                      src={item.bannerBg}
+                      alt=""
+                      fill
+                      className="object-cover"
+                      sizes="(max-width: 640px) 100vw, 128px"
+                    />
+                    <div className="absolute inset-0 bg-black/10" />
+                    <div className="relative rounded-lg overflow-hidden">
+                      <div className="absolute inset-0 bg-white/35 backdrop-blur-lg" />
+                      <div className="relative p-1">
+                        <div className="rounded bg-[var(--background)] text-[var(--foreground)] w-12 h-12 flex items-center justify-center">
+                          <span className="text-xl font-bold">{item.num}</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div className="p-4 sm:p-6 flex-1">
+                  <h3 className="text-xl font-bold mb-2 text-[var(--foreground)] leading-tight">{item.title}</h3>
+                  <p className="text-[var(--foreground)] text-lg">{item.description}</p>
+                </div>
+              </div>
+              <div className="h-12 flex justify-center py-2">
+                <div className="w-0.5 h-full bg-[var(--foreground)]/30" />
+              </div>
             </div>
-            <div>
-              <p className="text-[var(--foreground)] font-medium">MFA is a major pain point</p>
-              <p className="text-[var(--foreground-secondary)] text-sm mt-1">Multi-factor authentication consistently disrupts automation flows for all user types.</p>
-            </div>
-          </div>
-          <div className="flex gap-4 items-start">
-            <div className="w-8 h-8 rounded-full bg-[var(--foreground)]/10 flex items-center justify-center shrink-0 mt-1">
-              <span className="text-sm font-bold text-[var(--foreground)]">2</span>
-            </div>
-            <div>
-              <p className="text-[var(--foreground)] font-medium">Current methods are insecure or complex</p>
-              <p className="text-[var(--foreground-secondary)] text-sm mt-1">Users either give plain text passwords to LLMs (insecure) or build complex integrations that are hard to maintain.</p>
-            </div>
-          </div>
-          <div className="flex gap-4 items-start">
-            <div className="w-8 h-8 rounded-full bg-[var(--foreground)]/10 flex items-center justify-center shrink-0 mt-1">
-              <span className="text-sm font-bold text-[var(--foreground)]">3</span>
-            </div>
-            <div>
-              <p className="text-[var(--foreground)] font-medium">Brand trust matters</p>
-              <p className="text-[var(--foreground-secondary)] text-sm mt-1">Users trust well-known security brands like 1Password over lesser-known alternatives.</p>
-            </div>
-          </div>
+          ))}
         </div>
+        </ContentSection>
       </NarrowContent>
 
       {/* Trust Quote */}
-      <NarrowContent className="mt-8 mb-12">
+      <NarrowContent className="mb-12 -mt-8">
+        <p className="text-2xl sm:text-3xl md:text-4xl font-medium text-[var(--foreground)] leading-normal mt-4">
+          Individual users will sacrifice <span className="bg-[var(--foreground)]/10 px-1">security for automation</span>. Admins will sacrifice <span className="bg-[var(--foreground)]/10 px-1">automation for security</span>.
+        </p>
+      </NarrowContent>
+
+      <NarrowContent>
+        <ZigZagDivider />
+      </NarrowContent>
+
+      {/* Prompt Design Section */}
+      <NarrowContent className="mt-8">
+        <SkewedTag size="lg">Prompt Design</SkewedTag>
+        <p className="text-2xl sm:text-3xl md:text-4xl font-medium text-[var(--foreground)] leading-tight mt-4">
+          Designing for AI agents.
+        </p>
+        <BodyText className="mt-4">
+          A key part of this project involved crafting the prompts that guide AI agents through the authentication flow. Clear, structured prompts ensure agents can reliably navigate login forms and handle edge cases.
+        </BodyText>
+      </NarrowContent>
+
+      <NarrowContent>
+        <ZigZagDivider />
+      </NarrowContent>
+
+      {/* Autonomous Agents Section */}
+      <NarrowContent className="mt-8">
+        <SkewedTag size="lg">Autonomous Agents</SkewedTag>
+        <p className="text-2xl sm:text-3xl md:text-4xl font-medium text-[var(--foreground)] leading-tight mt-4">
+          Coming soon.
+        </p>
+        <BodyText className="mt-4">
+          We are exploring how 1Password can securely provide credentials to autonomous agents that operate independently without human oversight.
+        </BodyText>
+      </NarrowContent>
+
+      <NarrowContent>
+        <ZigZagDivider />
+      </NarrowContent>
+
+      {/* Impact Section */}
+      <NarrowContent className="mt-8">
+        <ContentSection title="Impact">
+        <p className="text-2xl sm:text-3xl md:text-4xl font-medium text-[var(--foreground)] leading-tight mt-4">
+        Agentic Autofill was one of 1Password's most visible launches to date.
+        </p>
+        <BodyText className="mt-4">
+          The Secure Agentic Autofill launch with Browserbase generated significant media coverage, positioning 1Password as the trusted security layer for agentic AI.
+        </BodyText>
+        </ContentSection>
+      </NarrowContent>
+
+      <WideContent>
+        <div className="grid grid-cols-2 gap-4 lg:px-28">
+          <StatCard value="25+" label="Global stories" />
+          <StatCard value="170M+" label="Impressions" />
+          <StatCard value="1.26M" label="Estimated views" />
+          <StatCard value="64" label="Avg. domain authority" />
+        </div>
+      </WideContent>
+
+      {/* Full-bleed press coverage section */}
+      <motion.div 
+        className="w-screen relative left-1/2 right-1/2 -ml-[50vw] -mr-[50vw] overflow-hidden"
+        style={{
+          backgroundImage: "url('/images/work/agentic-autofill/problem-solution-bg-4.png')",
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+        }}
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, amount: 0.3 }}
+      >
+        <div className="max-w-[1400px] mx-auto px-4 md:px-8 flex flex-col md:flex-row items-start justify-center gap-8 md:gap-12 pt-16">
+          <motion.div
+            variants={{
+              hidden: { y: "100%" },
+              visible: { y: 16 }
+            }}
+            transition={{ type: "spring", stiffness: 80, damping: 18 }}
+            className="w-full max-w-[640px]"
+          >
+            <Image 
+              src="/images/work/agentic-autofill/theverge-agentic-autofill-4.png"
+              alt="The Verge coverage"
+              width={720}
+              height={600}
+              className="w-full h-auto shadow-[0_25px_60px_-10px_rgba(0,0,0,0.5)]"
+            />
+          </motion.div>
+          <motion.div
+            variants={{
+              hidden: { y: "100%" },
+              visible: { y: 16 }
+            }}
+            transition={{ type: "spring", stiffness: 80, damping: 18, delay: 0.1 }}
+            className="w-full max-w-[640px]"
+          >
+            <Image 
+              src="/images/work/agentic-autofill/siliconangle-agentic-autofill-4.png"
+              alt="SiliconANGLE coverage"
+              width={720}
+              height={600}
+              className="w-full h-auto shadow-[0_25px_60px_-10px_rgba(0,0,0,0.5)]"
+            />
+          </motion.div>
+        </div>
+      </motion.div>
+
+      <NarrowContent>
         <QuoteCard
-          quote="It's a lot easier if we say 1Password because everyone knows you rather than this random US brand."
-          attribution="Mike, Product Builder"
+          quote="It remembers the passwords that you can't, and hides them from AI bots that can't be trusted to forget."
+          attribution="The Verge"
         />
       </NarrowContent>
 

@@ -16,3 +16,4 @@ export { FeatureCard, FeatureCardConnector, FeatureCardList } from "./FeatureCar
 export type { FeatureCardItem } from "./FeatureCard";
 export { GridCard, GridCardList } from "./GridCard";
 export type { GridCardItem } from "./GridCard";
+export { StatCard } from "./StatCard";
