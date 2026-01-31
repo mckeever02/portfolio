@@ -132,6 +132,59 @@ const agenticAutofillConversationTemplates: ConversationTemplate[] = [
   },
 ];
 
+// Prompt Design conversation templates - showing guidelines for AI agents
+interface PromptDesignTemplate {
+  question: string;
+  response: string;
+  guideline?: {
+    title: string;
+    description: string;
+  };
+}
+
+const promptDesignConversationTemplates: PromptDesignTemplate[] = [
+  {
+    question: "Find me a Nintendo Switch OLED console on Amazon for under $400.",
+    response: "I'll help you find a Nintendo Switch OLED console on Amazon for under $400 including shipping.\n\nDo you want me to check your 1Password account for an Amazon login or do you want to provide this?",
+    guideline: {
+      title: "Ask first before checking",
+      description: "The first time a user connects 1Password, the agent should ask permission before accessing credentials. Once granted, subsequent requests in the same session don't require re-asking.",
+    },
+  },
+  {
+    question: "Yes, use my Amazon login from 1Password.",
+    response: "→ Checking 1Password for your Amazon credentials...\n→ Found credentials. Asking 1Password to sign in...\n→ Signed in successfully.\n\nSearching for Nintendo Switch OLED consoles under $400.",
+    guideline: {
+      title: "Show the chain of thought",
+      description: "Agents should communicate each step when interacting with 1Password—checking for credentials, requesting sign-in, and confirming authentication complete.",
+    },
+  },
+  {
+    question: "Yes, add the cheapest one to my cart.",
+    response: "I've added the Nintendo Switch OLED to your cart for $349.99.\n\nTo complete checkout, I'll need payment and shipping details. Should I check 1Password for your saved payment method and address?",
+    guideline: {
+      title: "Request only what's needed",
+      description: "When accessing sensitive information like payment details, agents should clearly explain why the information is needed and request explicit permission before proceeding.",
+    },
+  },
+  {
+    question: "Great, complete the purchase.",
+    response: "Before I place this order, please confirm:\n\n• Nintendo Switch OLED – $349.99\n• Shipping to 123 Main St, Seattle WA\n• Payment: Visa ending in 4242\n\nTotal: $349.99. Shall I proceed?",
+    guideline: {
+      title: "Confirm before irreversible actions",
+      description: "For purchases, transfers, or other actions that can't be undone, agents should summarize the details and request explicit confirmation before proceeding.",
+    },
+  },
+  {
+    question: "Yes, place the order.",
+    response: "Order placed successfully! Your Nintendo Switch will arrive by Thursday.\n\nYour payment and address details were handled securely through 1Password and have not been stored in this conversation.",
+    guideline: {
+      title: "Never log credentials",
+      description: "Credentials and sensitive data should never persist in conversation history, logs, or memory. After use, no trace of the credential content should remain.",
+    },
+  },
+];
+
 // Solution uses a step-based system for more complex flows
 type SolutionStepType = "user-message" | "agent-message" | "agent-working" | "permission-card" | "user-action";
 
@@ -877,6 +930,95 @@ function OverflowIcon() {
   );
 }
 
+// Prompt Design Guideline card component with line-draw animation
+function PromptGuidelineCard({ 
+  title, 
+  description,
+}: { 
+  title: string; 
+  description: string;
+}) {
+  const [showCard, setShowCard] = useState(false);
+  
+  return (
+    <motion.div
+      className="flex items-center"
+      initial={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.2 }}
+    >
+      {/* Connector line with circle - line draws left to right */}
+      <svg width="70" height="16" viewBox="0 0 70 16" fill="none" className="shrink-0 -ml-5">
+        {/* Outer circle ring - pops in first */}
+        <motion.circle 
+          cx="8" cy="8" r="7" 
+          stroke="black" 
+          strokeWidth="1" 
+          fill="none"
+          initial={{ scale: 0, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          transition={{ duration: 0.2, ease: "easeOut" }}
+        />
+        {/* Inner filled circle */}
+        <motion.circle 
+          cx="8" cy="8" r="3.5" 
+          fill="black"
+          initial={{ scale: 0 }}
+          animate={{ scale: 1 }}
+          transition={{ duration: 0.2, ease: "easeOut" }}
+        />
+        {/* Horizontal line as path - draws left to right */}
+        <motion.path 
+          d="M15 8 L70 8"
+          stroke="black" 
+          strokeWidth="1"
+          fill="none"
+          initial={{ pathLength: 0 }}
+          animate={{ pathLength: 1 }}
+          transition={{ 
+            duration: 0.25, 
+            delay: 0.1,
+            ease: "easeOut"
+          }}
+          onAnimationComplete={() => setShowCard(true)}
+        />
+      </svg>
+      
+      {/* Guideline card - always rendered to maintain layout, visibility animated */}
+      <motion.div 
+        className="bg-white border border-black w-[275px] p-4 flex flex-col gap-3 overflow-hidden origin-left"
+        initial={{ scale: 0.8, opacity: 0 }}
+        animate={{ 
+          scale: showCard ? 1 : 0.8, 
+          opacity: showCard ? 1 : 0 
+        }}
+        transition={{ 
+          type: "spring", 
+          stiffness: 400, 
+          damping: 25 
+        }}
+      >
+            {/* Header badge */}
+            <div className="bg-[var(--foreground)] px-2 py-1 self-start">
+              <span className="text-white text-sm font-bold tracking-[-0.18px]">
+                Prompt Design Guidelines
+              </span>
+            </div>
+            
+            {/* Title */}
+            <h4 className="text-lg font-bold leading-tight text-var(--foreground)">
+              {title}
+            </h4>
+            
+            {/* Description */}
+            <p className="text-[16px] leading-[1.4] text-black tracking-[-0.18px]">
+              {description}
+            </p>
+      </motion.div>
+    </motion.div>
+  );
+}
+
 // Permission card content - Figma accurate design with gray bg and shadow
 function PermissionCardContent({ onAuthorize }: { onAuthorize?: () => void }) {
   return (
@@ -1076,6 +1218,28 @@ function AgentBubble({
     setTextComplete(false);
   }, [content]);
 
+  // Parse content to separate status lines (starting with →) from regular text
+  const renderContent = (text: string) => {
+    const lines = text.split('\n');
+    return lines.map((line, i) => {
+      const isStatus = line.startsWith('→');
+      if (isStatus) {
+        return (
+          <span key={i} className="block text-[14px] font-mono text-[var(--foreground)]/60">
+            {line}
+            {i < lines.length - 1 && '\n'}
+          </span>
+        );
+      }
+      return (
+        <span key={i}>
+          {line}
+          {i < lines.length - 1 && '\n'}
+        </span>
+      );
+    });
+  };
+
   return (
     <div className="flex flex-col">
       {/* Typed text response or static */}
@@ -1083,7 +1247,10 @@ function AgentBubble({
         className={`text-[16px] leading-normal py-3 text-[var(--foreground)] whitespace-pre-line ${inter.className}`}
       >
         {isStatic ? (
-          content
+          renderContent(content)
+        ) : textComplete ? (
+          // Show styled content after typing completes
+          renderContent(content)
         ) : (
           <TextType
             text={content}
@@ -1222,15 +1389,27 @@ function StaticHeader({ label }: { label: string }) {
   );
 }
 
+// Arrow icon for skip button
+function ArrowRightIcon({ size = 16 }: { size?: number }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M5 12h14" />
+      <path d="M12 5l7 7-7 7" />
+    </svg>
+  );
+}
+
 // Chat header with countdown progress ring (CSS transition based) – used when no headerLabel
 function ChatHeader({
   cycleKey,
   totalDuration,
   isActive,
+  onSkip,
 }: {
   cycleKey: number;
   totalDuration: number;
   isActive: boolean;
+  onSkip?: () => void;
 }) {
   const size = 32;
   const strokeWidth = 1;
@@ -1238,12 +1417,34 @@ function ChatHeader({
   const circumference = 2 * Math.PI * radius;
 
   const strokeDashoffset = isActive ? 0 : circumference;
+  
+  const [isHovered, setIsHovered] = useState(false);
+  const [arrowState, setArrowState] = useState<"idle" | "exiting" | "entering">("idle");
+
+  const handleClick = () => {
+    if (!onSkip || arrowState !== "idle") return;
+    setArrowState("exiting");
+    // After exit animation, switch to entering
+    setTimeout(() => {
+      setArrowState("entering");
+      // After enter animation, reset to idle and trigger skip
+      setTimeout(() => {
+        setArrowState("idle");
+        onSkip();
+      }, 150);
+    }, 120);
+  };
 
   return (
     <div className="flex items-center justify-center py-6">
-      <div
-        className="relative flex items-center justify-center"
+      <button
+        className={`relative flex items-center justify-center overflow-hidden ${onSkip ? "cursor-pointer" : ""}`}
         style={{ width: size, height: size }}
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={() => setIsHovered(false)}
+        onClick={handleClick}
+        disabled={!onSkip}
+        aria-label={onSkip ? "Skip to next conversation" : undefined}
       >
         <svg
           key={cycleKey}
@@ -1276,8 +1477,48 @@ function ChatHeader({
             }}
           />
         </svg>
-        <SentinelIcon size={16} />
-      </div>
+        {/* Sentinel icon - scales out on hover */}
+        <motion.div
+          className="absolute"
+          initial={false}
+          animate={{ 
+            opacity: isHovered && onSkip ? 0 : 1,
+            scale: isHovered && onSkip ? 0 : 1,
+          }}
+          transition={{ duration: 0.2, ease: "easeOut" }}
+        >
+          <SentinelIcon size={16} />
+        </motion.div>
+        {/* Arrow icon - scales in with pop on hover, flies off/in on click */}
+        {onSkip && arrowState !== "entering" && (
+          <motion.div
+            className="absolute"
+            initial={false}
+            animate={{ 
+              opacity: isHovered ? 1 : 0,
+              scale: isHovered ? 1.1 : 0,
+              x: arrowState === "exiting" ? 40 : 0,
+            }}
+            transition={{ 
+              duration: arrowState === "exiting" ? 0.12 : 0.2,
+              ease: arrowState === "exiting" ? [0.4, 0, 1, 1] : [0, 0, 0.2, 1.2],
+            }}
+          >
+            <ArrowRightIcon size={18} />
+          </motion.div>
+        )}
+        {/* Arrow entering from left after click */}
+        {onSkip && arrowState === "entering" && (
+          <motion.div
+            className="absolute"
+            initial={{ x: -40, opacity: 0, scale: 1.1 }}
+            animate={{ x: 0, opacity: 1, scale: 1.1 }}
+            transition={{ duration: 0.15, ease: [0, 0, 0.2, 1] }}
+          >
+            <ArrowRightIcon size={18} />
+          </motion.div>
+        )}
+      </button>
     </div>
   );
 }
@@ -1290,6 +1531,7 @@ type ConversationMessage = { role: "user" | "agent"; content: string };
 
 const TYPING_DURATION = 3500;
 const DISPLAY_DURATION = 4000;
+const DISPLAY_DURATION_PROMPT_DESIGN = 14000; // 10s longer for prompt-design
 const INITIAL_DELAY = 1200;
 const CARD_LOADING_DURATION = 1500;
 const FADE_OUT_DURATION = 350;
@@ -1299,24 +1541,34 @@ const AGENT_TO_USER_DELAY = 1500;
 const USER_TO_TYPING_DELAY = 800;
 const TOTAL_CYCLE_DURATION =
   INITIAL_DELAY + TYPING_DURATION + CARD_LOADING_DURATION + DISPLAY_DURATION + FADE_OUT_DURATION;
+const TOTAL_CYCLE_DURATION_PROMPT_DESIGN =
+  INITIAL_DELAY + TYPING_DURATION + CARD_LOADING_DURATION + DISPLAY_DURATION_PROMPT_DESIGN + FADE_OUT_DURATION;
 
 export function SummaryCardDemo({
   backgroundImage = "/images/work/sentinel/agent-bg.png",
   backgroundPosition = "center",
   headerLabel,
   variant = "sentinel",
+  showBackground = true,
 }: {
   backgroundImage?: string;
   backgroundPosition?: string;
   headerLabel?: string;
-  variant?: "sentinel" | "agentic-autofill";
+  variant?: "sentinel" | "agentic-autofill" | "prompt-design";
+  showBackground?: boolean;
 } = {}) {
   // Select conversation templates based on variant
   const conversationTemplates = variant === "sentinel" 
     ? sentinelConversationTemplates 
+    : variant === "prompt-design"
+    ? promptDesignConversationTemplates as ConversationTemplate[]
     : agenticAutofillConversationTemplates;
   
+  // For prompt-design variant, get guidelines
+  const promptDesignTemplates = variant === "prompt-design" ? promptDesignConversationTemplates : null;
+  
   const [currentIndex, setCurrentIndex] = useState(0);
+  const currentIndexRef = useRef(currentIndex);
   const template = conversationTemplates[currentIndex];
 
   const [showAgentResponse, setShowAgentResponse] = useState(false);
@@ -1347,12 +1599,16 @@ export function SummaryCardDemo({
   const [solutionCurrentAgentTyping, setSolutionCurrentAgentTyping] = useState<string | null>(null);
   const [solutionIsTyping, setSolutionIsTyping] = useState(false);
   const [solutionIsExiting, setSolutionIsExiting] = useState(false);
+  
+  // Prompt design guideline state
+  const [currentGuideline, setCurrentGuideline] = useState<{ title: string; description: string } | null>(null);
 
   const containerRef = useRef<HTMLDivElement>(null);
   const advanceLockRef = useRef(false);
   const solutionStepTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const segmentChangeTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const solutionStartTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const cycleTimeoutsRef = useRef<ReturnType<typeof setTimeout>[]>([]);
 
   const advanceToNextStep = useCallback(() => {
     if (advanceLockRef.current) return;
@@ -1437,31 +1693,83 @@ export function SummaryCardDemo({
         }, USER_TO_TYPING_DELAY);
       }, delay);
     } else {
+      // Default cycling behavior for other variants (including prompt-design)
+      // Clear any pending cycle timeouts
+      cycleTimeoutsRef.current.forEach(clearTimeout);
+      cycleTimeoutsRef.current = [];
+      
+      // Read index from ref to always get latest value
+      const cycleIndex = currentIndexRef.current;
       setCycleKey((prev) => prev + 1);
       requestAnimationFrame(() => setIsProgressActive(true));
-      setTimeout(() => {
+      
+      const t1 = setTimeout(() => {
         setIsTyping(true);
-        setTimeout(() => {
+        const t2 = setTimeout(() => {
           setIsTyping(false);
           setShowAgentResponse(true);
+          // Show guideline if prompt-design variant has one for current template
+          if (promptDesignTemplates) {
+            const currentTemplate = promptDesignTemplates[cycleIndex];
+            if (currentTemplate?.guideline) {
+              const guideline = currentTemplate.guideline;
+              const tGuideline = setTimeout(() => setCurrentGuideline(guideline), 3500);
+              cycleTimeoutsRef.current.push(tGuideline);
+            }
+          }
           setIsCardLoading(true);
-          setTimeout(() => {
+          const t3 = setTimeout(() => {
             setIsCardLoading(false);
-            setTimeout(() => {
+            // Use longer display duration for prompt-design variant
+            const displayDuration = variant === "prompt-design" ? DISPLAY_DURATION_PROMPT_DESIGN : DISPLAY_DURATION;
+            const t4 = setTimeout(() => {
               setIsExiting(true);
-              setTimeout(() => {
+              setCurrentGuideline(null); // Clear guideline before cycling
+              const t5 = setTimeout(() => {
                 setIsProgressActive(false);
                 setShowAgentResponse(false);
-                setCurrentIndex((prev) => (prev + 1) % conversationTemplates.length);
+                const nextIndex = (cycleIndex + 1) % conversationTemplates.length;
+                // Update both state and ref
+                currentIndexRef.current = nextIndex;
+                setCurrentIndex(nextIndex);
                 setIsExiting(false);
+                // Call startConversation again (ref reads latest index)
                 startConversation();
               }, FADE_OUT_DURATION);
-            }, DISPLAY_DURATION);
+              cycleTimeoutsRef.current.push(t5);
+            }, displayDuration);
+            cycleTimeoutsRef.current.push(t4);
           }, CARD_LOADING_DURATION);
+          cycleTimeoutsRef.current.push(t3);
         }, TYPING_DURATION);
+        cycleTimeoutsRef.current.push(t2);
       }, INITIAL_DELAY);
+      cycleTimeoutsRef.current.push(t1);
     }
-  }, [headerLabel]);
+  }, [headerLabel, promptDesignTemplates, conversationTemplates.length, variant]);
+
+  // Skip to next conversation (for manual navigation)
+  const skipToNext = useCallback(() => {
+    // Clear all pending cycle timeouts
+    cycleTimeoutsRef.current.forEach(clearTimeout);
+    cycleTimeoutsRef.current = [];
+    
+    // Clear current state
+    setCurrentGuideline(null);
+    setShowAgentResponse(false);
+    setIsTyping(false);
+    setIsCardLoading(false);
+    setIsExiting(false);
+    setIsProgressActive(false);
+    
+    // Advance to next index
+    const nextIndex = (currentIndexRef.current + 1) % conversationTemplates.length;
+    currentIndexRef.current = nextIndex;
+    setCurrentIndex(nextIndex);
+    
+    // Start new conversation
+    startConversation();
+  }, [conversationTemplates.length, startConversation]);
 
   // Process solution step
   const processSolutionStep = useCallback((stepIndex: number) => {
@@ -1634,21 +1942,22 @@ export function SummaryCardDemo({
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [hasTriggered]);
 
-
   return (
     <div 
       ref={containerRef}
-      className="relative w-full p-3 sm:p-6 md:p-8 lg:p-12 xl:p-16 overflow-hidden"
+      className={`relative w-full overflow-hidden ${showBackground ? "p-3 sm:p-6 md:p-8 lg:p-12 xl:p-16" : ""}`}
     >
       {/* Background image - optimized by Next.js */}
-      <Image
-        src={backgroundImage}
-        alt=""
-        fill
-        className="object-cover"
-        style={{ objectPosition: backgroundPosition }}
-        sizes="100vw"
-      />
+      {showBackground && (
+        <Image
+          src={backgroundImage}
+          alt=""
+          fill
+          className="object-cover"
+          style={{ objectPosition: backgroundPosition }}
+          sizes="100vw"
+        />
+      )}
       {/* Segmented control above chat window */}
       {headerLabel && (
         <div className="relative z-10 flex justify-center mb-4">
@@ -1663,13 +1972,19 @@ export function SummaryCardDemo({
         </div>
       )}
 
-      {/* Outer blur wrapper with shake animation */}
+      {/* Container for chat + absolutely positioned guideline */}
+      <div className="relative z-10 w-full">
+      <div className="flex justify-center">
+      {/* Chat window wrapper - backdrop blur when showBackground, simple border otherwise */}
       <motion.div
-        className="relative z-10 rounded-[16px] p-2 backdrop-blur-md border border-white/30"
+        className={showBackground 
+          ? "relative rounded-[16px] p-2 backdrop-blur-md border border-white/30"
+          : "relative overflow-hidden"
+        }
         style={{ 
-          backgroundColor: "rgba(255, 255, 255, 0.3)",
+          backgroundColor: showBackground ? "rgba(255, 255, 255, 0.3)" : undefined,
           maxWidth: "416px",
-          margin: "0 auto",
+          width: "100%",
           willChange: "transform",
         }}
         animate={
@@ -1683,7 +1998,10 @@ export function SummaryCardDemo({
       >
         {/* Inner container - uses theme colors */}
         <div 
-          className="rounded-[12px] overflow-hidden flex flex-col h-[660px] bg-[var(--background)]"
+          className={showBackground 
+            ? "rounded-[12px] overflow-hidden flex flex-col h-[660px] bg-[var(--background)]"
+            : "rounded-[12px] overflow-hidden flex flex-col h-[660px] bg-[var(--background)] border border-[var(--border-darker)]"
+          }
         >
       {/* Header: static title when headerLabel set, else countdown */}
       {headerLabel ? (
@@ -1694,8 +2012,9 @@ export function SummaryCardDemo({
       ) : (
         <ChatHeader
           cycleKey={cycleKey}
-          totalDuration={TOTAL_CYCLE_DURATION}
+          totalDuration={variant === "prompt-design" ? TOTAL_CYCLE_DURATION_PROMPT_DESIGN : TOTAL_CYCLE_DURATION}
           isActive={isProgressActive}
+          onSkip={skipToNext}
         />
       )}
 
@@ -1872,6 +2191,23 @@ export function SummaryCardDemo({
       </div>
       </div>
       </motion.div>
+      </div>
+      
+      {/* Absolutely positioned guideline card for prompt-design variant */}
+      {variant === "prompt-design" && (
+        <div className="hidden lg:block absolute left-[calc(50%+220px)] top-[120px]">
+          <AnimatePresence>
+            {currentGuideline && (
+              <PromptGuidelineCard 
+                title={currentGuideline.title} 
+                description={currentGuideline.description} 
+              />
+            )}
+          </AnimatePresence>
+        </div>
+      )}
+      
+      </div>
       
       {/* Authorization Modal Overlay */}
       {headerLabel && (

@@ -431,7 +431,7 @@ export function AgenticAutofillContent({ caseStudy }: { caseStudy: CaseStudy }) 
 
       <NarrowContent>
         <ContentSection id="the-problem">
-          <SkewedTag size="lg">The Problem</SkewedTag>
+          <SkewedTag size="xl">The Problem</SkewedTag>
 
           <BodyText className="text-3xl leading-normal my-3">Users want AI agents to automate tasks for them, but have limited options to grant access without exposing their credentials.</BodyText>
 
@@ -513,8 +513,8 @@ export function AgenticAutofillContent({ caseStudy }: { caseStudy: CaseStudy }) 
       </NarrowContent>
 
       <NarrowContent>
-        <SkewedTag size="lg">Browser-based Agents</SkewedTag>
-        <p className="text-2xl sm:text-3xl md:text-4xl font-medium text-[var(--foreground)] leading-tight mt-4">
+        <SkewedTag size="xl">Browser-based Agents</SkewedTag>
+        <p className="text-2xl sm:text-3xl md:text-4xl font-medium text-[var(--foreground)] leading-tight">
           Browserbase enters the chat.
         </p>
 
@@ -611,8 +611,9 @@ export function AgenticAutofillContent({ caseStudy }: { caseStudy: CaseStudy }) 
       </NarrowContent>
 
       {/* Trust Quote */}
-      <NarrowContent className="mb-12 -mt-8">
-        <p className="text-2xl sm:text-3xl md:text-4xl font-medium text-[var(--foreground)] leading-normal mt-4">
+      <NarrowContent className="-mt-6 gap-3">
+        <h4 className="text-base uppercase tracking-wider text-[var(--foreground)]/70 font-bold text-center">The tl;dr</h4>
+        <p className="text-2xl sm:text-3xl md:text-4xl font-medium text-[var(--foreground)] leading-normal">
           Individual users will sacrifice <span className="bg-[var(--foreground)]/10 px-1">security for automation</span>. Admins will sacrifice <span className="bg-[var(--foreground)]/10 px-1">automation for security</span>.
         </p>
       </NarrowContent>
@@ -621,14 +622,17 @@ export function AgenticAutofillContent({ caseStudy }: { caseStudy: CaseStudy }) 
         <ZigZagDivider />
       </NarrowContent>
 
-      {/* Prompt Design Section */}
-      <NarrowContent className="mt-8">
-        <SkewedTag size="lg">Prompt Design</SkewedTag>
-        <p className="text-2xl sm:text-3xl md:text-4xl font-medium text-[var(--foreground)] leading-tight mt-4">
-          Designing for AI agents.
+      {/* Why not MCP Section */}
+      <NarrowContent>
+        <SkewedTag size="xl">Why not MCP?</SkewedTag>
+        <p className="text-2xl sm:text-3xl md:text-4xl font-medium text-[var(--foreground)] leading-tight">
+          MCP isn&apos;t the answer for credentials – agentic autofill is.
         </p>
-        <BodyText className="mt-4">
-          A key part of this project involved crafting the prompts that guide AI agents through the authentication flow. Clear, structured prompts ensure agents can reliably navigate login forms and handle edge cases.
+        <BodyText>
+          MCP servers are designed for general-purpose integrations—not for handling sensitive credentials. Exposing passwords through an MCP server would create a security vulnerability, as credentials could be logged, cached, or accessed by unintended processes. Not ideal.
+        </BodyText>
+        <BodyText>
+          Agentic Autofill takes a different approach. Credentials never leave 1Password&apos;s secure vault. Instead of passing secrets through the model context, 1Password injects credentials directly into the browser at the moment of authentication—keeping them encrypted and invisible to the agent itself.
         </BodyText>
       </NarrowContent>
 
@@ -636,9 +640,32 @@ export function AgenticAutofillContent({ caseStudy }: { caseStudy: CaseStudy }) 
         <ZigZagDivider />
       </NarrowContent>
 
+      {/* Prompt Design Section */}
+      <NarrowContent>
+        <SkewedTag size="xl">Prompt Design Guidelines</SkewedTag>
+        <p className="text-2xl sm:text-3xl md:text-4xl font-medium text-[var(--foreground)] leading-tight">
+          How do you design for something you can&apos;t control?
+        </p>
+        <BodyText>
+          AI agents are inherently unpredictable. A key part of this project was defining guidelines that create predictable, trustworthy behavior when agents handle sensitive credentials—ensuring transparency, minimal access, and user control at every step.
+        </BodyText>
+      </NarrowContent>
+
+      {/* Prompt Design Chat Demo */}
+      <FullWidthContent className="!px-0">
+        <SummaryCardDemo
+          variant="prompt-design"
+          showBackground={false}
+        />
+      </FullWidthContent>
+
+      <NarrowContent>
+        <ZigZagDivider />
+      </NarrowContent>
+
       {/* Autonomous Agents Section */}
       <NarrowContent className="mt-8">
-        <SkewedTag size="lg">Autonomous Agents</SkewedTag>
+        <SkewedTag size="xl">Autonomous Agents</SkewedTag>
         <p className="text-2xl sm:text-3xl md:text-4xl font-medium text-[var(--foreground)] leading-tight mt-4">
           Coming soon.
         </p>
@@ -653,7 +680,8 @@ export function AgenticAutofillContent({ caseStudy }: { caseStudy: CaseStudy }) 
 
       {/* Impact Section */}
       <NarrowContent className="mt-8">
-        <ContentSection title="Impact">
+        <ContentSection>
+        <SkewedTag size="xl">Impact</SkewedTag>
         <p className="text-2xl sm:text-3xl md:text-4xl font-medium text-[var(--foreground)] leading-tight mt-4">
         Agentic Autofill was one of 1Password's most visible launches to date.
         </p>
