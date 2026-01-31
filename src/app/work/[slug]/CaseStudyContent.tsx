@@ -20,7 +20,65 @@ import { motion, useScroll, useTransform } from "framer-motion";
 import { ZigZagDivider } from "@/components/ZigZagDivider";
 import { SummaryCardDemo } from "@/components/SummaryCardDemo";
 import { FlipCard, CardFace } from "@/components/FlipCard";
+import { FlipCarousel } from "@/components/FlipCarousel";
 import { SkewedTag } from "@/components/SkewedTag";
+
+// Helper for persona back content
+function PersonaNeeds({ items }: { items: string[] }) {
+  return (
+    <>
+      <h3 className="text-xl sm:text-2xl md:text-3xl font-bold mb-4 text-[var(--foreground)]">What they want</h3>
+      <ul className="text-[var(--foreground)] text-base sm:text-lg md:text-xl lg:text-2xl leading-relaxed space-y-3">
+        {items.map((item, i) => (
+          <li key={i} className="flex gap-3">
+            <span className="text-[var(--foreground-secondary)]">•</span>
+            <span>{item}</span>
+          </li>
+        ))}
+      </ul>
+    </>
+  );
+}
+
+// Research personas data for FlipCarousel
+const researchPersonas = [
+  {
+    tag: "Individual User",
+    tagBg: "#DD4825",
+    content: "Users automating their own workflows in professional or personal settings. They want to set up automations once and never think about them again.",
+    backContent: (
+      <PersonaNeeds items={[
+        '"Set it and forget it" automation with no babysitting',
+        "Manage passwords in one place—no duplicate updates",
+        "Quick setup without complex configuration",
+      ]} />
+    ),
+  },
+  {
+    tag: "Admin",
+    tagBg: "#3B82F6",
+    content: "Admins automating workflows on behalf of employees. They prioritize security and need controls to enforce safe practices.",
+    backContent: (
+      <PersonaNeeds items={[
+        "Controls to prevent insecure end-user behaviors",
+        "Granular control over what agents can access",
+        "User-friendly UI for non-technical employees",
+      ]} />
+    ),
+  },
+  {
+    tag: "Product Builder",
+    tagBg: "#10B981",
+    content: "Users building Browserbase into their products to automate tasks for customers. They need secure ways to handle customer credentials.",
+    backContent: (
+      <PersonaNeeds items={[
+        "A trusted brand their customers recognize",
+        "Use customer credentials without managing them",
+        "MFA handling for fully automated flows",
+      ]} />
+    ),
+  },
+];
 
 // Problem section card data
 const problemItems: FeatureCardItem[] = [
@@ -475,184 +533,20 @@ export function AgenticAutofillContent({ caseStudy }: { caseStudy: CaseStudy }) 
       <NarrowContent className="mt-16">
         <ContentSection id="research" title="Research Insights">
           <BodyText>
-            We teamed up with the Browserbase team to conduct a research study with 6 of their customers to understand their use cases for AI agents and how they are currently handling credentials when using agentic AI.
-          </BodyText>
-          <BodyText>
-            Three distinct user personas emerged from the research:
+            We teamed up with the Browserbase team to conduct a research study with 6 of their customers to understand how they are currently handling credentials when using agentic AI. Three distinct user personas emerged:
           </BodyText>
         </ContentSection>
       </NarrowContent>
 
-      {/* User Personas - Flip Cards */}
-      <WideContent>
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          {/* Individual User */}
-          <FlipCard
-            className="h-[300px]"
-            autoFlipHint
-            front={
-              <div className="card-spotlight h-full flex flex-col p-6">
-                <div 
-                  className="w-10 h-10 rounded-lg flex items-center justify-center mb-4"
-                  style={{ backgroundColor: "rgba(221, 72, 37, 0.15)" }}
-                >
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#DD4825" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
-                    <circle cx="12" cy="7" r="4" />
-                  </svg>
-                </div>
-                <h3 className="text-xl font-bold mb-2 text-[var(--foreground)] leading-tight">Individual User</h3>
-                <p className="text-[var(--foreground)] text-base">
-                  Users automating their own workflows in professional or personal settings.
-                </p>
-                <div className="mt-auto pt-4 border-t border-[var(--foreground)]/10">
-                  <p className="text-sm text-[var(--foreground)]">
-                    e.g. Email outreach, grocery shopping, LinkedIn messaging
-                  </p>
-                </div>
-              </div>
-            }
-            back={
-              <div className="card-spotlight h-full flex flex-col p-6">
-                <h3 className="text-lg font-bold mb-3 text-[var(--foreground)] leading-tight">What they want</h3>
-                <ul className="text-[var(--foreground)] text-sm leading-relaxed space-y-2">
-                  <li className="flex gap-2">
-                    <span className="text-[var(--foreground-secondary)]">•</span>
-                    <span>&ldquo;Set it and forget it&rdquo; automation with no babysitting</span>
-                  </li>
-                  <li className="flex gap-2">
-                    <span className="text-[var(--foreground-secondary)]">•</span>
-                    <span>Manage passwords in one place—no duplicate updates</span>
-                  </li>
-                  <li className="flex gap-2">
-                    <span className="text-[var(--foreground-secondary)]">•</span>
-                    <span>Quick setup without complex configuration</span>
-                  </li>
-                </ul>
-              </div>
-            }
-          />
+      {/* User Personas - FlipCarousel style */}
+      <FlipCarousel items={researchPersonas} />
 
-          {/* Admin User */}
-          <FlipCard
-            className="h-[300px]"
-            front={
-              <div className="card-spotlight h-full flex flex-col p-6">
-                <div 
-                  className="w-10 h-10 rounded-lg flex items-center justify-center mb-4"
-                  style={{ backgroundColor: "rgba(59, 130, 246, 0.15)" }}
-                >
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#3B82F6" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10" />
-                  </svg>
-                </div>
-                <h3 className="text-xl font-bold mb-2 text-[var(--foreground)] leading-tight">Admin</h3>
-                <p className="text-[var(--foreground)] text-base">
-                  Admins automating workflows on behalf of employees. Security is paramount.
-                </p>
-                <div className="mt-auto pt-4 border-t border-[var(--foreground)]/10">
-                  <p className="text-sm text-[var(--foreground)]">
-                    e.g. Engineering directors setting up workflows for analyst teams
-                  </p>
-                </div>
-              </div>
-            }
-            back={
-              <div className="card-spotlight h-full flex flex-col p-6">
-                <h3 className="text-lg font-bold mb-3 text-[var(--foreground)] leading-tight">What they want</h3>
-                <ul className="text-[var(--foreground)] text-sm leading-relaxed space-y-2">
-                  <li className="flex gap-2">
-                    <span className="text-[var(--foreground-secondary)]">•</span>
-                    <span>Controls to prevent insecure end-user behaviors</span>
-                  </li>
-                  <li className="flex gap-2">
-                    <span className="text-[var(--foreground-secondary)]">•</span>
-                    <span>Granular control over what agents can access</span>
-                  </li>
-                  <li className="flex gap-2">
-                    <span className="text-[var(--foreground-secondary)]">•</span>
-                    <span>User-friendly UI for non-technical employees</span>
-                  </li>
-                </ul>
-              </div>
-            }
-          />
-
-          {/* Product Builder */}
-          <FlipCard
-            className="h-[300px]"
-            front={
-              <div className="card-spotlight h-full flex flex-col p-6">
-                <div 
-                  className="w-10 h-10 rounded-lg flex items-center justify-center mb-4"
-                  style={{ backgroundColor: "rgba(16, 185, 129, 0.15)" }}
-                >
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#10B981" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <polyline points="16 18 22 12 16 6" />
-                    <polyline points="8 6 2 12 8 18" />
-                  </svg>
-                </div>
-                <h3 className="text-xl font-bold mb-2 text-[var(--foreground)] leading-tight">Product Builder</h3>
-                <p className="text-[var(--foreground)] text-base">
-                  Users incorporating Browserbase into products for their customers.
-                </p>
-                <div className="mt-auto pt-4 border-t border-[var(--foreground)]/10">
-                  <p className="text-sm text-[var(--foreground)]">
-                    e.g. Automating operations or social media marketing for clients
-                  </p>
-                </div>
-              </div>
-            }
-            back={
-              <div className="card-spotlight h-full flex flex-col p-6">
-                <h3 className="text-lg font-bold mb-3 text-[var(--foreground)] leading-tight">What they want</h3>
-                <ul className="text-[var(--foreground)] text-sm leading-relaxed space-y-2">
-                  <li className="flex gap-2">
-                    <span className="text-[var(--foreground-secondary)]">•</span>
-                    <span>A trusted brand their customers recognize</span>
-                  </li>
-                  <li className="flex gap-2">
-                    <span className="text-[var(--foreground-secondary)]">•</span>
-                    <span>Use customer credentials without managing them</span>
-                  </li>
-                  <li className="flex gap-2">
-                    <span className="text-[var(--foreground-secondary)]">•</span>
-                    <span>MFA handling for fully automated flows</span>
-                  </li>
-                </ul>
-              </div>
-            }
-          />
-        </div>
-      </WideContent>
-
-      <NarrowContent>
-          <p className="text-2xl sm:text-3xl md:text-4xl font-medium text-[var(--foreground)] leading-tight mt-4">
+      {/* Key Insight */}
+      <NarrowContent className="mt-8">
+        <div className="bg-[var(--foreground)]/5 border-l-4 border-[var(--accent-orange)] p-6">
+          <p className="text-lg text-[var(--foreground)] font-medium">
             Individual users will sacrifice security for automation. Admins will sacrifice automation for security.
           </p>
-      </NarrowContent>
-
-      {/* Pain Points Section */}
-      <NarrowContent className="mt-12">
-        <h3 className="text-xl font-bold text-[var(--foreground)] mb-6">Key pain points</h3>
-        
-        <QuoteCard
-          quote="The non-starter thing is you have to be logged into these sites to be able to do it."
-          attribution="Adam, Individual User"
-        />
-
-        <div className="mt-6">
-          <QuoteCard
-            quote="The main concern was passing session tokens or passwords into the large language models."
-            attribution="Yaniv, Director of Engineering"
-          />
-        </div>
-
-        <div className="mt-6">
-          <QuoteCard
-            quote="2 factor is the biggest pain in my ass that I've got at the moment."
-            attribution="Mike, Product Builder"
-          />
         </div>
       </NarrowContent>
 
