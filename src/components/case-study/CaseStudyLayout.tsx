@@ -5,17 +5,24 @@ import { PasswordGate } from "@/components";
 import { BackButton } from "./BackButton";
 import { HeroImage } from "./HeroImage";
 import { ProjectMeta } from "./ProjectMeta";
+import { TableOfContents } from "./TableOfContents";
 import { twMerge } from "tailwind-merge";
+
+interface Section {
+  id: string;
+  title: string;
+}
 
 interface CaseStudyLayoutProps {
   caseStudy: CaseStudy;
   children: React.ReactNode;
+  sections?: Section[];
 }
 
 // Width wrapper components for flexible content layouts
-export function NarrowContent({ children, className = "" }: { children: React.ReactNode; className?: string }) {
+export function NarrowContent({ children, className = "", id }: { children: React.ReactNode; className?: string; id?: string }) {
   return (
-    <div className={twMerge("mx-auto w-full max-w-[800px] px-4 md:px-8 flex flex-col gap-10", className)}>
+    <div id={id} className={twMerge("mx-auto w-full max-w-[800px] px-4 md:px-8 flex flex-col gap-10", className)}>
       {children}
     </div>
   );
@@ -37,9 +44,12 @@ export function FullWidthContent({ children, className = "" }: { children: React
   );
 }
 
-function LayoutContent({ caseStudy, children }: CaseStudyLayoutProps) {
+function LayoutContent({ caseStudy, children, sections }: CaseStudyLayoutProps) {
   return (
     <div className="min-h-screen bg-[var(--page-background)] overflow-x-hidden">
+      {/* Floating Table of Contents */}
+      {sections && sections.length > 0 && <TableOfContents sections={sections} />}
+      
       <div className="py-4 md:py-8">
         <main className="flex flex-col gap-10 py-4 min-w-0">
           {/* Back Button */}
@@ -78,14 +88,14 @@ function LayoutContent({ caseStudy, children }: CaseStudyLayoutProps) {
   );
 }
 
-export function CaseStudyLayout({ caseStudy, children }: CaseStudyLayoutProps) {
+export function CaseStudyLayout({ caseStudy, children, sections }: CaseStudyLayoutProps) {
   if (caseStudy.protected) {
     return (
       <PasswordGate slug={caseStudy.slug}>
-        <LayoutContent caseStudy={caseStudy} children={children} />
+        <LayoutContent caseStudy={caseStudy} children={children} sections={sections} />
       </PasswordGate>
     );
   }
 
-  return <LayoutContent caseStudy={caseStudy} children={children} />;
+  return <LayoutContent caseStudy={caseStudy} children={children} sections={sections} />;
 }

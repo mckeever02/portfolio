@@ -119,6 +119,28 @@ const problemItems: FeatureCardItem[] = [
   },
 ];
 
+// Sections for table of contents
+const verifierSections = [
+  { id: "overview", title: "Overview" },
+  { id: "hackathon", title: "Hackathon" },
+  { id: "problem", title: "Labs Experiment" },
+  { id: "why-1password", title: "Why 1Password" },
+  { id: "usecases", title: "Usecases" },
+  { id: "wireframing", title: "Wireframing" },
+  { id: "flow", title: "High Fidelity" },
+  { id: "rsa", title: "RSA" },
+];
+
+const agenticAutofillSections = [
+  { id: "overview", title: "Overview" },
+  { id: "the-problem", title: "The Problem" },
+  { id: "browser-agents", title: "Browser Agents" },
+  { id: "research", title: "Research Insights" },
+  { id: "prompt-guidelines", title: "Prompt Guidelines" },
+  { id: "autonomous-agents", title: "Autonomous Agents" },
+  { id: "impact", title: "Impact" },
+];
+
 // Agent types card data with examples for flip cards
 const agentTypesItems = [
   {
@@ -222,7 +244,7 @@ function ScrollScaleVideo({ src }: { src: string }) {
 
 export function VerifierContent({ caseStudy }: { caseStudy: CaseStudy }) {
   return (
-    <CaseStudyLayout caseStudy={caseStudy}>
+    <CaseStudyLayout caseStudy={caseStudy} sections={verifierSections}>
       <NarrowContent>
         {/* Overview Section */}
         <ContentSection id="overview" title="Overview">
@@ -403,7 +425,7 @@ export function VerifierContent({ caseStudy }: { caseStudy: CaseStudy }) {
 
 export function AgenticAutofillContent({ caseStudy }: { caseStudy: CaseStudy }) {
   return (
-    <CaseStudyLayout caseStudy={caseStudy}>
+    <CaseStudyLayout caseStudy={caseStudy} sections={agenticAutofillSections}>
       <NarrowContent>
         <ContentSection id="overview" title="Overview">
           <BodyText>
@@ -512,7 +534,7 @@ export function AgenticAutofillContent({ caseStudy }: { caseStudy: CaseStudy }) 
         <ZigZagDivider />
       </NarrowContent>
 
-      <NarrowContent>
+      <NarrowContent id="browser-agents" className="scroll-mt-8">
         <SkewedTag size="xl">Browser-based Agents</SkewedTag>
         <p className="text-2xl sm:text-3xl md:text-4xl font-medium text-[var(--foreground)] leading-tight">
           Browserbase enters the chat.
@@ -641,7 +663,7 @@ export function AgenticAutofillContent({ caseStudy }: { caseStudy: CaseStudy }) 
       </NarrowContent>
 
       {/* Prompt Design Section */}
-      <NarrowContent>
+      <NarrowContent id="prompt-guidelines" className="scroll-mt-8">
         <SkewedTag size="xl">Prompt Design Guidelines</SkewedTag>
         <p className="text-2xl sm:text-3xl md:text-4xl font-medium text-[var(--foreground)] leading-tight">
           How do you design for something you can&apos;t control?
@@ -664,7 +686,7 @@ export function AgenticAutofillContent({ caseStudy }: { caseStudy: CaseStudy }) 
       </NarrowContent>
 
       {/* Autonomous Agents Section */}
-      <NarrowContent className="mt-8">
+      <NarrowContent id="autonomous-agents" className="mt-8 scroll-mt-8">
         <SkewedTag size="xl">Autonomous Agents</SkewedTag>
         <p className="text-2xl sm:text-3xl md:text-4xl font-medium text-[var(--foreground)] leading-tight mt-4">
           Coming soon.
@@ -679,7 +701,7 @@ export function AgenticAutofillContent({ caseStudy }: { caseStudy: CaseStudy }) 
       </NarrowContent>
 
       {/* Impact Section */}
-      <NarrowContent className="mt-8">
+      <NarrowContent id="impact" className="mt-8 scroll-mt-8">
         <ContentSection>
         <SkewedTag size="xl">Impact</SkewedTag>
         <p className="text-2xl sm:text-3xl md:text-4xl font-medium text-[var(--foreground)] leading-tight mt-4">
