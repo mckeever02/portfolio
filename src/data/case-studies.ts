@@ -70,6 +70,7 @@ export const caseStudies: Record<string, CaseStudy> = {
     sections: [
       { id: "overview", title: "Overview" },
       { id: "the-problem", title: "The problem" },
+      { id: "research", title: "Research Insights" },
     ],
   },
   verifier: {

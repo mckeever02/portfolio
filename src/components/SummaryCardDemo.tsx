@@ -1191,7 +1191,7 @@ function SegmentedControl({
             relative z-10 px-5 py-2 rounded-[12px] text-base font-medium transition-colors duration-200
             ${
               selected === option.id
-                ? "text-[var(--foreground)]"
+                ? "text-[#21201C]"
                 : "text-white hover:text-white/80"
             }
           `}
@@ -1681,10 +1681,9 @@ export function SummaryCardDemo({
             : { x: 0 }
         }
       >
-        {/* Inner container */}
+        {/* Inner container - uses theme colors */}
         <div 
-          className="rounded-[12px] overflow-hidden flex flex-col h-[660px]"
-          style={{ backgroundColor: "#ffffff" }}
+          className="rounded-[12px] overflow-hidden flex flex-col h-[660px] bg-[var(--background)]"
         >
       {/* Header: static title when headerLabel set, else countdown */}
       {headerLabel ? (

@@ -5,6 +5,7 @@ import { PasswordGate } from "@/components";
 import { BackButton } from "./BackButton";
 import { HeroImage } from "./HeroImage";
 import { ProjectMeta } from "./ProjectMeta";
+import { twMerge } from "tailwind-merge";
 
 interface CaseStudyLayoutProps {
   caseStudy: CaseStudy;
@@ -14,7 +15,7 @@ interface CaseStudyLayoutProps {
 // Width wrapper components for flexible content layouts
 export function NarrowContent({ children, className = "" }: { children: React.ReactNode; className?: string }) {
   return (
-    <div className={`mx-auto w-full max-w-[800px] px-4 md:px-8 flex flex-col gap-10 ${className}`}>
+    <div className={twMerge("mx-auto w-full max-w-[800px] px-4 md:px-8 flex flex-col gap-10", className)}>
       {children}
     </div>
   );
@@ -22,7 +23,7 @@ export function NarrowContent({ children, className = "" }: { children: React.Re
 
 export function WideContent({ children, className = "" }: { children: React.ReactNode; className?: string }) {
   return (
-    <div className={`mx-auto w-full max-w-[1100px] px-4 md:px-8 ${className}`}>
+    <div className={twMerge("mx-auto w-full max-w-[1100px] px-4 md:px-8", className)}>
       {children}
     </div>
   );
@@ -30,7 +31,7 @@ export function WideContent({ children, className = "" }: { children: React.Reac
 
 export function FullWidthContent({ children, className = "" }: { children: React.ReactNode; className?: string }) {
   return (
-    <div className={`w-full max-w-[1920px] mx-auto px-4 md:px-8 ${className}`}>
+    <div className={twMerge("w-full max-w-[1920px] mx-auto px-4 md:px-8", className)}>
       {children}
     </div>
   );

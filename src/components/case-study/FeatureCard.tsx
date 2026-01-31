@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import Image from "next/image";
 
 export interface FeatureCardItem {
   title: string;
@@ -14,17 +15,29 @@ export function FeatureCard({ item }: { item: FeatureCardItem }) {
     <div className="bg-[var(--background)] border border-[var(--foreground)]/20 flex flex-col sm:flex-row overflow-hidden">
       <div className="p-1 sm:self-stretch">
         <div
-          className="relative py-4 sm:py-0 shrink-0 flex items-center justify-center w-full sm:w-32 sm:h-full sm:min-h-[128px]"
+          className="relative py-4 sm:py-0 shrink-0 flex items-center justify-center w-full sm:w-32 sm:h-full sm:min-h-[128px] overflow-hidden"
           style={{
-            backgroundImage: item.bannerBg ? `url('${item.bannerBg}')` : undefined,
             backgroundColor: item.bannerBg ? undefined : "var(--foreground)",
-            backgroundSize: "cover",
-            backgroundPosition: "center",
           }}
         >
-          <div className="rounded-lg bg-white/30 backdrop-blur-sm p-1">
-            <div className="rounded bg-[var(--background)] text-[var(--foreground)] w-12 h-12 flex items-center justify-center">
-              {item.icon}
+          {item.bannerBg && (
+            <>
+              <Image
+                src={item.bannerBg}
+                alt=""
+                fill
+                className="object-cover"
+                sizes="(max-width: 640px) 100vw, 128px"
+              />
+              <div className="absolute inset-0 bg-black/10" />
+            </>
+          )}
+          <div className="relative rounded-lg overflow-hidden">
+            <div className="absolute inset-0 bg-white/35 backdrop-blur-lg" />
+            <div className="relative p-1">
+              <div className="rounded bg-[var(--background)] text-[var(--foreground)] w-12 h-12 flex items-center justify-center">
+                {item.icon}
+              </div>
             </div>
           </div>
         </div>

@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect, ReactNode } from "react";
 import { HoverCursor, useHoverCursor, RotateIcon } from "./HoverCursor";
+import Image from "next/image";
 
 interface FlipCardProps {
   front: ReactNode;
@@ -176,24 +177,27 @@ export function CardFace({
       <div className="card-spotlight h-full flex flex-col overflow-hidden">
         {/* Banner with background image */}
         <div 
-          className="relative h-28 flex items-center justify-center -mx-6 -mt-6 mb-4 mx-[-24px] mt-[-24px]"
+          className="relative h-28 flex items-center justify-center overflow-hidden"
           style={{
             margin: "-24px -24px 16px -24px",
           }}
         >
-          <div 
-            className="absolute inset-1 overflow-hidden bg-black/20"
-            style={{
-              backgroundImage: `url('${bannerBg}')`,
-              backgroundSize: "cover",
-              backgroundPosition: "center",
-            }}
+          <Image
+            src={bannerBg}
+            alt=""
+            fill
+            className="object-cover"
+            sizes="300px"
           />
-          <div className="rounded-lg bg-white/30 backdrop-blur-sm w-15 h-15 relative flex items-center justify-center">
-            <div 
-              className="relative rounded flex items-center justify-center w-12 h-12 min-w-12 min-h-12 bg-[var(--background)] text-[var(--foreground)]"
-            >
-              {icon}
+          <div className="absolute inset-0 bg-black/10" />
+          <div className="relative rounded-lg overflow-hidden">
+            <div className="absolute inset-0 bg-white/35 backdrop-blur-lg" />
+            <div className="relative p-1">
+              <div 
+                className="rounded flex items-center justify-center w-12 h-12 min-w-12 min-h-12 bg-[var(--background)] text-[var(--foreground)]"
+              >
+                {icon}
+              </div>
             </div>
           </div>
         </div>

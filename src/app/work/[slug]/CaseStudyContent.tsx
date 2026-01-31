@@ -20,13 +20,14 @@ import { motion, useScroll, useTransform } from "framer-motion";
 import { ZigZagDivider } from "@/components/ZigZagDivider";
 import { SummaryCardDemo } from "@/components/SummaryCardDemo";
 import { FlipCard, CardFace } from "@/components/FlipCard";
+import { SkewedTag } from "@/components/SkewedTag";
 
 // Problem section card data
 const problemItems: FeatureCardItem[] = [
   {
     title: "Security risks",
     description: "Credentials exposed in logs, chat histories, or repositories risk data leaks.",
-    bannerBg: "/images/shared/pixel-meadow-flowers.png",
+    bannerBg: "/images/shared/pixel-cloud-blue.png",
     icon: (
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
         <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10" />
@@ -38,7 +39,7 @@ const problemItems: FeatureCardItem[] = [
   {
     title: "Productivity loss",
     description: "Manual secret handling slows teams down and diverts focus from building.",
-    bannerBg: "/images/shared/pixel-sky-through-trees.png",
+    bannerBg: "/images/shared/pixel-clouds-blue.png",
     icon: (
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
         <circle cx="12" cy="12" r="10" />
@@ -49,7 +50,7 @@ const problemItems: FeatureCardItem[] = [
   {
     title: "Adoption barrier",
     description: "Security-conscious teams hesitate to automate without secure credentials.",
-    bannerBg: "/images/shared/pixel-field-clouds.png",
+    bannerBg: "/images/shared/pixel-cloud-spiral.png",
     icon: (
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
         <circle cx="12" cy="12" r="10" />
@@ -64,7 +65,7 @@ const agentTypesItems = [
   {
     title: "Conversational agents",
     description: "AI assistants that interact with users through natural language. Users can authorize actions in real-time as needed.",
-    bannerBg: "/images/shared/pixel-forest-canopy.png",
+    bannerBg: "/images/shared/pixel-autumn-driveway.png",
     icon: (
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
         <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
@@ -80,7 +81,7 @@ const agentTypesItems = [
   {
     title: "Autonomous agents",
     description: "Agents that operate independently, running scheduled tasks or responding to triggers without human oversight.",
-    bannerBg: "/images/shared/pixel-cloud-spiral.png",
+    bannerBg: "/images/shared/pixel-cloud-spiral-banner.png",
     icon: (
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
         <rect x="3" y="11" width="18" height="10" rx="2" />
@@ -99,7 +100,7 @@ const agentTypesItems = [
   {
     title: "Browser-based agents",
     description: "Agents that navigate the web like humans—clicking, filling forms, and authenticating through traditional login flows.",
-    bannerBg: "/images/shared/pixel-meadow-flowers.png",
+    bannerBg: "/images/shared/pixel-fallen-leaves.png",
     icon: (
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
         <circle cx="12" cy="12" r="10" />
@@ -117,7 +118,7 @@ const agentTypesItems = [
   {
     title: "API-driven agents",
     description: "Agents that interact programmatically through APIs, using tokens, keys, and secrets that need secure management.",
-    bannerBg: "/images/shared/pixel-autumn-foliage.png",
+    bannerBg: "/images/shared/pixel-flower-bed.png",
     icon: (
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
         <polyline points="16 18 22 12 16 6" />
@@ -439,18 +440,262 @@ export function AgenticAutofillContent({ caseStudy }: { caseStudy: CaseStudy }) 
             />
           ))}
         </div>
-      </WideContent>
+      </NarrowContent>
 
       <NarrowContent>
         <ZigZagDivider />
       </NarrowContent>
 
       <NarrowContent>
-        <ContentSection title="Browser-based agents">
+        <SkewedTag size="lg">Browser-based Agents</SkewedTag>
+        <p className="text-2xl sm:text-3xl md:text-4xl font-medium text-[var(--foreground)] leading-tight mt-4">
+          Browserbase enters the chat.
+        </p>
+
+        <BodyText linkColor="neutral">
+          1Password partnered with <a href="https://browserbase.com" target="_blank" rel="noopener noreferrer">Browserbase</a> – an AI agent browser platform – to develop an integration for their product <a href="https://director.ai" target="_blank" rel="noopener noreferrer">Director.ai</a> that would allow users to securely provide their credentials to AI agents.
+        </BodyText>
+
+        <BodyText linkColor="neutral">
+          I created a vision prototype to show Browserbase and internal stakeholders how an integration could work and how it would help both of our customers.
+        </BodyText>
+      </NarrowContent>
+
+      <FullWidthContent className="mt-12 xl:px-32">
+        <div className="relative w-full" style={{ paddingBottom: "62.5%" }}>
+          <iframe
+            className="absolute top-0 left-0 w-full h-full border-0"
+            src="https://www.figma.com/embed?embed_host=share&url=https%3A%2F%2Fwww.figma.com%2Fproto%2F2toCLEwSrPnl36bml6x1NL%2FAgentic-Autofill-Case-Study%3Fpage-id%3D1%253A75662%26node-id%3D1-110516%26viewport%3D-2475%252C-312%252C0.25%26t%3D6COyOptz1gcPhdn3-8%26scaling%3Dscale-down-width%26content-scaling%3Dfixed%26starting-point-node-id%3D1%253A110516%26show-proto-sidebar%3D1%26hide-ui%3D1"
+            allowFullScreen
+          />
+        </div>
+      </FullWidthContent>
+
+      {/* Research Insights Section */}
+      <NarrowContent className="mt-16">
+        <ContentSection id="research" title="Research Insights">
           <BodyText>
-            Content coming soon.
+            We teamed up with the Browserbase team to conduct a research study with 6 of their customers to understand their use cases for AI agents and how they are currently handling credentials when using agentic AI.
+          </BodyText>
+          <BodyText>
+            Three distinct user personas emerged from the research:
           </BodyText>
         </ContentSection>
+      </NarrowContent>
+
+      {/* User Personas - Flip Cards */}
+      <WideContent>
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          {/* Individual User */}
+          <FlipCard
+            className="h-[300px]"
+            autoFlipHint
+            front={
+              <div className="card-spotlight h-full flex flex-col p-6">
+                <div 
+                  className="w-10 h-10 rounded-lg flex items-center justify-center mb-4"
+                  style={{ backgroundColor: "rgba(221, 72, 37, 0.15)" }}
+                >
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#DD4825" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                    <circle cx="12" cy="7" r="4" />
+                  </svg>
+                </div>
+                <h3 className="text-xl font-bold mb-2 text-[var(--foreground)] leading-tight">Individual User</h3>
+                <p className="text-[var(--foreground)] text-base">
+                  Users automating their own workflows in professional or personal settings.
+                </p>
+                <div className="mt-auto pt-4 border-t border-[var(--foreground)]/10">
+                  <p className="text-sm text-[var(--foreground)]">
+                    e.g. Email outreach, grocery shopping, LinkedIn messaging
+                  </p>
+                </div>
+              </div>
+            }
+            back={
+              <div className="card-spotlight h-full flex flex-col p-6">
+                <h3 className="text-lg font-bold mb-3 text-[var(--foreground)] leading-tight">What they want</h3>
+                <ul className="text-[var(--foreground)] text-sm leading-relaxed space-y-2">
+                  <li className="flex gap-2">
+                    <span className="text-[var(--foreground-secondary)]">•</span>
+                    <span>&ldquo;Set it and forget it&rdquo; automation with no babysitting</span>
+                  </li>
+                  <li className="flex gap-2">
+                    <span className="text-[var(--foreground-secondary)]">•</span>
+                    <span>Manage passwords in one place—no duplicate updates</span>
+                  </li>
+                  <li className="flex gap-2">
+                    <span className="text-[var(--foreground-secondary)]">•</span>
+                    <span>Quick setup without complex configuration</span>
+                  </li>
+                </ul>
+              </div>
+            }
+          />
+
+          {/* Admin User */}
+          <FlipCard
+            className="h-[300px]"
+            front={
+              <div className="card-spotlight h-full flex flex-col p-6">
+                <div 
+                  className="w-10 h-10 rounded-lg flex items-center justify-center mb-4"
+                  style={{ backgroundColor: "rgba(59, 130, 246, 0.15)" }}
+                >
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#3B82F6" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10" />
+                  </svg>
+                </div>
+                <h3 className="text-xl font-bold mb-2 text-[var(--foreground)] leading-tight">Admin</h3>
+                <p className="text-[var(--foreground)] text-base">
+                  Admins automating workflows on behalf of employees. Security is paramount.
+                </p>
+                <div className="mt-auto pt-4 border-t border-[var(--foreground)]/10">
+                  <p className="text-sm text-[var(--foreground)]">
+                    e.g. Engineering directors setting up workflows for analyst teams
+                  </p>
+                </div>
+              </div>
+            }
+            back={
+              <div className="card-spotlight h-full flex flex-col p-6">
+                <h3 className="text-lg font-bold mb-3 text-[var(--foreground)] leading-tight">What they want</h3>
+                <ul className="text-[var(--foreground)] text-sm leading-relaxed space-y-2">
+                  <li className="flex gap-2">
+                    <span className="text-[var(--foreground-secondary)]">•</span>
+                    <span>Controls to prevent insecure end-user behaviors</span>
+                  </li>
+                  <li className="flex gap-2">
+                    <span className="text-[var(--foreground-secondary)]">•</span>
+                    <span>Granular control over what agents can access</span>
+                  </li>
+                  <li className="flex gap-2">
+                    <span className="text-[var(--foreground-secondary)]">•</span>
+                    <span>User-friendly UI for non-technical employees</span>
+                  </li>
+                </ul>
+              </div>
+            }
+          />
+
+          {/* Product Builder */}
+          <FlipCard
+            className="h-[300px]"
+            front={
+              <div className="card-spotlight h-full flex flex-col p-6">
+                <div 
+                  className="w-10 h-10 rounded-lg flex items-center justify-center mb-4"
+                  style={{ backgroundColor: "rgba(16, 185, 129, 0.15)" }}
+                >
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#10B981" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <polyline points="16 18 22 12 16 6" />
+                    <polyline points="8 6 2 12 8 18" />
+                  </svg>
+                </div>
+                <h3 className="text-xl font-bold mb-2 text-[var(--foreground)] leading-tight">Product Builder</h3>
+                <p className="text-[var(--foreground)] text-base">
+                  Users incorporating Browserbase into products for their customers.
+                </p>
+                <div className="mt-auto pt-4 border-t border-[var(--foreground)]/10">
+                  <p className="text-sm text-[var(--foreground)]">
+                    e.g. Automating operations or social media marketing for clients
+                  </p>
+                </div>
+              </div>
+            }
+            back={
+              <div className="card-spotlight h-full flex flex-col p-6">
+                <h3 className="text-lg font-bold mb-3 text-[var(--foreground)] leading-tight">What they want</h3>
+                <ul className="text-[var(--foreground)] text-sm leading-relaxed space-y-2">
+                  <li className="flex gap-2">
+                    <span className="text-[var(--foreground-secondary)]">•</span>
+                    <span>A trusted brand their customers recognize</span>
+                  </li>
+                  <li className="flex gap-2">
+                    <span className="text-[var(--foreground-secondary)]">•</span>
+                    <span>Use customer credentials without managing them</span>
+                  </li>
+                  <li className="flex gap-2">
+                    <span className="text-[var(--foreground-secondary)]">•</span>
+                    <span>MFA handling for fully automated flows</span>
+                  </li>
+                </ul>
+              </div>
+            }
+          />
+        </div>
+      </WideContent>
+
+      <NarrowContent>
+          <p className="text-2xl sm:text-3xl md:text-4xl font-medium text-[var(--foreground)] leading-tight mt-4">
+            Individual users will sacrifice security for automation. Admins will sacrifice automation for security.
+          </p>
+      </NarrowContent>
+
+      {/* Pain Points Section */}
+      <NarrowContent className="mt-12">
+        <h3 className="text-xl font-bold text-[var(--foreground)] mb-6">Key pain points</h3>
+        
+        <QuoteCard
+          quote="The non-starter thing is you have to be logged into these sites to be able to do it."
+          attribution="Adam, Individual User"
+        />
+
+        <div className="mt-6">
+          <QuoteCard
+            quote="The main concern was passing session tokens or passwords into the large language models."
+            attribution="Yaniv, Director of Engineering"
+          />
+        </div>
+
+        <div className="mt-6">
+          <QuoteCard
+            quote="2 factor is the biggest pain in my ass that I've got at the moment."
+            attribution="Mike, Product Builder"
+          />
+        </div>
+      </NarrowContent>
+
+      {/* Findings Summary */}
+      <NarrowContent className="mt-12">
+        <h3 className="text-xl font-bold text-[var(--foreground)] mb-6">What we learned</h3>
+        <div className="flex flex-col gap-4">
+          <div className="flex gap-4 items-start">
+            <div className="w-8 h-8 rounded-full bg-[var(--foreground)]/10 flex items-center justify-center shrink-0 mt-1">
+              <span className="text-sm font-bold text-[var(--foreground)]">1</span>
+            </div>
+            <div>
+              <p className="text-[var(--foreground)] font-medium">MFA is a major pain point</p>
+              <p className="text-[var(--foreground-secondary)] text-sm mt-1">Multi-factor authentication consistently disrupts automation flows for all user types.</p>
+            </div>
+          </div>
+          <div className="flex gap-4 items-start">
+            <div className="w-8 h-8 rounded-full bg-[var(--foreground)]/10 flex items-center justify-center shrink-0 mt-1">
+              <span className="text-sm font-bold text-[var(--foreground)]">2</span>
+            </div>
+            <div>
+              <p className="text-[var(--foreground)] font-medium">Current methods are insecure or complex</p>
+              <p className="text-[var(--foreground-secondary)] text-sm mt-1">Users either give plain text passwords to LLMs (insecure) or build complex integrations that are hard to maintain.</p>
+            </div>
+          </div>
+          <div className="flex gap-4 items-start">
+            <div className="w-8 h-8 rounded-full bg-[var(--foreground)]/10 flex items-center justify-center shrink-0 mt-1">
+              <span className="text-sm font-bold text-[var(--foreground)]">3</span>
+            </div>
+            <div>
+              <p className="text-[var(--foreground)] font-medium">Brand trust matters</p>
+              <p className="text-[var(--foreground-secondary)] text-sm mt-1">Users trust well-known security brands like 1Password over lesser-known alternatives.</p>
+            </div>
+          </div>
+        </div>
+      </NarrowContent>
+
+      {/* Trust Quote */}
+      <NarrowContent className="mt-8 mb-12">
+        <QuoteCard
+          quote="It's a lot easier if we say 1Password because everyone knows you rather than this random US brand."
+          attribution="Mike, Product Builder"
+        />
       </NarrowContent>
 
     </CaseStudyLayout>
