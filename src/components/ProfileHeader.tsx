@@ -5,26 +5,26 @@ import { motion } from "framer-motion";
 
 export function ProfileHeader() {
   return (
-    <div className="flex items-center gap-3">
+    <motion.div 
+      className="flex items-center origin-bottom"
+      initial={{ rotate: 0 }}
+      animate={{ rotate: -2 }}
+      transition={{
+        duration: 0.25,
+        delay: 2.6,
+        ease: "easeOut",
+      }}
+    >
+      {/* Image - falls from above */}
       <motion.div
-        className="w-[48px] h-[48px] overflow-hidden relative origin-bottom"
-        initial={{ y: -300, rotate: 0 }}
-        animate={{ 
-          y: [-300, 0, -12, 0, -4, 0],
-          rotate: -5,
-        }}
+        className="w-[48px] h-[48px] relative flex-shrink-0"
+        initial={{ y: -300 }}
+        animate={{ y: [-300, 0, -12, 0, -4, 0] }}
         transition={{
-          y: {
-            duration: 1,
-            delay: 1,
-            times: [0, 0.4, 0.55, 0.7, 0.85, 1],
-            ease: ["easeIn", "easeOut", "easeIn", "easeOut", "easeIn", "easeOut"],
-          },
-          rotate: {
-            duration: 0.25,
-            delay: 2.6,
-            ease: "easeOut",
-          },
+          duration: 1,
+          delay: 1,
+          times: [0, 0.4, 0.55, 0.7, 0.85, 1],
+          ease: ["easeIn", "easeOut", "easeIn", "easeOut", "easeIn", "easeOut"],
         }}
       >
         <Image
@@ -37,15 +37,15 @@ export function ProfileHeader() {
         <div aria-hidden="true" className="absolute inset-0 bg-[#f2ede6] mix-blend-multiply" />
       </motion.div>
 
-      {/* Name and Title */}
+      {/* Name and Title - animates to get pushed by image */}
       <motion.div 
-        className="flex flex-col"
+        className="flex flex-col ml-3"
         initial={{ x: -60 }}
         animate={{ x: 0 }}
         transition={{
           type: "spring",
-          stiffness: 450,
-          damping: 20,
+          stiffness: 320,
+          damping: 15,
           mass: 0.5,
           delay: 1.3,
         }}
@@ -53,10 +53,10 @@ export function ProfileHeader() {
         <h1 className="text-xl font-bold text-[var(--foreground)]">
           Michael McKeever
         </h1>
-        <p className="text-base text-[var(--foreground)]">
+        <h2 className="text-base text-[var(--foreground)]">
           Software Designer
-        </p>
+        </h2>
       </motion.div>
-    </div>
+    </motion.div>
   );
 }
