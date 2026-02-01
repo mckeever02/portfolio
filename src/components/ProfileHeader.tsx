@@ -1,12 +1,25 @@
 "use client";
 
+import { useState } from "react";
 import Image from "next/image";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
+
+const EMOJIS = ["👋", "✨", "🎨", "💻", "🚀", "⚡", "🎯", "💡", "🔥", "👀", "🤙", "💜", "🇮🇪", "☕", "🏔️", "🎾", "🎮", "🥾", "🎧", "🤘", "😎", "🙌", "💪", "🧠", "🤖", "🤔", "🇮🇪", "🇵🇸", "🇵🇸", "🇵🇸"];
 
 export function ProfileHeader() {
+  const [isHovered, setIsHovered] = useState(false);
+  const [currentEmoji, setCurrentEmoji] = useState(() => 
+    EMOJIS[Math.floor(Math.random() * EMOJIS.length)]
+  );
+
+  const handleMouseEnter = () => {
+    setCurrentEmoji(EMOJIS[Math.floor(Math.random() * EMOJIS.length)]);
+    setIsHovered(true);
+  };
+
   return (
     <motion.div 
-      className="flex items-center origin-bottom"
+      className="flex items-center origin-bottom cursor-pointer"
       initial={{ rotate: 0 }}
       animate={{ rotate: -2 }}
       transition={{
@@ -14,27 +27,52 @@ export function ProfileHeader() {
         delay: 2.6,
         ease: "easeOut",
       }}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={() => setIsHovered(false)}
     >
       {/* Image - falls from above */}
       <motion.div
         className="w-[48px] h-[48px] relative flex-shrink-0"
-        initial={{ y: -300 }}
-        animate={{ y: [-300, 0, -12, 0, -4, 0] }}
+        initial={{ y: -300, rotate: 0, scale: 1 }}
+        animate={{ 
+          y: [-300, 0, -12, 0, -4, 0],
+          rotate: isHovered ? -6 : 0,
+          scale: isHovered ? 1.1 : 1,
+        }}
         transition={{
-          duration: 1,
-          delay: 1,
-          times: [0, 0.4, 0.55, 0.7, 0.85, 1],
-          ease: ["easeIn", "easeOut", "easeIn", "easeOut", "easeIn", "easeOut"],
+          y: {
+            duration: 1,
+            delay: 1,
+            times: [0, 0.4, 0.55, 0.7, 0.85, 1],
+            ease: ["easeIn", "easeOut", "easeIn", "easeOut", "easeIn", "easeOut"],
+          },
+          rotate: { duration: 0.15 },
+          scale: { duration: 0.15 },
         }}
       >
         <Image
-          src="/images/michael-mckeever.jpg"
+          src="/images/michael-mckeever-pixel-portrait-4.png"
           alt="Michael McKeever"
           width={48}
           height={48}
-          className="w-full h-full object-cover"
+          className="w-full h-full object-cover rotate-[-1deg]"
         />
         <div aria-hidden="true" className="absolute inset-0 bg-[#f2ede6] mix-blend-multiply" />
+        
+        {/* Emoji badge */}
+        <AnimatePresence>
+          {isHovered && (
+            <motion.div
+              className="absolute -bottom-2 -right-2 w-7 h-7 bg-[var(--background)] rounded-full flex items-center justify-center shadow-sm border border-[var(--foreground)]/10"
+              initial={{ scale: 0, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0, opacity: 0 }}
+              transition={{ type: "spring", stiffness: 500, damping: 25 }}
+            >
+              <span className="text-sm">{currentEmoji}</span>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </motion.div>
 
       {/* Name and Title - animates to get pushed by image */}

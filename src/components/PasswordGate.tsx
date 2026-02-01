@@ -99,7 +99,7 @@ export function PasswordGate({ children, slug }: PasswordGateProps) {
 
 
           <p className="text-white/40 text-sm mt-2 text-center">
-            <Link href="mailto:mckeever02@gmail.com" className="text-white/70 underline underline-offset-2 hover:text-white transition-colors">Contact me</Link> if you need access.
+            <Link href="mailto:mckeever02@gmail.com?subject=Case%20Study%20Access%20Request&body=Hi%2C%0D%0A%0D%0ACan%20you%20provide%20access%20to%20your%20case%20studies%20by%20supplying%20the%20password%3F%0D%0A%0D%0AThanks" className="text-white/70 underline underline-offset-2 hover:text-white transition-colors">Contact me</Link> if you need access.
           </p>
         </div>
 
