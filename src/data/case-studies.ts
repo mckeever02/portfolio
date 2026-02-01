@@ -84,7 +84,7 @@ export const caseStudies: Record<string, CaseStudy> = {
   },
   verifier: {
     slug: "verifier",
-    title: "1PasswordVerifier",
+    title: "1Password Verifier",
     company: "1Password",
     subtitle: "Identity verification in the age of AI fraud and deepfakes",
     description: "Designed a 0 → 1 verification experience to help people prove their identities in the age of deepfakes and AI fraud.",
