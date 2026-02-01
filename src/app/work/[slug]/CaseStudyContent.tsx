@@ -134,7 +134,7 @@ const agenticAutofillSections = [
   { id: "browser-agents", title: "Browser Agents" },
   { id: "research", title: "Research Insights" },
   { id: "prompt-guidelines", title: "Prompt Guidelines" },
-  { id: "autonomous-agents", title: "Autonomous Agents" },
+  // { id: "autonomous-agents", title: "Autonomous Agents" }, // Hidden while adding content
   { id: "impact", title: "Impact" },
 ];
 
@@ -682,7 +682,7 @@ export function AgenticAutofillContent({ caseStudy }: { caseStudy: CaseStudy }) 
         <ZigZagDivider />
       </NarrowContent>
 
-      {/* Autonomous Agents Section */}
+      {/* Autonomous Agents Section - hidden while adding content
       <NarrowContent id="autonomous-agents" className="mt-8 scroll-mt-8">
         <SkewedTag size="xl">Autonomous Agents</SkewedTag>
         <p className="text-2xl sm:text-3xl md:text-4xl font-medium text-[var(--foreground)] leading-tight mt-4">
@@ -692,6 +692,7 @@ export function AgenticAutofillContent({ caseStudy }: { caseStudy: CaseStudy }) 
           We are exploring how 1Password can securely provide credentials to autonomous agents that operate independently without human oversight.
         </BodyText>
       </NarrowContent>
+      */}
 
       <NarrowContent>
         <ZigZagDivider />
