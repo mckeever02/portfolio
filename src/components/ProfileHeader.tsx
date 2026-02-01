@@ -28,11 +28,11 @@ export function ProfileHeader() {
         }}
       >
         <Image
-          src="/images/michael-mckeever.jpg"
+          src="/images/michael-mckeever-pixel-portrait-4.png"
           alt="Michael McKeever"
           width={48}
           height={48}
-          className="w-full h-full object-cover"
+          className="w-full h-full object-cover rotate-[-1deg]"
         />
         <div aria-hidden="true" className="absolute inset-0 bg-[#f2ede6] mix-blend-multiply" />
       </motion.div>

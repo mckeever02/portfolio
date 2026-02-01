@@ -8,8 +8,8 @@ import {
   StatCard,
   WorkCard,
   ProjectCard,
-  ImageCarousel,
   Timeline,
+  PixelRevealImage,
 } from "@/components";
 import { useActiveSection } from "@/hooks/useActiveSection";
 import { caseStudies } from "@/data/case-studies";
@@ -104,9 +104,9 @@ export default function Home() {
               />
               <WorkCard
                 title="Sweepr"
-                description="Self-service customer support solution for leading UK ISPs"
+                description="Designed a multimodal design system for self-service tech support across mobile, voice, and smart displays."
                 year="2019"
-                role="Product Design & frontend development"
+                role="Product Design & development"
                 company="Sweepr"
                 bgColor="#8FC2A5"
                 videoUrl="/images/sweepr-card-hero.mp4"
@@ -139,6 +139,7 @@ export default function Home() {
                 title="Headway"
                 description="A Chrome extension that replaces the default new tab page with a simple, customizable todo app."
                 year="2023"
+                role="Side project"
                 bgColor="#f5f0e8"
                 imageUrl="/images/headway-card-hero.jpg"
                 href="https://chromewebstore.google.com/detail/headway-%E2%80%94-new-tab-todo-li/nnmkipmghijjolehhibjjmmlpdgnkpgi"
@@ -148,6 +149,8 @@ export default function Home() {
                 title="Mailtolink"
                 description="A weekend project that turned into the most popular mailto link generator. Acquired in 2022."
                 year="2019"
+                role="Side project"
+
                 bgColor="#c8f0e8"
                 imageUrl="/images/mailtolink-card-hero.png"
                 href="https://mailtolink.me"
@@ -162,8 +165,32 @@ export default function Home() {
               About
             </h2>
             
-            {/* Image Carousel */}
-            <ImageCarousel />
+            {/* About Photos */}
+            <div className="flex gap-4 h-[280px] sm:h-[320px] md:h-[360px]">
+              <div className="relative h-full overflow-hidden flex-shrink-0">
+                <PixelRevealImage
+                  src="/images/michael-mckeever-mournes-2.jpg"
+                  alt="Michael McKeever in the Mourne Mountains"
+                  width={240}
+                  height={360}
+                  className="h-full w-auto"
+                  pixelSize={24}
+                  duration={600}
+                />
+              </div>
+              <div className="relative h-full overflow-hidden flex-grow">
+                <PixelRevealImage
+                  src="/images/michael-mckeever-british-columbia.jpeg"
+                  alt="Michael McKeever in British Columbia"
+                  width={480}
+                  height={360}
+                  className="h-full w-full"
+                  pixelSize={24}
+                  delay={250}
+                  duration={600}
+                />
+              </div>
+            </div>
 
             {/* Bio */}
             <p className="text-lg leading-relaxed text-[var(--foreground)]">
@@ -171,7 +198,7 @@ export default function Home() {
             </p>
 
             <p className="text-lg leading-relaxed text-[var(--foreground)]">
-              I believe in prototypes over PRDs as a method of collaboration and experimentation. I'm inspired by deep curiosity in the unknown and a strong conviction that craft is a durable differentiator, particularly in the age of AI.
+              I believe in prototypes over PRDs. I'm deeply curious and have a strong conviction that craft and attention to detail are key differentiators in the age of AI.
             </p>
 
               <p className="text-lg leading-relaxed text-[var(--foreground)]">

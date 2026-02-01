@@ -22,6 +22,7 @@ export { HoverCursor, useHoverCursor, RotateIcon, ArrowIcon, ExternalArrowIcon, 
 export { ZigZagDivider } from "./ZigZagDivider";
 export { FuzzyText } from "./FuzzyText";
 export { ASCIIText } from "./ASCIIText";
+export { PixelRevealImage } from "./PixelRevealImage";
 export { Button } from "./Button";
 export { SummaryCardDemo } from "./SummaryCardDemo";
 export { SkewedTag } from "./SkewedTag";
