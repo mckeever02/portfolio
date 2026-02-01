@@ -236,16 +236,16 @@ const stickyNotes: Record<string, StickyNote[]> = {
 
 // Competitive analysis data
 const competitors = [
-  { name: "Okta", domain: "okta.com", genAI: true, conversational: true, predictive: true, personalisation: true, agentic: false },
-  { name: "CrowdStrike", domain: "crowdstrike.com", genAI: true, conversational: true, predictive: true, personalisation: true, agentic: true },
-  { name: "Atlassian", domain: "atlassian.com", genAI: true, conversational: true, predictive: "partial", personalisation: true, agentic: true },
-  { name: "HubSpot", domain: "hubspot.com", genAI: true, conversational: true, predictive: false, personalisation: true, agentic: true },
-  { name: "Monday.com", domain: "monday.com", genAI: true, conversational: true, predictive: "partial", personalisation: true, agentic: false },
-  { name: "Notion", domain: "notion.so", genAI: true, conversational: true, predictive: false, personalisation: true, agentic: true },
-  { name: "Zoho", domain: "zoho.com", genAI: true, conversational: true, predictive: true, personalisation: true, agentic: true },
-  { name: "Google Workspace", domain: "workspace.google.com", genAI: true, conversational: true, predictive: "partial", personalisation: true, agentic: false },
-  { name: "Salesforce", domain: "salesforce.com", genAI: true, conversational: true, predictive: true, personalisation: true, agentic: true },
-  { name: "1Password", domain: "1password.com", genAI: false, conversational: false, predictive: false, personalisation: false, agentic: false, highlight: true },
+  { name: "Okta", logo: "/images/work/sentinel/logo-okta.png", genAI: true, conversational: true, predictive: true, personalisation: true, agentic: false },
+  { name: "CrowdStrike", logo: "/images/work/sentinel/logo-crowdstrike.png", genAI: true, conversational: true, predictive: true, personalisation: true, agentic: true },
+  { name: "Atlassian", logo: "/images/work/sentinel/logo-atlassian.png", genAI: true, conversational: true, predictive: "partial", personalisation: true, agentic: true },
+  { name: "HubSpot", logo: "/images/work/sentinel/logo-hubspot.png", genAI: true, conversational: true, predictive: false, personalisation: true, agentic: true },
+  { name: "Monday.com", logo: "/images/work/sentinel/logo-monday.png", genAI: true, conversational: true, predictive: "partial", personalisation: true, agentic: false },
+  { name: "Notion", logo: "/images/work/sentinel/logo-notion.png", genAI: true, conversational: true, predictive: false, personalisation: true, agentic: true },
+  { name: "Zoho", logo: "/images/work/sentinel/logo-zoho.png", genAI: true, conversational: true, predictive: true, personalisation: true, agentic: true },
+  { name: "Google Workspace", logo: "/images/work/sentinel/logo-google-workspace.png", genAI: true, conversational: true, predictive: "partial", personalisation: true, agentic: false },
+  { name: "Salesforce", logo: "/images/work/sentinel/logo-salesforce.png", genAI: true, conversational: true, predictive: true, personalisation: true, agentic: true },
+  { name: "1Password", logo: "/images/work/sentinel/logo-1password.png", genAI: false, conversational: false, predictive: false, personalisation: false, agentic: false, highlight: true },
 ];
 
 function StatusIcon({ status }: { status: boolean | "partial" }) {
@@ -306,12 +306,11 @@ function CompetitorTable() {
               <td className={`py-4 px-4 ${company.highlight ? "font-bold text-[var(--foreground)]" : "text-[var(--foreground)]/80"}`}>
                 <div className="flex items-center gap-3">
                   <Image
-                    src={`https://img.logo.dev/${company.domain}?token=pk_VAZ6tvAVQHCDwKeaNRVyjQ`}
+                    src={company.logo}
                     alt={`${company.name} logo`}
                     width={20}
                     height={20}
                     className="rounded-sm"
-                    unoptimized
                   />
                   {company.name}
                 </div>
@@ -335,7 +334,7 @@ const adminReasons = [
   {
     title: "People management",
     description: "Onboard new team members, manage permissions, handle account recovery, and maintain organizational structure.",
-    bannerBg: "/images/work/sentinel/people-management-bg.png",
+    bannerBg: "/images/shared/pixel-meadow-flowers.png",
     icon: (
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
         <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
@@ -352,7 +351,7 @@ const adminReasons = [
   {
     title: "Security management",
     description: "Configure security policies, enforce compliance standards, and manage authentication requirements across the organization.",
-    bannerBg: "/images/work/sentinel/security-management-bg.png",
+    bannerBg: "/images/shared/pixel-sky-through-trees.png",
     icon: (
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
         <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
@@ -367,7 +366,7 @@ const adminReasons = [
   {
     title: "Security insights",
     description: "Monitor password health, identify vulnerabilities, track breach alerts, and gain visibility into organizational security posture.",
-    bannerBg: "/images/work/sentinel/security-insights-bg.png",
+    bannerBg: "/images/shared/pixel-field-clouds.png",
     icon: (
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
         <path d="M2 12h5" />
@@ -554,7 +553,7 @@ function SolutionSection() {
         className="grid grid-cols-1 bg-[var(--background)] border border-[var(--foreground)]/20 lg:grid-cols-2 items-center"
       >
         <div className="p-6 xs:p-8 sm:p-12">
-          <section id="exploration" className="flex flex-col gap-4 xs:gap-5 sm:gap-6 scroll-mt-8">
+          <section id="solution" className="flex flex-col gap-4 xs:gap-5 sm:gap-6 scroll-mt-8">
             <SkewedTag as="h3" className="text-lg lg:text-xl">The solution</SkewedTag>
             <p className="text-[var(--foreground)] text-2xl md:text-3xl lg:text-4xl leading-relaxed">
               An AI Agent which can{" "}
@@ -747,7 +746,7 @@ const timelineItems = [
   {
     title: "Composable blocks",
     description: "Small, reusable UI components that can be combined in different ways to present information, actions, and feedback.",
-        bannerBg: "/images/work/sentinel/composable-blocks-bg.png",
+        bannerBg: "/images/shared/pixel-forest-canopy.png",
     icon: (
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
         <rect x="3" y="3" width="7" height="7" />
@@ -760,7 +759,7 @@ const timelineItems = [
   {
     title: "Sentinel decides",
     description: "1Password Sentinel determines which components to render based on the user's query and the type of response needed.",
-    bannerBg: "/images/work/sentinel/sentinel-decides-bg.png",
+    bannerBg: "/images/shared/pixel-cloud-spiral.png",
     icon: (
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
         <circle cx="12" cy="12" r="3" />
@@ -778,7 +777,7 @@ const timelineItems = [
   {
     title: "Flexible rendering",
     description: "Components adapt to show tables, charts, action buttons, or confirmation dialogs depending on the task at hand.",
-      bannerBg: "/images/work/sentinel/flexible-rendering-bg-2.png",
+      bannerBg: "/images/shared/pixel-autumn-foliage.png",
     icon: (
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
         <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z" />
@@ -837,7 +836,7 @@ function AgenticTimeline() {
 
 export function SentinelContent({ caseStudy }: { caseStudy: CaseStudy }) {
   return (
-    <CaseStudyLayout caseStudy={caseStudy}>
+    <CaseStudyLayout caseStudy={caseStudy} sections={caseStudy.sections}>
       <NarrowContent>
         <ContentSection id="overview" title="Overview">
           <BodyText>
@@ -857,7 +856,7 @@ export function SentinelContent({ caseStudy }: { caseStudy: CaseStudy }) {
 
       {/* Making a case for Agentic AI */}
       <NarrowContent className="mt-16">
-        <ContentSection id="making-the-case" title="Making a case for Agentic AI in 1Password">
+        <ContentSection id="comparative-audit" title="Making a case for Agentic AI in 1Password">
           <BodyText>
             As AI capabilities rapidly evolved across the industry, 1Password risked falling behind competitors who were already shipping AI-powered features. I conducted{" "}
             <HoverImageText
@@ -898,7 +897,7 @@ export function SentinelContent({ caseStudy }: { caseStudy: CaseStudy }) {
 
 
       <NarrowContent className="mt-16">
-        <ContentSection id="why-admins" title="Understanding our Admin pain points">
+        <ContentSection id="admin-pain-points" title="Understanding our Admin pain points">
           <BodyText>
             Understanding admin motivations and their pain points helped me identify where AI features might be most valuable.
           </BodyText>
@@ -966,7 +965,7 @@ export function SentinelContent({ caseStudy }: { caseStudy: CaseStudy }) {
 
       {/* Proof of Concept Section */}
       <NarrowContent className="mt-16">
-        <ContentSection id="proof-of-concept" title="Vibe-coding a proof of concept">
+        <ContentSection id="vibe-coding" title="Vibe-coding a proof of concept">
           <BodyText>
             To help validate the idea and demonstrate the potential capabilities, I vibe-coded a proof of concept to share with stakeholders and the AI team.
           </BodyText>
@@ -1085,7 +1084,7 @@ export function SentinelContent({ caseStudy }: { caseStudy: CaseStudy }) {
 
       {/* Prototype Story Section */}
       <NarrowContent>
-        <ContentSection id="prototype" title="Telling Sonja's story">
+        <ContentSection id="storytelling" title="Telling Sonja's story">
           <BodyText>
             To bring the vision to life and build alignment across stakeholders, I created a high-fidelity prototype that followed <HoverImageText
               highlightColor="neutral"

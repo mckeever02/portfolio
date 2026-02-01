@@ -339,6 +339,55 @@ body {
   --highlight-color: rgba(33, 32, 28, 0.2);
 }
 
+@media (prefers-color-scheme: dark) {
+  .highlight-expand-neutral {
+    --highlight-color: rgba(231, 230, 227, 0.25);
+  }
+}
+
+/* BodyText link highlighting - applies highlight-expand to any <a> tags within */
+.body-text-links a {
+  cursor: pointer;
+  text-decoration: none;
+  background-image: linear-gradient(var(--highlight-color, #38BDF8), var(--highlight-color, #38BDF8));
+  background-size: 100% 3px;
+  background-position: 0 100%;
+  background-repeat: no-repeat;
+  transition: background-size 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
+}
+
+.body-text-links a:hover {
+  background-size: 100% 100%;
+}
+
+.body-text-links-blue {
+  --highlight-color: rgba(56, 189, 248, 0.4);
+}
+
+.body-text-links-purple {
+  --highlight-color: rgba(169, 155, 234, 0.4);
+}
+
+.body-text-links-brown {
+  --highlight-color: rgba(167, 139, 91, 0.4);
+}
+
+.body-text-links-orange {
+  --highlight-color: rgba(249, 115, 22, 0.4);
+}
+
+.body-text-links-neutral {
+  --highlight-color: rgba(33, 32, 28, 0.2);
+}
+
+@media (prefers-color-scheme: dark) {
+  .body-text-links-neutral {
+    --highlight-color: rgba(231, 230, 227, 0.25);
+  }
+}
+
 /* React Medium Image Zoom - Custom Styles */
 [data-rmiz] {
   cursor: zoom-in;

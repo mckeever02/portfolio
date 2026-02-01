@@ -9,10 +9,11 @@ interface FlipCarouselItem {
   tag: string;
   tagBg: string;
   content: ReactNode;
-  quote: {
+  quote?: {
     text: ReactNode;
     attribution: string;
   };
+  backContent?: ReactNode;
 }
 
 interface FlipCarouselProps<T extends FlipCarouselItem> {
@@ -88,15 +89,21 @@ function StackedCard<T extends FlipCarouselItem>({
           className="absolute inset-0 w-full h-full bg-[var(--background)] p-6 border border-[var(--foreground)]/20 flex flex-col"
           style={{ backfaceVisibility: "hidden", WebkitBackfaceVisibility: "hidden", transform: "rotateY(180deg)" }}
         >
-          <svg className="w-6 h-6 text-[var(--foreground)]/20 mb-3 shrink-0" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z" />
-          </svg>
-          <p className="text-[var(--foreground)] text-lg leading-relaxed flex-1 not-italic">
-            {item.quote.text}
-          </p>
-          <p className="text-[var(--foreground)]/60 uppercase font-bold tracking-wider text-xs mt-3 not-italic">
-            {item.quote.attribution}
-          </p>
+          {item.backContent ? (
+            item.backContent
+          ) : item.quote ? (
+            <>
+              <svg className="w-6 h-6 text-[var(--foreground)]/20 mb-3 shrink-0" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z" />
+              </svg>
+              <p className="text-[var(--foreground)] text-lg leading-relaxed flex-1 not-italic">
+                {item.quote.text}
+              </p>
+              <p className="text-[var(--foreground)]/60 uppercase font-bold tracking-wider text-xs mt-3 not-italic">
+                {item.quote.attribution}
+              </p>
+            </>
+          ) : null}
         </div>
       </div>
     </div>
@@ -191,15 +198,21 @@ function CarouselCard<T extends FlipCarouselItem>({
           className="absolute inset-0 w-full h-full bg-[var(--background)] p-10 lg:p-12 border border-[var(--foreground)]/20 flex flex-col"
           style={{ backfaceVisibility: "hidden", WebkitBackfaceVisibility: "hidden", transform: "rotateY(180deg)" }}
         >
-          <svg className="w-8 h-8 text-[var(--foreground)]/20 mb-4 shrink-0" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z" />
-          </svg>
-          <p className="text-[var(--foreground)] text-xl lg:text-2xl leading-relaxed flex-1 not-italic">
-            {item.quote.text}
-          </p>
-          <p className="text-[var(--foreground)]/60 uppercase font-bold tracking-wider text-sm mt-4">
-            {item.quote.attribution}
-          </p>
+          {item.backContent ? (
+            item.backContent
+          ) : item.quote ? (
+            <>
+              <svg className="w-8 h-8 text-[var(--foreground)]/20 mb-4 shrink-0" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z" />
+              </svg>
+              <p className="text-[var(--foreground)] text-xl lg:text-2xl leading-relaxed flex-1 not-italic">
+                {item.quote.text}
+              </p>
+              <p className="text-[var(--foreground)]/60 uppercase font-bold tracking-wider text-sm mt-4">
+                {item.quote.attribution}
+              </p>
+            </>
+          ) : null}
         </div>
       </div>
     </div>
@@ -217,6 +230,11 @@ export function FlipCarousel<T extends FlipCarouselItem>({
   const [hasAutoFlipped, setHasAutoFlipped] = useState(false);
   const [isDesktop, setIsDesktop] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
+
+  const itemCount = items.length;
+  const cardWidth = 800;
+  const gap = 48;
+  const slideOffset = cardWidth + gap;
 
   // Track screen size - lg breakpoint is 1024px
   useEffect(() => {
@@ -258,8 +276,8 @@ export function FlipCarousel<T extends FlipCarouselItem>({
     return () => observer.disconnect();
   }, [hasAutoFlipped, isDesktop]);
 
-  const toggleSlide = () => {
-    setActiveIndex((prev) => (prev === 0 ? 1 : 0));
+  const navigateToCard = (index: number) => {
+    setActiveIndex(index);
     setIsHovered(false);
     setHoveredCardIndex(null);
     setIsFlipped(false);
@@ -271,7 +289,6 @@ export function FlipCarousel<T extends FlipCarouselItem>({
   };
 
   const isHoveringActiveCard = hoveredCardIndex === activeIndex;
-  const slideOffset = 848; // 800px card + 48px gap
 
   // Mobile/Tablet: Stacked cards
   if (!isDesktop) {
@@ -295,19 +312,20 @@ export function FlipCarousel<T extends FlipCarouselItem>({
     <div className="w-full mt-0 -my-8">
       <div ref={containerRef} className="relative px-8 py-8 overflow-x-clip overflow-y-visible">
         <motion.div 
-          className="grid grid-cols-[800px_800px] gap-12"
-          animate={{ x: activeIndex === 0 ? 0 : -slideOffset }}
-          transition={{ duration: 0.5, ease: [0.32, 0.72, 0, 1] }}
+          className={`grid gap-12`}
           style={{ 
-            paddingLeft: "max(1rem, calc((100vw - 800px) / 2))",
-            paddingRight: "max(1rem, calc((100vw - 800px) / 2))",
+            gridTemplateColumns: `repeat(${itemCount}, ${cardWidth}px)`,
+            paddingLeft: `max(1rem, calc((100vw - ${cardWidth}px) / 2))`,
+            paddingRight: `max(1rem, calc((100vw - ${cardWidth}px) / 2))`,
           }}
+          animate={{ x: -activeIndex * slideOffset }}
+          transition={{ duration: 0.5, ease: [0.32, 0.72, 0, 1] }}
         >
           {items.map((item, index) => (
             <CarouselCard 
               key={index}
               item={item}
-              onNavigate={toggleSlide}
+              onNavigate={() => navigateToCard(index)}
               isHovered={isHovered && hoveredCardIndex === index}
               onHoverChange={(hovered) => {
                 setIsHovered(hovered);
@@ -325,7 +343,7 @@ export function FlipCarousel<T extends FlipCarouselItem>({
           {isHoveringActiveCard ? (
             <RotateIcon flipCount={flipCount} />
           ) : (
-            <ArrowIcon direction={hoveredCardIndex === 1 ? "right" : "left"} />
+            <ArrowIcon direction={hoveredCardIndex !== null && hoveredCardIndex > activeIndex ? "right" : "left"} />
           )}
         </HoverCursor>
       </div>

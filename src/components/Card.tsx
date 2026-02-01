@@ -14,6 +14,7 @@ interface CardProps {
   imageUrl?: string;
   videoUrl?: string;
   videoPoster?: string;
+  videoPreload?: "none" | "metadata" | "auto";
   externalLink?: boolean;
   comingSoon?: boolean;
   details: ReactNode;
@@ -28,6 +29,7 @@ export function Card({
   imageUrl,
   videoUrl,
   videoPoster,
+  videoPreload = "none",
   externalLink = false,
   comingSoon = false,
   details,
@@ -83,7 +85,7 @@ export function Card({
             loop
             muted
             playsInline
-            preload="none"
+            preload={videoPreload}
             className="w-full h-full object-cover"
           />
         ) : imageUrl ? (

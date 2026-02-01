@@ -1,20 +1,28 @@
 "use client";
 
-import { CaseStudy } from "@/data/case-studies";
-import { PasswordGate } from "@/components";
+import { CaseStudy, getAdjacentCaseStudies } from "@/data/case-studies";
+import { PasswordGate, ProjectCard } from "@/components";
 import { BackButton } from "./BackButton";
 import { HeroImage } from "./HeroImage";
 import { ProjectMeta } from "./ProjectMeta";
+import { TableOfContents } from "./TableOfContents";
+import { twMerge } from "tailwind-merge";
+
+interface Section {
+  id: string;
+  title: string;
+}
 
 interface CaseStudyLayoutProps {
   caseStudy: CaseStudy;
   children: React.ReactNode;
+  sections?: Section[];
 }
 
 // Width wrapper components for flexible content layouts
-export function NarrowContent({ children, className = "" }: { children: React.ReactNode; className?: string }) {
+export function NarrowContent({ children, className = "", id }: { children: React.ReactNode; className?: string; id?: string }) {
   return (
-    <div className={`mx-auto w-full max-w-[800px] px-4 md:px-8 flex flex-col gap-10 ${className}`}>
+    <div id={id} className={twMerge("mx-auto w-full max-w-[800px] px-4 md:px-8 flex flex-col gap-10", className)}>
       {children}
     </div>
   );
@@ -22,7 +30,7 @@ export function NarrowContent({ children, className = "" }: { children: React.Re
 
 export function WideContent({ children, className = "" }: { children: React.ReactNode; className?: string }) {
   return (
-    <div className={`mx-auto w-full max-w-[1100px] px-4 md:px-8 ${className}`}>
+    <div className={twMerge("mx-auto w-full max-w-[1100px] px-4 md:px-8", className)}>
       {children}
     </div>
   );
@@ -30,15 +38,21 @@ export function WideContent({ children, className = "" }: { children: React.Reac
 
 export function FullWidthContent({ children, className = "" }: { children: React.ReactNode; className?: string }) {
   return (
-    <div className={`w-full max-w-[1920px] mx-auto px-4 md:px-8 lg:px-12 ${className}`}>
+    <div className={twMerge("w-full max-w-[1920px] mx-auto px-4 md:px-8", className)}>
       {children}
     </div>
   );
 }
 
-function LayoutContent({ caseStudy, children }: CaseStudyLayoutProps) {
+function LayoutContent({ caseStudy, children, sections }: CaseStudyLayoutProps) {
+  const { prev, next } = getAdjacentCaseStudies(caseStudy.slug);
+  const linkedCaseStudy = next || prev;
+  
   return (
-    <div className="min-h-screen bg-[var(--page-background)]">
+    <div className="min-h-screen bg-[var(--page-background)] overflow-x-hidden">
+      {/* Floating Table of Contents */}
+      {sections && sections.length > 0 && <TableOfContents sections={sections} />}
+      
       <div className="py-4 md:py-8">
         <main className="flex flex-col gap-10 py-4 min-w-0">
           {/* Back Button */}
@@ -68,8 +82,34 @@ function LayoutContent({ caseStudy, children }: CaseStudyLayoutProps) {
             {/* Case Study Content */}
             {children}
 
-            {/* Bottom spacer */}
-            <div className="h-[200px]" />
+            {/* Related Case Study Section */}
+            {linkedCaseStudy && (
+              <div>
+                {/* Full-width zig zag divider */}
+                <div className="py-12">
+                  <div 
+                    className="w-screen relative h-3 opacity-20 bg-[var(--foreground)] [mask-image:url('data:image/svg+xml,%3Csvg%20width%3D%2216%22%20height%3D%2212%22%20viewBox%3D%220%200%2016%2012%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%3Cpath%20d%3D%22M0%206L8%2011L16%206%22%20stroke%3D%22black%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%2F%3E%3C%2Fsvg%3E')] [mask-repeat:repeat-x] [mask-size:16px_12px] [mask-position:left_center]"
+                  />
+                </div>
+                
+                <div className="mx-auto w-full max-w-[800px] px-4 md:px-8 pb-16">
+                  <h2 className="text-2xl font-bold text-[var(--foreground)] mb-6">
+                    Up next
+                  </h2>
+                  <ProjectCard
+                    title={linkedCaseStudy.title}
+                    description={linkedCaseStudy.description}
+                    year={linkedCaseStudy.timeline}
+                    role={linkedCaseStudy.role}
+                    bgColor={linkedCaseStudy.heroColor}
+                    href={`/work/${linkedCaseStudy.slug}`}
+                    videoUrl={linkedCaseStudy.heroVideo}
+                    videoPoster={linkedCaseStudy.heroVideoPoster}
+                    imageUrl={linkedCaseStudy.heroImage}
+                  />
+                </div>
+              </div>
+            )}
           </div>
         </main>
       </div>
@@ -77,14 +117,14 @@ function LayoutContent({ caseStudy, children }: CaseStudyLayoutProps) {
   );
 }
 
-export function CaseStudyLayout({ caseStudy, children }: CaseStudyLayoutProps) {
+export function CaseStudyLayout({ caseStudy, children, sections }: CaseStudyLayoutProps) {
   if (caseStudy.protected) {
     return (
       <PasswordGate slug={caseStudy.slug}>
-        <LayoutContent caseStudy={caseStudy} children={children} />
+        <LayoutContent caseStudy={caseStudy} children={children} sections={sections} />
       </PasswordGate>
     );
   }
 
-  return <LayoutContent caseStudy={caseStudy} children={children} />;
+  return <LayoutContent caseStudy={caseStudy} children={children} sections={sections} />;
 }

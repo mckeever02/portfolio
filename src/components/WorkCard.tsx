@@ -13,6 +13,7 @@ interface WorkCardProps {
   imageUrl?: string;
   videoUrl?: string;
   videoPoster?: string;
+  videoPreload?: "none" | "metadata" | "auto";
   externalLink?: boolean;
   comingSoon?: boolean;
   hoverLabel?: string;
@@ -29,6 +30,7 @@ export function WorkCard({
   imageUrl,
   videoUrl,
   videoPoster,
+  videoPreload,
   externalLink = false,
   comingSoon = false,
   hoverLabel,
@@ -42,6 +44,7 @@ export function WorkCard({
       imageUrl={imageUrl}
       videoUrl={videoUrl}
       videoPoster={videoPoster}
+      videoPreload={videoPreload}
       externalLink={externalLink}
       comingSoon={comingSoon}
       hoverLabel={hoverLabel}
