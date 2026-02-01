@@ -52,7 +52,16 @@ export const caseStudies: Record<string, CaseStudy> = {
     timeline: "Q4 2025",
     role: "Design Lead",
     team: [],
-    sections: [],
+    sections: [
+      { id: "overview", title: "Overview" },
+      { id: "comparative-audit", title: "Comparative audit" },
+      { id: "admin-pain-points", title: "Admin pain points" },
+      { id: "solution", title: "Solution" },
+      { id: "vibe-coding", title: "Vibe-coding" },
+      { id: "agentic-ui", title: "Agentic UI" },
+      { id: "user-testing", title: "User Testing" },
+      { id: "storytelling", title: "Storytelling" },
+    ],
     protected: true,
   },
   "agentic-autofill": {
@@ -94,13 +103,10 @@ export const caseStudies: Record<string, CaseStudy> = {
     ],
     sections: [
       { id: "overview", title: "Overview" },
-      { id: "hackathon", title: "The hackathon" },
-      { id: "problem", title: "The problem" },
-      { id: "why-1password", title: "Why 1Password?" },
-      { id: "usecases", title: "Defining usecases" },
-      { id: "wireframing", title: "Wireframing the flow" },
-      { id: "flow", title: "The flow" },
-      { id: "rsa", title: "RSA San Francisco 2025" },
+      { id: "usecases", title: "Usecases" },
+      { id: "wireframing", title: "Wireframing" },
+      { id: "high-fidelity", title: "High-fidelity prototype" },
+      { id: "rsa", title: "RSA 2025" },
     ],
     protected: true,
   },
@@ -112,4 +118,21 @@ export function getCaseStudy(slug: string): CaseStudy | undefined {
 
 export function getAllCaseStudySlugs(): string[] {
   return Object.keys(caseStudies);
+}
+
+// Define explicit order for navigation
+const caseStudyOrder = ["pilgrim", "sentinel", "agentic-autofill", "verifier"];
+
+export function getAdjacentCaseStudies(currentSlug: string): {
+  prev: CaseStudy | null;
+  next: CaseStudy | null;
+} {
+  const currentIndex = caseStudyOrder.indexOf(currentSlug);
+  if (currentIndex === -1) {
+    return { prev: null, next: null };
+  }
+  return {
+    prev: currentIndex > 0 ? caseStudies[caseStudyOrder[currentIndex - 1]] : null,
+    next: currentIndex < caseStudyOrder.length - 1 ? caseStudies[caseStudyOrder[currentIndex + 1]] : null,
+  };
 }

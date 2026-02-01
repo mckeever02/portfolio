@@ -122,13 +122,10 @@ const problemItems: FeatureCardItem[] = [
 // Sections for table of contents
 const verifierSections = [
   { id: "overview", title: "Overview" },
-  { id: "hackathon", title: "Hackathon" },
-  { id: "problem", title: "Labs Experiment" },
-  { id: "why-1password", title: "Why 1Password" },
   { id: "usecases", title: "Usecases" },
   { id: "wireframing", title: "Wireframing" },
-  { id: "flow", title: "High Fidelity" },
-  { id: "rsa", title: "RSA" },
+  { id: "high-fidelity", title: "High-fidelity prototype" },
+  { id: "rsa", title: "RSA 2025" },
 ];
 
 const agenticAutofillSections = [
@@ -363,7 +360,7 @@ export function VerifierContent({ caseStudy }: { caseStudy: CaseStudy }) {
         </section>
 
         {/* The Flow Section */}
-        <ContentSection id="flow" title="High fidelity prototype">
+        <ContentSection id="high-fidelity" title="High fidelity prototype">
           <BodyText className="mb-4">
             I created a high fidelity prototype of the flow to show at our RSA booth to security professionals and potential customers.
           </BodyText>

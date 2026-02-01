@@ -112,20 +112,31 @@ export function TableOfContents({ sections }: TableOfContentsProps) {
   const indicatorIndex = targetIndex ?? activeIndex;
   
   // Calculate indicator position based on actual button positions relative to container
-  useLayoutEffect(() => {
+  useEffect(() => {
     // Only calculate when expanded
     if (!isHovered) return;
     
-    const button = buttonRefs.current[indicatorIndex];
-    if (!button || !containerRef.current) return;
+    const calculateOffset = () => {
+      const button = buttonRefs.current[indicatorIndex];
+      if (!button || !containerRef.current) return;
+      
+      // Get position relative to the shared container
+      const containerRect = containerRef.current.getBoundingClientRect();
+      const buttonRect = button.getBoundingClientRect();
+      
+      // Calculate center of button relative to container
+      const offset = (buttonRect.top - containerRect.top) + buttonRect.height / 2;
+      setIndicatorOffset(offset);
+    };
     
-    // Get position relative to the shared container
-    const containerRect = containerRef.current.getBoundingClientRect();
-    const buttonRect = button.getBoundingClientRect();
+    // Use requestAnimationFrame to ensure DOM has painted
+    const rafId = requestAnimationFrame(() => {
+      calculateOffset();
+      // Recalculate again after animation has likely settled
+      setTimeout(calculateOffset, 100);
+    });
     
-    // Calculate center of button relative to container
-    const offset = (buttonRect.top - containerRect.top) + buttonRect.height / 2;
-    setIndicatorOffset(offset);
+    return () => cancelAnimationFrame(rafId);
   }, [indicatorIndex, sections, isHovered]);
 
   const handleClick = (id: string, index: number) => {

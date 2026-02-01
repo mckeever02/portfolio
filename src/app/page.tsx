@@ -45,17 +45,16 @@ export default function Home() {
             </h2>
             <div className="flex flex-col gap-6">
               <WorkCard
-                title="Autofill for AI Agents"
-                description="Led the design for a brand new experience that allows AI agents to authenticate and act online using 1Password."
+                title={caseStudies["agentic-autofill"].title}
+                description={caseStudies["agentic-autofill"].description}
                 year="2025"
-                role="Design Lead"
-                company="1Password"
-                bgColor="#DD4825"
-                videoUrl="/images/agentic-autofill-card-hero.mp4"
-                videoPoster="/images/agentic-autofill-card-hero.jpg"
+                role={caseStudies["agentic-autofill"].role}
+                company={caseStudies["agentic-autofill"].company}
+                bgColor={caseStudies["agentic-autofill"].heroColor}
+                videoUrl={caseStudies["agentic-autofill"].heroVideo}
+                videoPoster={caseStudies["agentic-autofill"].heroVideoPoster}
                 videoPreload="metadata"
-                href="https://www.youtube.com/watch?v=c3tqMe2_UwQ"
-                externalLink
+                href={`/work/${caseStudies["agentic-autofill"].slug}`}
               />
               <WorkCard
                 title={caseStudies.sentinel.title}

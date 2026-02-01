@@ -553,7 +553,7 @@ function SolutionSection() {
         className="grid grid-cols-1 bg-[var(--background)] border border-[var(--foreground)]/20 lg:grid-cols-2 items-center"
       >
         <div className="p-6 xs:p-8 sm:p-12">
-          <section id="exploration" className="flex flex-col gap-4 xs:gap-5 sm:gap-6 scroll-mt-8">
+          <section id="solution" className="flex flex-col gap-4 xs:gap-5 sm:gap-6 scroll-mt-8">
             <SkewedTag as="h3" className="text-lg lg:text-xl">The solution</SkewedTag>
             <p className="text-[var(--foreground)] text-2xl md:text-3xl lg:text-4xl leading-relaxed">
               An AI Agent which can{" "}
@@ -836,7 +836,7 @@ function AgenticTimeline() {
 
 export function SentinelContent({ caseStudy }: { caseStudy: CaseStudy }) {
   return (
-    <CaseStudyLayout caseStudy={caseStudy}>
+    <CaseStudyLayout caseStudy={caseStudy} sections={caseStudy.sections}>
       <NarrowContent>
         <ContentSection id="overview" title="Overview">
           <BodyText>
@@ -856,7 +856,7 @@ export function SentinelContent({ caseStudy }: { caseStudy: CaseStudy }) {
 
       {/* Making a case for Agentic AI */}
       <NarrowContent className="mt-16">
-        <ContentSection id="making-the-case" title="Making a case for Agentic AI in 1Password">
+        <ContentSection id="comparative-audit" title="Making a case for Agentic AI in 1Password">
           <BodyText>
             As AI capabilities rapidly evolved across the industry, 1Password risked falling behind competitors who were already shipping AI-powered features. I conducted{" "}
             <HoverImageText
@@ -897,7 +897,7 @@ export function SentinelContent({ caseStudy }: { caseStudy: CaseStudy }) {
 
 
       <NarrowContent className="mt-16">
-        <ContentSection id="why-admins" title="Understanding our Admin pain points">
+        <ContentSection id="admin-pain-points" title="Understanding our Admin pain points">
           <BodyText>
             Understanding admin motivations and their pain points helped me identify where AI features might be most valuable.
           </BodyText>
@@ -965,7 +965,7 @@ export function SentinelContent({ caseStudy }: { caseStudy: CaseStudy }) {
 
       {/* Proof of Concept Section */}
       <NarrowContent className="mt-16">
-        <ContentSection id="proof-of-concept" title="Vibe-coding a proof of concept">
+        <ContentSection id="vibe-coding" title="Vibe-coding a proof of concept">
           <BodyText>
             To help validate the idea and demonstrate the potential capabilities, I vibe-coded a proof of concept to share with stakeholders and the AI team.
           </BodyText>
@@ -1084,7 +1084,7 @@ export function SentinelContent({ caseStudy }: { caseStudy: CaseStudy }) {
 
       {/* Prototype Story Section */}
       <NarrowContent>
-        <ContentSection id="prototype" title="Telling Sonja's story">
+        <ContentSection id="storytelling" title="Telling Sonja's story">
           <BodyText>
             To bring the vision to life and build alignment across stakeholders, I created a high-fidelity prototype that followed <HoverImageText
               highlightColor="neutral"
