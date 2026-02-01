@@ -678,9 +678,11 @@ export function AgenticAutofillContent({ caseStudy }: { caseStudy: CaseStudy }) 
         />
       </FullWidthContent>
 
+      {/* Hidden along with Autonomous Agents section
       <NarrowContent>
         <ZigZagDivider />
       </NarrowContent>
+      */}
 
       {/* Autonomous Agents Section - hidden while adding content
       <NarrowContent id="autonomous-agents" className="mt-8 scroll-mt-8">

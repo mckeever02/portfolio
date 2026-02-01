@@ -952,7 +952,7 @@ function PromptGuidelineCard({
         {/* Outer circle ring - pops in first */}
         <motion.circle 
           cx="8" cy="8" r="7" 
-          stroke="black" 
+          stroke="var(--foreground)"
           strokeWidth="1" 
           fill="none"
           initial={{ scale: 0, opacity: 0 }}
@@ -962,7 +962,7 @@ function PromptGuidelineCard({
         {/* Inner filled circle */}
         <motion.circle 
           cx="8" cy="8" r="3.5" 
-          fill="black"
+          fill="var(--foreground)"
           initial={{ scale: 0 }}
           animate={{ scale: 1 }}
           transition={{ duration: 0.2, ease: "easeOut" }}
@@ -970,7 +970,7 @@ function PromptGuidelineCard({
         {/* Horizontal line as path - draws left to right */}
         <motion.path 
           d="M15 8 L70 8"
-          stroke="black" 
+          stroke="var(--foreground)"
           strokeWidth="1"
           fill="none"
           initial={{ pathLength: 0 }}
@@ -986,7 +986,7 @@ function PromptGuidelineCard({
       
       {/* Guideline card - always rendered to maintain layout, visibility animated */}
       <motion.div 
-        className="bg-white border border-black w-[275px] p-4 flex flex-col gap-3 overflow-hidden origin-left"
+        className="bg-[var(--background)] border border-[var(--foreground)] w-[275px] p-4 flex flex-col gap-3 overflow-hidden origin-left"
         initial={{ scale: 0.8, opacity: 0 }}
         animate={{ 
           scale: showCard ? 1 : 0.8, 
@@ -1000,18 +1000,18 @@ function PromptGuidelineCard({
       >
             {/* Header badge */}
             <div className="bg-[var(--foreground)] px-2 py-1 self-start">
-              <span className="text-white text-sm font-bold tracking-[-0.18px]">
+              <span className="text-[var(--background)] text-sm font-bold tracking-[-0.18px]">
                 Prompt Design Guidelines
               </span>
             </div>
             
             {/* Title */}
-            <h4 className="text-lg font-bold leading-tight text-var(--foreground)">
+            <h4 className="text-lg font-bold leading-tight text-[var(--foreground)]">
               {title}
             </h4>
             
             {/* Description */}
-            <p className="text-[16px] leading-[1.4] text-black tracking-[-0.18px]">
+            <p className="text-[16px] leading-[1.4] text-[var(--foreground)] tracking-[-0.18px]">
               {description}
             </p>
       </motion.div>

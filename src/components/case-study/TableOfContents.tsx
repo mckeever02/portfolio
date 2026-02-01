@@ -211,7 +211,7 @@ export function TableOfContents({ sections }: TableOfContentsProps) {
           width: isHovered ? expandedSize.width : COLLAPSED_WIDTH,
           height: isHovered ? expandedSize.height : COLLAPSED_HEIGHT,
           borderRadius: isHovered ? 0 : COLLAPSED_BORDER_RADIUS,
-          backgroundColor: isHovered ? "var(--background)" : "rgba(33,32,28,0.4)",
+          backgroundColor: isHovered ? "var(--background)" : "color-mix(in srgb, var(--foreground) 40%, transparent)",
           borderWidth: isHovered ? 1 : 0,
           borderColor: isHovered ? "var(--foreground)" : "transparent",
           y: "-50%",
