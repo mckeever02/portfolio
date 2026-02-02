@@ -19,7 +19,7 @@ import type { FeatureCardItem } from "@/components/case-study";
 import Image from "next/image";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { ZigZagDivider } from "@/components/ZigZagDivider";
-import { SummaryCardDemo } from "@/components/SummaryCardDemo";
+import { SummaryCardDemo, CyclingPermissionCard } from "@/components/SummaryCardDemo";
 import { FlipCard, CardFace } from "@/components/FlipCard";
 import { FlipCarousel } from "@/components/FlipCarousel";
 import { SkewedTag } from "@/components/SkewedTag";
@@ -697,15 +697,36 @@ export function AgenticAutofillContent({ caseStudy }: { caseStudy: CaseStudy }) 
       <NarrowContent>
         <SkewedTag size="xl">Why not MCP?</SkewedTag>
         <p className="text-2xl sm:text-3xl md:text-4xl font-medium text-[var(--foreground)] leading-tight">
-          MCP isn&apos;t the answer for credentials – agentic autofill is.
+          MCP wasn't the answer for credentials, so we built our own.
         </p>
         <BodyText>
-          MCP servers are designed for general-purpose integrations—not for handling sensitive credentials. Exposing passwords through an MCP server would create a security vulnerability, as credentials could be logged, cached, or accessed by unintended processes. Not ideal.
+          MCP servers are designed for general-purpose integrations—not for handling sensitive credentials. Exposing passwords through an MCP server would create a security vulnerability, as credentials could be logged, cached, or accessed by unintended processes. It was a pathway that we ruled out pretty early on.
         </BodyText>
         <BodyText>
           Agentic Autofill takes a different approach. Credentials never leave 1Password&apos;s secure vault. Instead of passing secrets through the model context, 1Password injects credentials directly into the browser at the moment of authentication—keeping them encrypted and invisible to the agent itself.
         </BodyText>
       </NarrowContent>
+
+      <NarrowContent>
+        <ZigZagDivider />
+      </NarrowContent>
+
+      {/* The Prompt Section */}
+      <NarrowContent id="the-prompt" className="scroll-mt-8">
+        <SkewedTag size="xl">The Prompt</SkewedTag>
+        <p className="text-2xl sm:text-3xl md:text-4xl font-medium text-[var(--foreground)] leading-tight">
+          The 1Password access request.
+        </p>
+        <BodyText>
+          When an AI agent needs to authenticate, 1Password presents the user with a clear authorization request—showing exactly which service is requesting access and which credentials will be used.
+        </BodyText>
+      </NarrowContent>
+
+      <WideContent>
+        <div className="flex justify-center py-8">
+          <CyclingPermissionCard />
+        </div>
+      </WideContent>
 
       <NarrowContent>
         <ZigZagDivider />

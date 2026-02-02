@@ -898,6 +898,8 @@ const LOGO_URLS = {
   onePassword: "/images/1password-app-icon.png",
   browserbase: "/images/logo-browserbase.png",
   stripe: "/images/logo-stripe.png",
+  github: "/images/logos/github-copilot.png",
+  zapier: "/images/logos/zapier.png",
 };
 
 // Checkmark icon for the connection line - green success color
@@ -913,8 +915,8 @@ function CheckmarkIcon() {
 // Chevron down icon for dropdown
 function ChevronDownIcon() {
   return (
-    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <path d="M4 6L8 10L12 6" stroke="rgba(0,0,0,0.62)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" className="text-[rgba(0,0,0,0.62)] dark:text-[rgba(255,255,255,0.6)]">
+      <path d="M4 6L8 10L12 6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
     </svg>
   );
 }
@@ -922,10 +924,10 @@ function ChevronDownIcon() {
 // Overflow menu icon (three dots)
 function OverflowIcon() {
   return (
-    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <circle cx="8" cy="3" r="1.5" fill="rgba(0,0,0,0.62)" />
-      <circle cx="8" cy="8" r="1.5" fill="rgba(0,0,0,0.62)" />
-      <circle cx="8" cy="13" r="1.5" fill="rgba(0,0,0,0.62)" />
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" className="text-[rgba(0,0,0,0.62)] dark:text-[rgba(255,255,255,0.6)]">
+      <circle cx="8" cy="3" r="1.5" fill="currentColor" />
+      <circle cx="8" cy="8" r="1.5" fill="currentColor" />
+      <circle cx="8" cy="13" r="1.5" fill="currentColor" />
     </svg>
   );
 }
@@ -1019,11 +1021,282 @@ function PromptGuidelineCard({
   );
 }
 
-// Permission card content - Figma accurate design with gray bg and shadow
-function PermissionCardContent({ onAuthorize }: { onAuthorize?: () => void }) {
+// Credential item type for configurable permission card
+interface CredentialItem {
+  name: string;
+  logo: string;
+  username: string;
+}
+
+// Platform configuration for permission card
+interface PlatformConfig {
+  name: string;
+  logo: string;
+  credentials: CredentialItem[];
+}
+
+// Default configurations for cycling
+const permissionCardConfigs: PlatformConfig[] = [
+  {
+    name: "Browserbase",
+    logo: "/images/logo-browserbase.png",
+    credentials: [
+      { name: "Stripe", logo: "/images/logo-stripe.png", username: "sonja.johnson@acmeltd.com" },
+      { name: "GitHub", logo: "/images/logos/github-copilot.png", username: "sonja-johnson" },
+      { name: "Zapier", logo: "/images/logos/zapier.png", username: "sonja.johnson@acmeltd.com" },
+    ],
+  },
+  {
+    name: "Claude",
+    logo: "/images/logos/claude.png",
+    credentials: [
+      { name: "Stripe", logo: "/images/logo-stripe.png", username: "sonja.johnson@acmeltd.com" },
+    ],
+  },
+  {
+    name: "ChatGPT",
+    logo: "/images/logos/chatgpt.png",
+    credentials: [
+      { name: "GitHub", logo: "/images/logos/github-copilot.png", username: "sonja-johnson" },
+      { name: "Zapier", logo: "/images/logos/zapier.png", username: "sonja.johnson@acmeltd.com" },
+    ],
+  },
+];
+
+// Configurable Permission card content
+export function ConfigurablePermissionCard({ 
+  platform,
+  onAuthorize 
+}: { 
+  platform: PlatformConfig;
+  onAuthorize?: () => void;
+}) {
+  const itemCount = platform.credentials.length;
+  const itemText = itemCount === 1 ? platform.credentials[0].name : `${itemCount} items`;
+  
   return (
     <div 
-      className={`backdrop-blur-[22px] bg-[#ededed] rounded-[8px] overflow-hidden w-full max-w-[396px] ${inter.className}`}
+      className={`backdrop-blur-[22px] bg-[#ededed] dark:bg-[#2a2a2a] rounded-[8px] overflow-hidden w-full max-w-[396px] ${inter.className}`}
+      style={{
+        boxShadow: "0px 0px 0px 1px rgba(0,0,0,0.1), 0px 4px 16px rgba(0,0,0,0.06), 0px 8px 40px rgba(0,0,0,0.1)",
+      }}
+    >
+      <div className="flex flex-col gap-6 items-center pt-[30px] pb-5 px-5">
+        {/* Header Section */}
+        <div className="flex flex-col gap-6 items-center w-full">
+          <h3 className="text-[20px] font-semibold leading-[1.2] text-center text-[rgba(0,0,0,0.82)] dark:text-[rgba(255,255,255,0.9)] tracking-[-0.33px]">
+            1Password Access Requested
+          </h3>
+          
+          <div className="flex flex-col gap-3 items-center w-full">
+            {/* Icon Row with Connector */}
+            <div className="flex items-center gap-1">
+              <div className="w-15 h-15 rounded-[12px] overflow-hidden bg-white dark:bg-[#3a3a3a] flex items-center justify-center">
+                <Image 
+                  src={platform.logo} 
+                  alt={platform.name} 
+                  width={60}
+                  height={60}
+                  className="object-cover w-full h-full"
+                />
+              </div>
+              
+              <div className="flex items-center gap-1 w-16">
+                <div className="flex-1 h-[2px] rounded-full bg-black dark:bg-white opacity-20" />
+                <CheckmarkIcon />
+                <div className="flex-1 h-[2px] rounded-full bg-black dark:bg-white opacity-20" />
+              </div>
+              
+              <div className="w-15 h-15 rounded-[12px] overflow-hidden bg-white dark:bg-[#3a3a3a] flex items-center justify-center">
+                <Image 
+                  src={LOGO_URLS.onePassword} 
+                  alt="1Password" 
+                  width={60}
+                  height={60}
+                  className="object-cover w-full h-full"
+                />
+              </div>
+            </div>
+            
+            <p className="text-[16px] leading-[1.2] text-center text-[rgba(0,0,0,0.82)] dark:text-[rgba(255,255,255,0.9)] px-1">
+              Allow <span className="font-semibold text-[15.5px] tracking-[-0.17px]">{platform.name}</span> to use 1Password to<br />
+              autofill <span className="font-semibold text-[15.5px] tracking-[-0.17px]">{itemText}</span> on your behalf
+            </p>
+          </div>
+        </div>
+        
+        {/* Credential Rows */}
+        <div className="flex flex-col gap-4 items-start w-full">
+          <div className="bg-[#fafafa] dark:bg-[#1f1f1f] border border-[rgba(0,0,0,0.13)] dark:border-[rgba(255,255,255,0.13)] rounded-[8px] w-full">
+            {platform.credentials.map((cred, index) => (
+              <div key={index} className="flex items-center gap-3 px-3 py-2">
+                <div className="w-8 h-8 rounded-[6px] overflow-hidden bg-white dark:bg-[#3a3a3a] flex items-center justify-center">
+                  <Image 
+                    src={cred.logo} 
+                    alt={cred.name} 
+                    width={30}
+                    height={30}
+                    className="object-contain"
+                  />
+                </div>
+                <div className="flex-1 flex flex-col gap-0.5">
+                  <span className="text-[14px] leading-[1.2] text-[rgba(0,0,0,0.82)] dark:text-[rgba(255,255,255,0.9)] tracking-[-0.09px]">
+                    {cred.name}
+                  </span>
+                  <span className="text-[12px] leading-[1.2] text-[rgba(0,0,0,0.62)] dark:text-[rgba(255,255,255,0.6)] tracking-[0.01px]">
+                    {cred.username}
+                  </span>
+                </div>
+                <button className="p-1.5 rounded-[8px] hover:bg-[rgba(0,0,0,0.05)] dark:hover:bg-[rgba(255,255,255,0.08)] transition-colors">
+                  <OverflowIcon />
+                </button>
+              </div>
+            ))}
+          </div>
+          
+          {/* Access Duration Row */}
+          <div className="flex items-center justify-between w-full">
+            <span className="text-[14px] leading-[1.2] text-[rgba(0,0,0,0.82)] dark:text-[rgba(255,255,255,0.9)] tracking-[-0.09px]">
+              Allow access for:
+            </span>
+            <div className="bg-white dark:bg-[#3a3a3a] border border-[rgba(0,0,0,0.13)] dark:border-[rgba(255,255,255,0.13)] rounded-[8px] px-2 py-1.5 flex items-center gap-2 min-w-[143px]">
+              <span className="flex-1 text-[14px] leading-[1.2] text-[rgba(0,0,0,0.82)] dark:text-[rgba(255,255,255,0.9)] tracking-[-0.09px]">
+                Just this task
+              </span>
+              <ChevronDownIcon />
+            </div>
+          </div>
+        </div>
+        
+        {/* Buttons */}
+        <div className="flex items-center justify-end gap-3 w-full">
+          <button className="px-2 py-1.5 rounded-[8px] border border-[rgba(0,0,0,0.13)] dark:border-[rgba(255,255,255,0.13)] text-[14px] leading-[1.2] text-[rgba(0,0,0,0.82)] dark:text-[rgba(255,255,255,0.9)] tracking-[-0.09px] hover:bg-[rgba(0,0,0,0.05)] dark:hover:bg-[rgba(255,255,255,0.08)] transition-colors">
+            Cancel
+          </button>
+          <button
+            onClick={onAuthorize}
+            className="px-2 py-1.5 rounded-[8px] bg-[#0570eb] text-[14px] leading-[1.2] text-white tracking-[-0.09px] hover:bg-[#0560d0] transition-colors"
+          >
+            Authorize
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// Cycling Permission Card with countdown - cycles through different platforms and credentials
+const PERMISSION_CYCLE_DURATION = 5000; // 5 seconds per config
+
+export function CyclingPermissionCard() {
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [cycleKey, setCycleKey] = useState(0);
+  const [isActive, setIsActive] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
+  
+  // Start cycling when in view
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsActive(true);
+        }
+      },
+      { threshold: 0.5 }
+    );
+    
+    if (containerRef.current) {
+      observer.observe(containerRef.current);
+    }
+    
+    return () => observer.disconnect();
+  }, []);
+  
+  // Cycle through configs
+  useEffect(() => {
+    if (!isActive) return;
+    
+    const timer = setTimeout(() => {
+      setCurrentIndex((prev) => (prev + 1) % permissionCardConfigs.length);
+      setCycleKey((prev) => prev + 1);
+    }, PERMISSION_CYCLE_DURATION);
+    
+    return () => clearTimeout(timer);
+  }, [currentIndex, isActive, cycleKey]);
+  
+  const currentConfig = permissionCardConfigs[currentIndex];
+  
+  // Countdown ring
+  const size = 32;
+  const strokeWidth = 1;
+  const radius = (size - strokeWidth) / 2;
+  const circumference = 2 * Math.PI * radius;
+  const strokeDashoffset = isActive ? 0 : circumference;
+  
+  return (
+    <div ref={containerRef} className="flex flex-col items-center gap-4">
+      {/* Countdown Ring */}
+      <div className="flex items-center justify-center">
+        <div
+          className="relative flex items-center justify-center"
+          style={{ width: size, height: size }}
+        >
+          <svg
+            key={cycleKey}
+            className="absolute inset-0 -rotate-90"
+            width={size}
+            height={size}
+          >
+            <circle
+              cx={size / 2}
+              cy={size / 2}
+              r={radius}
+              fill="none"
+              stroke="currentColor"
+              strokeWidth={strokeWidth}
+              className="text-[var(--foreground)]/20"
+            />
+            <circle
+              cx={size / 2}
+              cy={size / 2}
+              r={radius}
+              fill="none"
+              stroke="currentColor"
+              strokeWidth={strokeWidth}
+              strokeLinecap="round"
+              className="text-[var(--foreground)]"
+              style={{
+                strokeDasharray: circumference,
+                strokeDashoffset: strokeDashoffset,
+                transition: isActive ? `stroke-dashoffset ${PERMISSION_CYCLE_DURATION}ms linear` : "none",
+              }}
+            />
+          </svg>
+          <SentinelIcon size={16} />
+        </div>
+      </div>
+      
+      {/* Permission Card with animation */}
+      <AnimatePresence mode="wait">
+        <motion.div
+          key={currentIndex}
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -10 }}
+          transition={{ duration: 0.3 }}
+        >
+          <ConfigurablePermissionCard platform={currentConfig} />
+        </motion.div>
+      </AnimatePresence>
+    </div>
+  );
+}
+
+// Permission card content - Figma accurate design with gray bg and shadow
+export function PermissionCardContent({ onAuthorize }: { onAuthorize?: () => void }) {
+  return (
+    <div 
+      className={`backdrop-blur-[22px] bg-[#ededed] dark:bg-[#2a2a2a] rounded-[8px] overflow-hidden w-full max-w-[396px] ${inter.className}`}
       style={{
         boxShadow: "0px 0px 0px 1px rgba(0,0,0,0.1), 0px 4px 16px rgba(0,0,0,0.06), 0px 8px 40px rgba(0,0,0,0.1)",
       }}
@@ -1033,7 +1306,7 @@ function PermissionCardContent({ onAuthorize }: { onAuthorize?: () => void }) {
         {/* Header Section */}
         <div className="flex flex-col gap-6 items-center w-full">
           {/* Title */}
-          <h3 className="text-[20px] font-semibold leading-[1.2] text-center text-[rgba(0,0,0,0.82)] tracking-[-0.33px]">
+          <h3 className="text-[20px] font-semibold leading-[1.2] text-center text-[rgba(0,0,0,0.82)] dark:text-[rgba(255,255,255,0.9)] tracking-[-0.33px]">
             1Password Access Requested
           </h3>
           
@@ -1042,7 +1315,7 @@ function PermissionCardContent({ onAuthorize }: { onAuthorize?: () => void }) {
             {/* Icon Row with Connector - gap-[1px] between sections */}
             <div className="flex items-center gap-1">
               {/* Browserbase Logo - 64px container, flush */}
-              <div className="w-15 h-15 rounded-[12px] overflow-hidden bg-white flex items-center justify-center">
+              <div className="w-15 h-15 rounded-[12px] overflow-hidden bg-white dark:bg-[#3a3a3a] flex items-center justify-center">
                 <Image 
                   src={LOGO_URLS.browserbase} 
                   alt="Browserbase" 
@@ -1054,13 +1327,13 @@ function PermissionCardContent({ onAuthorize }: { onAuthorize?: () => void }) {
               
               {/* Connector Line with Checkmark - 64px wide, gap-[4px] */}
               <div className="flex items-center gap-1 w-16">
-                <div className="flex-1 h-[2px] rounded-full bg-black opacity-20" />
+                <div className="flex-1 h-[2px] rounded-full bg-black dark:bg-white opacity-20" />
                 <CheckmarkIcon />
-                <div className="flex-1 h-[2px] rounded-full bg-black opacity-20" />
+                <div className="flex-1 h-[2px] rounded-full bg-black dark:bg-white opacity-20" />
               </div>
               
               {/* 1Password Logo - 64px container, flush */}
-              <div className="w-15 h-15 rounded-[12px] overflow-hidden bg-white flex items-center justify-center">
+              <div className="w-15 h-15 rounded-[12px] overflow-hidden bg-white dark:bg-[#3a3a3a] flex items-center justify-center">
                 <Image 
                   src={LOGO_URLS.onePassword} 
                   alt="1Password" 
@@ -1072,19 +1345,19 @@ function PermissionCardContent({ onAuthorize }: { onAuthorize?: () => void }) {
             </div>
             
             {/* Description with line break */}
-            <p className="text-[16px] leading-[1.2] text-center text-[rgba(0,0,0,0.82)] px-1">
+            <p className="text-[16px] leading-[1.2] text-center text-[rgba(0,0,0,0.82)] dark:text-[rgba(255,255,255,0.9)] px-1">
               Allow <span className="font-semibold text-[15.5px] tracking-[-0.17px]">Browserbase</span> to use 1Password to<br />
-              autofill <span className="font-semibold text-[15.5px] tracking-[-0.17px]">Stripe</span> on your behalf
+              autofill <span className="font-semibold text-[15.5px] tracking-[-0.17px]">3 items</span> on your behalf
             </p>
           </div>
         </div>
         
-        {/* Credential Row */}
+        {/* Credential Rows */}
         <div className="flex flex-col gap-4 items-start w-full">
-          <div className="bg-[#fafafa] border border-[rgba(0,0,0,0.13)] rounded-[8px] w-full">
+          <div className="bg-[#fafafa] dark:bg-[#1f1f1f] border border-[rgba(0,0,0,0.13)] dark:border-[rgba(255,255,255,0.13)] rounded-[8px] w-full">
+            {/* Stripe Row */}
             <div className="flex items-center gap-3 px-3 py-2">
-              {/* Stripe Logo */}
-              <div className="w-8 h-8 rounded-[6px] overflow-hidden bg-white flex items-center justify-center">
+              <div className="w-8 h-8 rounded-[6px] overflow-hidden bg-white dark:bg-[#3a3a3a] flex items-center justify-center">
                 <Image 
                   src={LOGO_URLS.stripe} 
                   alt="Stripe" 
@@ -1093,19 +1366,63 @@ function PermissionCardContent({ onAuthorize }: { onAuthorize?: () => void }) {
                   className="object-contain"
                 />
               </div>
-              
-              {/* Text Content */}
               <div className="flex-1 flex flex-col gap-0.5">
-                <span className="text-[14px] leading-[1.2] text-[rgba(0,0,0,0.82)] tracking-[-0.09px]">
+                <span className="text-[14px] leading-[1.2] text-[rgba(0,0,0,0.82)] dark:text-[rgba(255,255,255,0.9)] tracking-[-0.09px]">
                   Stripe
                 </span>
-                <span className="text-[12px] leading-[1.2] text-[rgba(0,0,0,0.62)] tracking-[0.01px]">
+                <span className="text-[12px] leading-[1.2] text-[rgba(0,0,0,0.62)] dark:text-[rgba(255,255,255,0.6)] tracking-[0.01px]">
                   sonja.johnson@acmeltd.com
                 </span>
               </div>
-              
-              {/* Overflow Menu */}
-              <button className="p-1.5 rounded-[8px] hover:bg-[rgba(0,0,0,0.05)] transition-colors">
+              <button className="p-1.5 rounded-[8px] hover:bg-[rgba(0,0,0,0.05)] dark:hover:bg-[rgba(255,255,255,0.08)] transition-colors">
+                <OverflowIcon />
+              </button>
+            </div>
+
+            {/* GitHub Row */}
+            <div className="flex items-center gap-3 px-3 py-2">
+              <div className="w-8 h-8 rounded-[6px] overflow-hidden bg-white dark:bg-[#3a3a3a] flex items-center justify-center">
+                <Image 
+                  src={LOGO_URLS.github} 
+                  alt="GitHub" 
+                  width={30}
+                  height={30}
+                  className="object-contain"
+                />
+              </div>
+              <div className="flex-1 flex flex-col gap-0.5">
+                <span className="text-[14px] leading-[1.2] text-[rgba(0,0,0,0.82)] dark:text-[rgba(255,255,255,0.9)] tracking-[-0.09px]">
+                  GitHub
+                </span>
+                <span className="text-[12px] leading-[1.2] text-[rgba(0,0,0,0.62)] dark:text-[rgba(255,255,255,0.6)] tracking-[0.01px]">
+                  sonja-johnson
+                </span>
+              </div>
+              <button className="p-1.5 rounded-[8px] hover:bg-[rgba(0,0,0,0.05)] dark:hover:bg-[rgba(255,255,255,0.08)] transition-colors">
+                <OverflowIcon />
+              </button>
+            </div>
+
+            {/* Zapier Row */}
+            <div className="flex items-center gap-3 px-3 py-2">
+              <div className="w-8 h-8 rounded-[6px] overflow-hidden bg-white dark:bg-[#3a3a3a] flex items-center justify-center">
+                <Image 
+                  src={LOGO_URLS.zapier} 
+                  alt="Zapier" 
+                  width={30}
+                  height={30}
+                  className="object-contain"
+                />
+              </div>
+              <div className="flex-1 flex flex-col gap-0.5">
+                <span className="text-[14px] leading-[1.2] text-[rgba(0,0,0,0.82)] dark:text-[rgba(255,255,255,0.9)] tracking-[-0.09px]">
+                  Zapier
+                </span>
+                <span className="text-[12px] leading-[1.2] text-[rgba(0,0,0,0.62)] dark:text-[rgba(255,255,255,0.6)] tracking-[0.01px]">
+                  sonja.johnson@acmeltd.com
+                </span>
+              </div>
+              <button className="p-1.5 rounded-[8px] hover:bg-[rgba(0,0,0,0.05)] dark:hover:bg-[rgba(255,255,255,0.08)] transition-colors">
                 <OverflowIcon />
               </button>
             </div>
@@ -1113,11 +1430,11 @@ function PermissionCardContent({ onAuthorize }: { onAuthorize?: () => void }) {
           
           {/* Access Duration Row */}
           <div className="flex items-center justify-between w-full">
-            <span className="text-[14px] leading-[1.2] text-[rgba(0,0,0,0.82)] tracking-[-0.09px]">
+            <span className="text-[14px] leading-[1.2] text-[rgba(0,0,0,0.82)] dark:text-[rgba(255,255,255,0.9)] tracking-[-0.09px]">
               Allow access for:
             </span>
-            <div className="bg-white border border-[rgba(0,0,0,0.13)] rounded-[8px] px-2 py-1.5 flex items-center gap-2 min-w-[143px]">
-              <span className="flex-1 text-[14px] leading-[1.2] text-[rgba(0,0,0,0.82)] tracking-[-0.09px]">
+            <div className="bg-white dark:bg-[#3a3a3a] border border-[rgba(0,0,0,0.13)] dark:border-[rgba(255,255,255,0.13)] rounded-[8px] px-2 py-1.5 flex items-center gap-2 min-w-[143px]">
+              <span className="flex-1 text-[14px] leading-[1.2] text-[rgba(0,0,0,0.82)] dark:text-[rgba(255,255,255,0.9)] tracking-[-0.09px]">
                 Just this task
               </span>
               <ChevronDownIcon />
@@ -1127,7 +1444,7 @@ function PermissionCardContent({ onAuthorize }: { onAuthorize?: () => void }) {
         
         {/* Buttons */}
         <div className="flex items-center justify-end gap-3 w-full">
-          <button className="px-2 py-1.5 rounded-[8px] border border-[rgba(0,0,0,0.13)] text-[14px] leading-[1.2] text-[rgba(0,0,0,0.82)] tracking-[-0.09px] hover:bg-[rgba(0,0,0,0.05)] transition-colors">
+          <button className="px-2 py-1.5 rounded-[8px] border border-[rgba(0,0,0,0.13)] dark:border-[rgba(255,255,255,0.13)] text-[14px] leading-[1.2] text-[rgba(0,0,0,0.82)] dark:text-[rgba(255,255,255,0.9)] tracking-[-0.09px] hover:bg-[rgba(0,0,0,0.05)] dark:hover:bg-[rgba(255,255,255,0.08)] transition-colors">
             Cancel
           </button>
           <button
