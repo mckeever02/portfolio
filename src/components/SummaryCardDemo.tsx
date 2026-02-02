@@ -1043,9 +1043,11 @@ function PermissionCardContent({ onAuthorize }: { onAuthorize?: () => void }) {
             <div className="flex items-center gap-1">
               {/* Browserbase Logo - 64px container, flush */}
               <div className="w-15 h-15 rounded-[12px] overflow-hidden bg-white flex items-center justify-center">
-                <img 
+                <Image 
                   src={LOGO_URLS.browserbase} 
                   alt="Browserbase" 
+                  width={60}
+                  height={60}
                   className="object-cover w-full h-full"
                 />
               </div>
@@ -1059,9 +1061,11 @@ function PermissionCardContent({ onAuthorize }: { onAuthorize?: () => void }) {
               
               {/* 1Password Logo - 64px container, flush */}
               <div className="w-15 h-15 rounded-[12px] overflow-hidden bg-white flex items-center justify-center">
-                <img 
+                <Image 
                   src={LOGO_URLS.onePassword} 
                   alt="1Password" 
+                  width={60}
+                  height={60}
                   className="object-cover w-full h-full"
                 />
               </div>
@@ -1081,10 +1085,12 @@ function PermissionCardContent({ onAuthorize }: { onAuthorize?: () => void }) {
             <div className="flex items-center gap-3 px-3 py-2">
               {/* Stripe Logo */}
               <div className="w-8 h-8 rounded-[6px] overflow-hidden bg-white flex items-center justify-center">
-                <img 
+                <Image 
                   src={LOGO_URLS.stripe} 
                   alt="Stripe" 
-                  className="w-[30px] h-[30px] object-contain"
+                  width={30}
+                  height={30}
+                  className="object-contain"
                 />
               </div>
               
