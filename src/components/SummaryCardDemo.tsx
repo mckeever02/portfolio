@@ -1187,11 +1187,119 @@ export function ConfigurablePermissionCard({
 
 // Cycling Permission Card with countdown - cycles through different platforms and credentials
 const PERMISSION_CYCLE_DURATION = 5000; // 5 seconds per config
+const SCRAMBLE_DURATION = 600; // Duration of text scramble effect
+const SCRAMBLE_CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+
+// Skeleton shimmer component for inline use
+function SkeletonShimmer({ className = "" }: { className?: string }) {
+  return <div className={`skeleton-shimmer rounded ${className}`} />;
+}
+
+// Text scramble hook that triggers on text change
+function useScrambleText(text: string, duration: number = SCRAMBLE_DURATION) {
+  const [displayText, setDisplayText] = useState(text);
+  const prevTextRef = useRef(text);
+  
+  useEffect(() => {
+    // Skip if text hasn't changed
+    if (prevTextRef.current === text) return;
+    prevTextRef.current = text;
+    
+    const finalText = text;
+    const length = finalText.length;
+    const scrambleIterations = 8;
+    const intervalPerChar = duration / (length * scrambleIterations);
+    
+    let iteration = 0;
+    const maxIterations = length * scrambleIterations;
+
+    const interval = setInterval(() => {
+      setDisplayText(
+        finalText
+          .split("")
+          .map((char, index) => {
+            if (char === " " || char === "." || char === "," || char === "'" || char === "-") {
+              return char;
+            }
+            
+            const charResolveAt = (index + 1) * scrambleIterations;
+            
+            if (iteration >= charResolveAt) {
+              return char;
+            }
+            
+            return SCRAMBLE_CHARS[Math.floor(Math.random() * SCRAMBLE_CHARS.length)];
+          })
+          .join("")
+      );
+
+      iteration++;
+
+      if (iteration >= maxIterations) {
+        clearInterval(interval);
+        setDisplayText(finalText);
+      }
+    }, intervalPerChar);
+
+    return () => clearInterval(interval);
+  }, [text, duration]);
+  
+  return displayText;
+}
+
+// Animated credential row with scramble text
+function AnimatedCredentialRow({ 
+  cred, 
+  isLoading 
+}: { 
+  cred: CredentialItem; 
+  isLoading: boolean;
+}) {
+  const scrambledName = useScrambleText(cred.name);
+  const scrambledUsername = useScrambleText(cred.username);
+  
+  return (
+    <motion.div 
+      className="flex items-center gap-3 px-3 py-2"
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: -10 }}
+      transition={{ duration: 0.2 }}
+    >
+      <div className="w-8 h-8 rounded-[6px] overflow-hidden bg-white dark:bg-[#3a3a3a] flex items-center justify-center">
+        {isLoading ? (
+          <SkeletonShimmer className="w-full h-full" />
+        ) : (
+          <Image 
+            src={cred.logo} 
+            alt={cred.name} 
+            width={30}
+            height={30}
+            className="object-contain"
+          />
+        )}
+      </div>
+      <div className="flex-1 flex flex-col gap-0.5">
+        <span className="text-[14px] leading-[1.2] text-[rgba(0,0,0,0.82)] dark:text-[rgba(255,255,255,0.9)] tracking-[-0.09px]">
+          {scrambledName}
+        </span>
+        <span className="text-[12px] leading-[1.2] text-[rgba(0,0,0,0.62)] dark:text-[rgba(255,255,255,0.6)] tracking-[0.01px]">
+          {scrambledUsername}
+        </span>
+      </div>
+      <button className="p-1.5 rounded-[8px] hover:bg-[rgba(0,0,0,0.05)] dark:hover:bg-[rgba(255,255,255,0.08)] transition-colors">
+        <OverflowIcon />
+      </button>
+    </motion.div>
+  );
+}
 
 export function CyclingPermissionCard() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [cycleKey, setCycleKey] = useState(0);
   const [isActive, setIsActive] = useState(false);
+  const [isLoadingIcons, setIsLoadingIcons] = useState(false);
+  const [countdownProgress, setCountdownProgress] = useState(0); // 0 = full circle, 1 = empty
   const containerRef = useRef<HTMLDivElement>(null);
   
   // Start cycling when in view
@@ -1212,26 +1320,53 @@ export function CyclingPermissionCard() {
     return () => observer.disconnect();
   }, []);
   
+  // Reset and start countdown animation when cycle changes
+  useEffect(() => {
+    if (!isActive) return;
+    
+    // Reset to 0 (full circle)
+    setCountdownProgress(0);
+    
+    // Start animation to 1 (empty) after a tiny delay to ensure reset is applied
+    const startTimer = setTimeout(() => {
+      setCountdownProgress(1);
+    }, 50);
+    
+    return () => clearTimeout(startTimer);
+  }, [cycleKey, isActive]);
+  
   // Cycle through configs
   useEffect(() => {
     if (!isActive) return;
     
     const timer = setTimeout(() => {
-      setCurrentIndex((prev) => (prev + 1) % permissionCardConfigs.length);
-      setCycleKey((prev) => prev + 1);
+      // Brief skeleton for icons only
+      setIsLoadingIcons(true);
+      
+      setTimeout(() => {
+        setCurrentIndex((prev) => (prev + 1) % permissionCardConfigs.length);
+        setCycleKey((prev) => prev + 1);
+        setIsLoadingIcons(false);
+      }, 200);
     }, PERMISSION_CYCLE_DURATION);
     
     return () => clearTimeout(timer);
   }, [currentIndex, isActive, cycleKey]);
   
   const currentConfig = permissionCardConfigs[currentIndex];
+  const itemCount = currentConfig.credentials.length;
+  const itemText = itemCount === 1 ? currentConfig.credentials[0].name : `${itemCount} items`;
+  
+  // Scramble text for platform name and item count
+  const scrambledPlatformName = useScrambleText(currentConfig.name);
+  const scrambledItemText = useScrambleText(itemText);
   
   // Countdown ring
   const size = 32;
   const strokeWidth = 1;
   const radius = (size - strokeWidth) / 2;
   const circumference = 2 * Math.PI * radius;
-  const strokeDashoffset = isActive ? 0 : circumference;
+  const strokeDashoffset = circumference * countdownProgress;
   
   return (
     <div ref={containerRef} className="flex flex-col items-center gap-4">
@@ -1268,7 +1403,7 @@ export function CyclingPermissionCard() {
               style={{
                 strokeDasharray: circumference,
                 strokeDashoffset: strokeDashoffset,
-                transition: isActive ? `stroke-dashoffset ${PERMISSION_CYCLE_DURATION}ms linear` : "none",
+                transition: countdownProgress === 1 ? `stroke-dashoffset ${PERMISSION_CYCLE_DURATION}ms linear` : "none",
               }}
             />
           </svg>
@@ -1276,18 +1411,121 @@ export function CyclingPermissionCard() {
         </div>
       </div>
       
-      {/* Permission Card with animation */}
-      <AnimatePresence mode="wait">
-        <motion.div
-          key={currentIndex}
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -10 }}
-          transition={{ duration: 0.3 }}
-        >
-          <ConfigurablePermissionCard platform={currentConfig} />
-        </motion.div>
-      </AnimatePresence>
+      {/* Permission Card */}
+      <div 
+        className={`backdrop-blur-[22px] bg-[#ededed] dark:bg-[#2a2a2a] rounded-[8px] overflow-hidden w-[396px] ${inter.className}`}
+        style={{
+          boxShadow: "0px 0px 0px 1px rgba(0,0,0,0.1), 0px 4px 16px rgba(0,0,0,0.06), 0px 8px 40px rgba(0,0,0,0.1)",
+        }}
+      >
+        <div className="flex flex-col gap-6 items-center pt-[30px] pb-5 px-5">
+          {/* Header Section */}
+          <div className="flex flex-col gap-6 items-center w-full">
+            <h3 className="text-[20px] font-semibold leading-[1.2] text-center text-[rgba(0,0,0,0.82)] dark:text-[rgba(255,255,255,0.9)] tracking-[-0.33px]">
+              1Password Access Requested
+            </h3>
+            
+            <div className="flex flex-col gap-3 items-center w-full">
+              {/* Icon Row with Connector */}
+              <div className="flex items-center gap-1">
+                {/* Platform Logo */}
+                <div className="w-15 h-15 rounded-[12px] overflow-hidden bg-white dark:bg-[#3a3a3a] flex items-center justify-center">
+                  {isLoadingIcons ? (
+                    <SkeletonShimmer className="w-full h-full" />
+                  ) : (
+                    <Image 
+                      src={currentConfig.logo} 
+                      alt={currentConfig.name} 
+                      width={60}
+                      height={60}
+                      className="object-cover w-full h-full"
+                    />
+                  )}
+                </div>
+                
+                <div className="flex items-center gap-1 w-16">
+                  <div className="flex-1 h-[2px] rounded-full bg-black dark:bg-white opacity-20" />
+                  <CheckmarkIcon />
+                  <div className="flex-1 h-[2px] rounded-full bg-black dark:bg-white opacity-20" />
+                </div>
+                
+                {/* 1Password Logo - always static */}
+                <div className="w-15 h-15 rounded-[12px] overflow-hidden bg-white dark:bg-[#3a3a3a] flex items-center justify-center">
+                  <Image 
+                    src={LOGO_URLS.onePassword} 
+                    alt="1Password" 
+                    width={60}
+                    height={60}
+                    className="object-cover w-full h-full"
+                  />
+                </div>
+              </div>
+              
+              {/* Description with scramble text */}
+              <p className="text-[16px] leading-[1.2] text-center text-[rgba(0,0,0,0.82)] dark:text-[rgba(255,255,255,0.9)] px-1">
+                Allow{" "}
+                <span className="font-semibold text-[15.5px] tracking-[-0.17px]">{scrambledPlatformName}</span>
+                {" "}to use 1Password to<br />
+                autofill{" "}
+                <span className="font-semibold text-[15.5px] tracking-[-0.17px]">{scrambledItemText}</span>
+                {" "}on your behalf
+              </p>
+            </div>
+          </div>
+          
+          {/* Credential Rows with animated height */}
+          <div className="flex flex-col gap-4 items-start w-full">
+            <motion.div 
+              className="bg-[#fafafa] dark:bg-[#1f1f1f] border border-[rgba(0,0,0,0.13)] dark:border-[rgba(255,255,255,0.13)] rounded-[8px] w-full overflow-hidden"
+              animate={{ height: "auto" }}
+              transition={{ type: "spring", stiffness: 300, damping: 25 }}
+            >
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={currentIndex}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.2 }}
+                >
+                  {currentConfig.credentials.map((cred, index) => (
+                    <AnimatedCredentialRow 
+                      key={`${currentIndex}-${index}`} 
+                      cred={cred} 
+                      isLoading={isLoadingIcons}
+                    />
+                  ))}
+                </motion.div>
+              </AnimatePresence>
+            </motion.div>
+            
+            {/* Access Duration Row */}
+            <div className="flex items-center justify-between w-full">
+              <span className="text-[14px] leading-[1.2] text-[rgba(0,0,0,0.82)] dark:text-[rgba(255,255,255,0.9)] tracking-[-0.09px]">
+                Allow access for:
+              </span>
+              <div className="bg-white dark:bg-[#3a3a3a] border border-[rgba(0,0,0,0.13)] dark:border-[rgba(255,255,255,0.13)] rounded-[8px] px-2 py-1.5 flex items-center gap-2 min-w-[143px]">
+                <span className="flex-1 text-[14px] leading-[1.2] text-[rgba(0,0,0,0.82)] dark:text-[rgba(255,255,255,0.9)] tracking-[-0.09px]">
+                  Just this task
+                </span>
+                <ChevronDownIcon />
+              </div>
+            </div>
+          </div>
+          
+          {/* Buttons */}
+          <div className="flex items-center justify-end gap-3 w-full">
+            <button className="px-2 py-1.5 rounded-[8px] border border-[rgba(0,0,0,0.13)] dark:border-[rgba(255,255,255,0.13)] text-[14px] leading-[1.2] text-[rgba(0,0,0,0.82)] dark:text-[rgba(255,255,255,0.9)] tracking-[-0.09px] hover:bg-[rgba(0,0,0,0.05)] dark:hover:bg-[rgba(255,255,255,0.08)] transition-colors">
+              Cancel
+            </button>
+            <button
+              className="px-2 py-1.5 rounded-[8px] bg-[#0570eb] text-[14px] leading-[1.2] text-white tracking-[-0.09px] hover:bg-[#0560d0] transition-colors"
+            >
+              Authorize
+            </button>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
