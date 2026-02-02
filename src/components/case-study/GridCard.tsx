@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import Image from "next/image";
 
 export interface GridCardItem {
   title: string;
@@ -17,13 +18,19 @@ export function GridCard({ item }: { item: GridCardItem }) {
         <div
           className="relative h-28 flex items-center justify-center overflow-hidden"
           style={{
-            backgroundImage: item.bannerBg ? `url('${item.bannerBg}')` : undefined,
             backgroundColor: item.bannerBg ? undefined : "var(--foreground)",
-            backgroundSize: "cover",
-            backgroundPosition: "center",
           }}
         >
-          <div className="rounded-lg bg-white/30 backdrop-blur-sm p-1">
+          {item.bannerBg && (
+            <Image
+              src={item.bannerBg}
+              alt=""
+              fill
+              className="object-cover object-center"
+              sizes="(max-width: 768px) 100vw, 33vw"
+            />
+          )}
+          <div className="relative rounded-lg bg-white/30 backdrop-blur-sm p-1">
             <div className="rounded bg-[var(--background)] text-[var(--foreground)] w-12 h-12 flex items-center justify-center">
               {item.icon}
             </div>

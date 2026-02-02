@@ -560,10 +560,12 @@ export function AgenticAutofillContent({ caseStudy }: { caseStudy: CaseStudy }) 
                     <div className="flex flex-wrap gap-3">
                       {item.examples.map((example, idx) => (
                         <div key={idx} className="flex items-center gap-2">
-                          <img 
+                          <Image 
                             src={example.logo} 
                             alt={example.name}
-                            className="w-6 h-6 object-contain rounded-md shrink-0"
+                            width={24}
+                            height={24}
+                            className="object-contain rounded-md shrink-0"
                           />
                           <span className="text-[var(--foreground)] text-base">{example.name}</span>
                         </div>
@@ -775,15 +777,17 @@ export function AgenticAutofillContent({ caseStudy }: { caseStudy: CaseStudy }) 
       {/* Full-bleed press coverage section */}
       <motion.div 
         className="w-screen relative left-1/2 right-1/2 -ml-[50vw] -mr-[50vw] overflow-hidden"
-        style={{
-          backgroundImage: "url('/images/work/agentic-autofill/problem-solution-bg-4.png')",
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-        }}
         initial="hidden"
         whileInView="visible"
         viewport={{ once: true, amount: 0.3 }}
       >
+        <Image
+          src="/images/work/agentic-autofill/problem-solution-bg-4.png"
+          alt=""
+          fill
+          className="object-cover object-center -z-10"
+          sizes="100vw"
+        />
         <div className="max-w-[1400px] mx-auto px-4 md:px-8 flex flex-col md:flex-row items-start justify-center gap-8 md:gap-12 pt-16">
           <motion.div
             variants={{

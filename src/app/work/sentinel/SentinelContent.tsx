@@ -593,12 +593,14 @@ function SolutionSection() {
 
         <div 
           className="p-6 pl-0 overflow-hidden relative"
-          style={{
-              backgroundImage: "url('/images/work/sentinel/preview-bg.png')",
-            backgroundSize: "cover",
-            backgroundPosition: "center",
-          }}
         >
+            <Image
+              src="/images/work/sentinel/preview-bg.png"
+              alt=""
+              fill
+              className="object-cover object-center -z-10"
+              sizes="50vw"
+            />
             <motion.div 
               className="relative w-full aspect-[2760/3045] overflow-hidden rounded-lg rounded-l-none shadow-2xl border border-[var(--foreground)]/10 border-l-0"
               initial={{ x: "-75%", opacity: 0 }}
@@ -792,13 +794,15 @@ function TimelineCard({ item }: { item: typeof timelineItems[0] }) {
         <div className="p-1">
             <div 
                 className="relative py-4 sm:py-0 sm:aspect-square shrink-0 flex items-center justify-center w-full sm:w-32"
-                style={{
-                backgroundImage: `url('${item.bannerBg}')`,
-                backgroundSize: "cover",
-                backgroundPosition: "center",
-                }}
             >
-                <div className="rounded-lg bg-white/30 backdrop-blur-sm p-1">
+                <Image
+                  src={item.bannerBg}
+                  alt=""
+                  fill
+                  className="object-cover object-center"
+                  sizes="(max-width: 640px) 100vw, 128px"
+                />
+                <div className="relative rounded-lg bg-white/30 backdrop-blur-sm p-1">
                 <div className="rounded bg-[var(--background)] text-[var(--foreground)] w-12 h-12 flex items-center justify-center">
                     {item.icon}
                 </div>
