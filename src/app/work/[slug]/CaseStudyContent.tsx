@@ -23,6 +23,7 @@ import { SummaryCardDemo } from "@/components/SummaryCardDemo";
 import { FlipCard, CardFace } from "@/components/FlipCard";
 import { FlipCarousel } from "@/components/FlipCarousel";
 import { SkewedTag } from "@/components/SkewedTag";
+import { ImageCarousel } from "@/components/ImageCarousel";
 
 // Helper for persona back content
 function PersonaNeeds({ items }: { items: string[] }) {
@@ -122,10 +123,25 @@ const problemItems: FeatureCardItem[] = [
 // Sections for table of contents
 const verifierSections = [
   { id: "overview", title: "Overview" },
+  { id: "solution", title: "Solution" },
   { id: "usecases", title: "Usecases" },
   { id: "wireframing", title: "Wireframing" },
   { id: "high-fidelity", title: "High-fidelity prototype" },
   { id: "rsa", title: "RSA 2025" },
+];
+
+const verifierSliderImages = [
+  { src: "/images/work/verifier/slider/verifier-home.png", alt: "Verifier home screen" },
+  { src: "/images/work/verifier/slider/profile.png", alt: "Verifier profile screen" },
+  { src: "/images/work/verifier/slider/sending.png", alt: "Sending verification request" },
+  { src: "/images/work/verifier/slider/sent.png", alt: "Verification request sent" },
+  { src: "/images/work/verifier/slider/sent-live-activity.png", alt: "Sent live activity" },
+  { src: "/images/work/verifier/slider/received.png", alt: "Verification request received" },
+  { src: "/images/work/verifier/slider/confirmed.png", alt: "Verification confirmed" },
+  { src: "/images/work/verifier/slider/confirmed-details.png", alt: "Verification confirmed details" },
+  { src: "/images/work/verifier/slider/rejected.png", alt: "Verification rejected" },
+  { src: "/images/work/verifier/slider/rejected-details.png", alt: "Verification rejected details" },
+  { src: "/images/work/verifier/slider/rejected-live-activity.png", alt: "Rejected live activity" },
 ];
 
 const agenticAutofillSections = [
@@ -247,6 +263,40 @@ export function VerifierContent({ caseStudy }: { caseStudy: CaseStudy }) {
         <ContentSection id="overview" title="Overview">
           <BodyText>
             The 1Password Labs team wanted to explore how 1Password&apos;s verification of trust method and mobile app could be utilised in an employee to employee verification scenario.
+          </BodyText>
+        </ContentSection>
+
+      </NarrowContent>
+
+      {/* Full-width device SVG */}
+      <FullWidthContent className="py-0 !px-0 !md:px-0 max-w-none w-screen relative left-1/2 -translate-x-1/2">
+        <div className="relative w-full flex justify-center">
+          <div className="absolute inset-0 flex items-center justify-center z-0">
+            <ImageCarousel
+              images={verifierSliderImages}
+              cardWidth={338}
+              cardHeight={731}
+              gap={64}
+              snap
+              showCaptions={false}
+              imageClassName="object-contain"
+              className="w-screen"
+            />
+          </div>
+          <div className="relative z-10 scale-[0.9] origin-center">
+            <svg width="415" height="852" viewBox="0 0 506 1023" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <rect width="498" height="1022.4" transform="translate(3.59998)" fill="black" fillOpacity="0.01" />
+              <path d="M400.8 4.34676e-05C413.845 4.32929e-05 425.072 -0.0188523 434.28 0.733442C443.768 1.50866 453.206 3.22077 462.287 7.8477C475.835 14.7505 486.849 25.7651 493.752 39.3125C498.379 48.3936 500.091 57.8311 500.866 67.3194C501.525 75.3763 501.593 84.9793 501.6 95.9932V235.2C503.588 235.2 505.2 236.78 505.2 238.729V349.273C505.2 351.221 503.588 352.8 501.6 352.8V926.007C501.593 937.021 501.525 946.624 500.866 954.681C500.091 964.169 498.379 973.606 493.752 982.688C486.849 996.235 475.835 1007.25 462.287 1014.15C453.206 1018.78 443.768 1020.49 434.28 1021.27C425.072 1022.02 413.845 1022 400.8 1022H104.399C91.3544 1022 80.1269 1022.02 70.9189 1021.27C61.4308 1020.49 51.9931 1018.78 42.9121 1014.15C29.3647 1007.25 18.3501 996.235 11.4473 982.688C6.82028 973.606 5.10823 964.169 4.33301 954.681C3.58069 945.473 3.59961 934.245 3.59961 921.2V378.667C1.61172 378.667 0.000248749 377.078 0 375.117V307.667C0 305.707 1.61156 304.117 3.59961 304.117V285.184C1.6117 285.183 0.000223667 283.594 0 281.634V214.184C0 212.223 1.61156 210.634 3.59961 210.634V178.684C1.6117 178.683 0.000225235 177.094 0 175.134V142C2.41368e-05 140.04 1.61158 138.45 3.59961 138.45V100.8C3.59961 87.7547 3.58068 76.5274 4.33301 67.3194C5.10823 57.8311 6.82026 48.3936 11.4473 39.3125C18.3501 25.7651 29.3647 14.7506 42.9121 7.8477C51.9931 3.22071 61.4308 1.50868 70.9189 0.733442C80.1269 -0.0188769 91.3544 4.28928e-05 104.399 4.34676e-05H400.8ZM104.399 24C77.5173 24 64.0753 23.9998 53.8076 29.2315C44.7762 33.8334 37.4329 41.1766 32.8311 50.2081C27.5994 60.4758 27.5996 73.9176 27.5996 100.8V921.2L27.6006 926.086C27.6197 949.75 27.9265 962.166 32.8311 971.792C37.4329 980.824 44.7762 988.167 53.8076 992.769C64.0753 998 77.5173 998 104.399 998H400.8L405.686 997.999C428.955 997.98 441.348 997.683 450.907 993.01L451.392 992.769C460.141 988.31 467.306 981.279 471.929 972.633L472.368 971.792C477.273 962.166 477.579 949.75 477.599 926.086L477.6 921.2V100.8C477.6 74.3377 477.6 60.8998 472.609 50.6924L472.368 50.2081C467.91 41.4586 460.879 34.2939 452.232 29.6709L451.392 29.2315C441.766 24.327 429.35 24.0202 405.686 24.001L400.8 24H386.281C377.082 24.0001 377.081 29.2622 377.081 34.8086C377.081 45.9353 368.599 60.0293 349.081 60.0293H154.682C135.164 60.0293 126.682 45.9353 126.682 34.4082C126.682 29.2622 126.681 24.0001 117.481 24H104.399Z" fill="black" />
+            </svg>
+          </div>
+        </div>
+      </FullWidthContent>
+
+      <NarrowContent>
+        {/* Solution Section */}
+        <ContentSection id="solution" title="Solution">
+          <BodyText>
+            We designed a lightweight verification flow that lets employees confirm identity using 1Password&apos;s trusted signals and mobile experience, reducing risk without adding friction.
           </BodyText>
         </ContentSection>
 

@@ -3,7 +3,7 @@
 import Image from "next/image";
 import { useRef, useEffect, useCallback, useState } from "react";
 
-const images = [
+const defaultImages = [
   { src: "/images/michael-mckeever-hiking.jpg", alt: "Michael hiking", location: "Mourne Mountains" },
   { src: "/images/michael-mckeever-in-tenerife.jpg", alt: "Michael in Tenerife", location: "Tenerife" },
   { src: "/images/michael-mckeever-kayaking.jpg", alt: "Michael kayaking", location: "Vancouver Island" },
@@ -24,9 +24,42 @@ function LocationIcon() {
 
 type ScrollDirection = "left" | "right" | "paused";
 
-export function ImageCarousel() {
+interface CarouselImage {
+  src: string;
+  alt: string;
+  location?: string;
+}
+
+interface ImageCarouselProps {
+  images?: CarouselImage[];
+  className?: string;
+  cardWidth?: number;
+  cardHeight?: number;
+  gap?: number;
+  snap?: boolean;
+  autoScroll?: boolean;
+  autoScrollIntervalMs?: number;
+  showCaptions?: boolean;
+  imageClassName?: string;
+}
+
+export function ImageCarousel({
+  images = defaultImages,
+  className = "",
+  cardWidth,
+  cardHeight,
+  gap = 24,
+  snap = false,
+  autoScroll = true,
+  autoScrollIntervalMs = 2400,
+  showCaptions = true,
+  imageClassName = "",
+}: ImageCarouselProps) {
   // Duplicate images for seamless infinite scroll
   const duplicatedImages = [...images, ...images, ...images];
+  const useCustomCardSize = Boolean(cardWidth && cardHeight);
+  const resolvedWidth = cardWidth ?? 426;
+  const resolvedHeight = cardHeight ?? 320;
   
   const containerRef = useRef<HTMLDivElement>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -34,6 +67,7 @@ export function ImageCarousel() {
   const velocityRef = useRef(0);
   const animationRef = useRef<number | null>(null);
   const isHoveringRef = useRef(false);
+  const [activeIndex, setActiveIndex] = useState(0);
   
   const [cursorStyle, setCursorStyle] = useState<ScrollDirection>("paused");
 
@@ -81,6 +115,10 @@ export function ImageCarousel() {
 
   // Animation loop
   useEffect(() => {
+    if (snap) {
+      return;
+    }
+
     const scrollContainer = scrollRef.current;
     if (!scrollContainer) return;
 
@@ -118,7 +156,37 @@ export function ImageCarousel() {
         cancelAnimationFrame(animationRef.current);
       }
     };
-  }, []);
+  }, [snap]);
+
+  useEffect(() => {
+    if (!snap) return;
+    const scrollContainer = scrollRef.current;
+    if (!scrollContainer) return;
+
+    const itemWidth = resolvedWidth;
+    const itemOffset = itemWidth + gap;
+    const singleSetWidth = images.length * itemWidth + (images.length - 1) * gap;
+
+    const centerActive = () => {
+      const containerWidth = scrollContainer.clientWidth;
+      const targetLeft =
+        singleSetWidth +
+        activeIndex * itemOffset -
+        (containerWidth - itemWidth) / 2;
+      scrollContainer.scrollTo({ left: targetLeft, behavior: "smooth" });
+    };
+
+    centerActive();
+  }, [snap, activeIndex, gap, images.length, resolvedWidth]);
+
+  useEffect(() => {
+    if (!snap || !autoScroll) return;
+    const interval = window.setInterval(() => {
+      setActiveIndex((prev) => (prev + 1) % images.length);
+    }, autoScrollIntervalMs);
+
+    return () => window.clearInterval(interval);
+  }, [snap, autoScroll, autoScrollIntervalMs, images.length]);
 
   const getCursor = () => {
     switch (cursorStyle) {
@@ -137,37 +205,50 @@ export function ImageCarousel() {
         containerRef.current = el;
         scrollRef.current = el;
       }}
-      className="marquee-container relative w-full max-w-full overflow-hidden"
-      onMouseMove={handleMouseMove}
-      onMouseEnter={handleMouseEnter}
-      onMouseLeave={handleMouseLeave}
-      style={{ cursor: getCursor() }}
+      className={`marquee-container relative w-full max-w-full overflow-hidden ${className}`}
+      onMouseMove={snap ? undefined : handleMouseMove}
+      onMouseEnter={snap ? undefined : handleMouseEnter}
+      onMouseLeave={snap ? undefined : handleMouseLeave}
+      style={{
+        cursor: snap ? "default" : getCursor(),
+        scrollSnapType: snap ? "x mandatory" : undefined,
+      }}
     >
       {/* Scrolling Track */}
-      <div className="marquee-track flex gap-6 w-max">
+      <div className="marquee-track flex w-max" style={{ gap: `${gap}px` }}>
         {duplicatedImages.map((image, index) => (
           <div
             key={index}
-            className="group relative flex-shrink-0 w-[338px] sm:w-[426px] h-[253px] sm:h-[320px] bg-white overflow-hidden"
+            className={
+              useCustomCardSize
+                ? "group relative flex-shrink-0 bg-white overflow-hidden"
+                : "group relative flex-shrink-0 w-[338px] sm:w-[426px] h-[253px] sm:h-[320px] bg-white overflow-hidden"
+            }
+            style={{
+              ...(useCustomCardSize ? { width: resolvedWidth, height: resolvedHeight } : {}),
+              ...(snap ? { scrollSnapAlign: "center" } : {}),
+            }}
           >
             <Image
               src={image.src}
               alt={image.alt}
-              width={426}
-              height={320}
-              className="w-full h-full object-cover pointer-events-none"
+              width={resolvedWidth}
+              height={resolvedHeight}
+              className={`w-full h-full object-cover pointer-events-none ${imageClassName}`}
               draggable={false}
             />
             {/* Caption that slides up on hover (hidden on touch devices) */}
-            <div 
-              className="carousel-caption absolute left-2 bottom-2 flex items-center gap-1 bg-[var(--card-background)] border border-[var(--border-darker)] px-2 py-1.5 translate-y-[calc(100%+8px)] opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500 text-[var(--foreground)]"
-              style={{ transitionTimingFunction: "cubic-bezier(0.34, 1.56, 0.64, 1)" }}
-            >
-              <LocationIcon />
-              <span className="text-sm whitespace-nowrap">
-                {image.location}
-              </span>
-            </div>
+            {showCaptions && image.location && (
+              <div 
+                className="carousel-caption absolute left-2 bottom-2 flex items-center gap-1 bg-[var(--card-background)] border border-[var(--border-darker)] px-2 py-1.5 translate-y-[calc(100%+8px)] opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500 text-[var(--foreground)]"
+                style={{ transitionTimingFunction: "cubic-bezier(0.34, 1.56, 0.64, 1)" }}
+              >
+                <LocationIcon />
+                <span className="text-sm whitespace-nowrap">
+                  {image.location}
+                </span>
+              </div>
+            )}
           </div>
         ))}
       </div>
