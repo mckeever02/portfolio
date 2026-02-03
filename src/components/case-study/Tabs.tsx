@@ -24,16 +24,16 @@ export function Tabs({ options, defaultTab, onChange }: TabsProps) {
 
   return (
     <div className="flex justify-center">
-      <div className="relative inline-flex p-1.5  bg-white backdrop-blur-sm border border-var(--foreground)">
+      <div className="relative inline-flex p-1.5 bg-white dark:bg-[#1a1a1a] backdrop-blur-sm border border-[var(--foreground)]/20">
         {options.map((option) => (
           <button
             key={option.id}
             onClick={() => handleTabClick(option.id)}
             className={`
-              relative z-10 px-5 py-2 rtext-base font-medium transition-colors duration-200
+              relative z-10 px-5 py-2 text-base font-medium transition-colors duration-200
               ${activeTab === option.id
-                ? 'text-white'
-              : 'text-[var(--foreground)] hover:text-[var(--foreground)]/80'
+                ? 'text-white dark:text-black'
+                : 'text-[var(--foreground)] hover:text-[var(--foreground)]/80'
               }
             `}
           >

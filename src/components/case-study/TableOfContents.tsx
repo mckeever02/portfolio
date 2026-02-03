@@ -26,25 +26,39 @@ export function TableOfContents({ sections }: TableOfContentsProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
   const buttonRefs = useRef<(HTMLButtonElement | null)[]>([]);
-  const [indicatorOffset, setIndicatorOffset] = useState(0);
   const [targetIndex, setTargetIndex] = useState<number | null>(null);
   const [spinCount, setSpinCount] = useState(0);
   const prevActiveIndexRef = useRef<number>(-1);
   const isFirstRender = useRef(true);
   const [isHovered, setIsHovered] = useState(false);
   const [hoveredItemIndex, setHoveredItemIndex] = useState<number | null>(null);
+  const [shouldAnimateStar, setShouldAnimateStar] = useState(false); // Don't animate when menu first opens
   const [expandedSize, setExpandedSize] = useState({ width: 200, height: 150 });
   const measureRef = useRef<HTMLDivElement>(null);
+  const measureButtonRefs = useRef<(HTMLDivElement | null)[]>([]); // Refs for hidden measurement buttons
+  const buttonOffsetsRef = useRef<number[]>([]); // Cached button center positions
   const barRef = useRef<HTMLDivElement>(null);
   const [proximityScale, setProximityScale] = useState(1);
   
-  // Measure expanded content size from hidden measurement div
+  // Measure expanded content size and button positions from hidden measurement div
   useLayoutEffect(() => {
     if (measureRef.current) {
       const rect = measureRef.current.getBoundingClientRect();
       if (rect.width > 0 && rect.height > 0) {
         setExpandedSize({ width: rect.width, height: rect.height });
       }
+      
+      // Calculate and cache button center positions relative to the nav container
+      // These positions are stable and don't change with scroll
+      const offsets: number[] = [];
+      measureButtonRefs.current.forEach((button, index) => {
+        if (button) {
+          // offsetTop is relative to the offsetParent, which is stable
+          // Add half the height to get the center
+          offsets[index] = button.offsetTop + button.offsetHeight / 2;
+        }
+      });
+      buttonOffsetsRef.current = offsets;
     }
   }, [sections]);
   
@@ -109,35 +123,28 @@ export function TableOfContents({ sections }: TableOfContentsProps) {
   }, [activeIndex, targetIndex]);
 
   // Use target during navigation, otherwise follow activeSection
-  const indicatorIndex = targetIndex ?? activeIndex;
+  // Ensure we have a valid index (fallback to 0 if not found)
+  const rawIndicatorIndex = targetIndex ?? activeIndex;
+  const indicatorIndex = rawIndicatorIndex >= 0 ? rawIndicatorIndex : 0;
   
-  // Calculate indicator position based on actual button positions relative to container
+  // Get the indicator offset from cached values (calculated once from measurement div)
+  // This is stable and doesn't depend on scroll position or container state
+  const indicatorOffset = buttonOffsetsRef.current[indicatorIndex] ?? 0;
+  
+  // When menu closes, disable star animation for next open
   useEffect(() => {
-    // Only calculate when expanded
+    if (!isHovered) {
+      setShouldAnimateStar(false);
+    }
+  }, [isHovered]);
+  
+  // Enable animation after menu opens (so initial position doesn't animate)
+  useEffect(() => {
     if (!isHovered) return;
-    
-    const calculateOffset = () => {
-      const button = buttonRefs.current[indicatorIndex];
-      if (!button || !containerRef.current) return;
-      
-      // Get position relative to the shared container
-      const containerRect = containerRef.current.getBoundingClientRect();
-      const buttonRect = button.getBoundingClientRect();
-      
-      // Calculate center of button relative to container
-      const offset = (buttonRect.top - containerRect.top) + buttonRect.height / 2;
-      setIndicatorOffset(offset);
-    };
-    
-    // Use requestAnimationFrame to ensure DOM has painted
-    const rafId = requestAnimationFrame(() => {
-      calculateOffset();
-      // Recalculate again after animation has likely settled
-      setTimeout(calculateOffset, 100);
-    });
-    
-    return () => cancelAnimationFrame(rafId);
-  }, [indicatorIndex, sections, isHovered]);
+    // Enable animation after a brief delay (after initial position is shown)
+    const enableAnimation = setTimeout(() => setShouldAnimateStar(true), 50);
+    return () => clearTimeout(enableAnimation);
+  }, [isHovered]);
 
   const handleClick = (id: string, index: number) => {
     // Don't do anything if already at target
@@ -162,7 +169,7 @@ export function TableOfContents({ sections }: TableOfContentsProps) {
 
   return (
     <>
-      {/* Hidden measurement div - renders content off-screen to measure natural size */}
+      {/* Hidden measurement div - renders content off-screen to measure natural size and button positions */}
       <div
         ref={measureRef}
         className="fixed -left-[9999px] top-0 pl-2 pr-4 py-2 pointer-events-none"
@@ -170,9 +177,13 @@ export function TableOfContents({ sections }: TableOfContentsProps) {
       >
         <div className="relative flex">
           <div className="relative w-[13px] shrink-0" />
-          <nav className="flex flex-col gap-1">
-            {sections.map((section) => (
-              <div key={section.id} className="px-3 py-1.5 text-base leading-normal whitespace-nowrap">
+          <nav className="relative flex flex-col gap-1">
+            {sections.map((section, index) => (
+              <div 
+                key={section.id} 
+                ref={(el) => { measureButtonRefs.current[index] = el; }}
+                className="px-3 py-1.5 text-base leading-normal whitespace-nowrap"
+              >
                 {section.title}
               </div>
             ))}
@@ -247,10 +258,9 @@ export function TableOfContents({ sections }: TableOfContentsProps) {
                 top: indicatorOffset - 9, // Center the 18px container
               }}
               transition={{
-                type: "spring",
-                stiffness: 500,
-                damping: 28,
-                mass: 0.8,
+                type: "tween",
+                duration: shouldAnimateStar ? 0.15 : 0, // Instant when menu opens, animated after
+                ease: "easeOut",
               }}
             >
               {/* Background to create gap in line */}

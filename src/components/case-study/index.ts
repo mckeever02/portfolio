@@ -11,6 +11,7 @@ export { TiltedImageGrid } from "./TiltedImageGrid";
 export { QuoteCard } from "./QuoteCard";
 export { HackathonSection } from "./HackathonSection";
 export { BodyText } from "./BodyText";
+export { BodyList } from "./BodyList";
 export { StickyNotesGrid } from "./StickyNotesGrid";
 export { FeatureCard, FeatureCardConnector, FeatureCardList } from "./FeatureCard";
 export type { FeatureCardItem } from "./FeatureCard";

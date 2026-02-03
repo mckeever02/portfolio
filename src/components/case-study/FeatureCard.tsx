@@ -5,17 +5,23 @@ import Image from "next/image";
 
 export interface FeatureCardItem {
   title: string;
-  description: string;
+  description: React.ReactNode;
   bannerBg?: string;
   icon: React.ReactNode;
 }
 
-export function FeatureCard({ item }: { item: FeatureCardItem }) {
+export function FeatureCard({ item, variant = "horizontal" }: { item: FeatureCardItem; variant?: "horizontal" | "vertical" }) {
+  const isVertical = variant === "vertical";
+  
   return (
-    <div className="bg-[var(--background)] border border-[var(--foreground)]/20 flex flex-col sm:flex-row overflow-hidden">
-      <div className="p-1 sm:self-stretch">
+    <div className={`bg-[var(--background)] border border-[var(--foreground)]/20 flex flex-col ${!isVertical ? "sm:flex-row" : ""} overflow-hidden`}>
+      <div className={`p-1 ${!isVertical ? "sm:self-stretch" : ""}`}>
         <div
-          className="relative py-4 sm:py-0 shrink-0 flex items-center justify-center w-full sm:w-32 sm:h-full sm:min-h-[128px] overflow-hidden"
+          className={`relative shrink-0 flex items-center justify-center overflow-hidden ${
+            isVertical 
+              ? "py-8 w-full" 
+              : "py-4 sm:py-0 w-full sm:w-32 sm:h-full sm:min-h-[128px]"
+          }`}
           style={{
             backgroundColor: item.bannerBg ? undefined : "var(--foreground)",
           }}
@@ -27,7 +33,7 @@ export function FeatureCard({ item }: { item: FeatureCardItem }) {
                 alt=""
                 fill
                 className="object-cover"
-                sizes="(max-width: 640px) 100vw, 128px"
+                sizes={isVertical ? "100vw" : "(max-width: 640px) 100vw, 128px"}
               />
               <div className="absolute inset-0 bg-black/10" />
             </>

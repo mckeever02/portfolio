@@ -950,14 +950,36 @@ export function PromptGuidelineCard({
   delay?: number;
 }) {
   const [showCard, setShowCard] = useState(false);
+  const [isInView, setIsInView] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
+  
+  // Track when component is in view
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsInView(true);
+          observer.disconnect(); // Only trigger once
+        }
+      },
+      { threshold: 0.3 }
+    );
+    
+    if (containerRef.current) {
+      observer.observe(containerRef.current);
+    }
+    
+    return () => observer.disconnect();
+  }, []);
   
   return (
     <motion.div
+      ref={containerRef}
       className={`flex items-center ${alignRight ? 'flex-row-reverse' : ''}`}
       initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
+      animate={{ opacity: isInView ? 1 : 0 }}
       exit={{ opacity: 0 }}
-      transition={{ duration: 0.2, delay }}
+      transition={{ duration: 0.2, delay: isInView ? delay : 0 }}
     >
       {/* Connector line with circle - line draws based on alignment */}
       <svg 
@@ -975,7 +997,7 @@ export function PromptGuidelineCard({
           strokeWidth="1" 
           fill="none"
           initial={{ scale: 0, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
+          animate={isInView ? { scale: 1, opacity: 1 } : { scale: 0, opacity: 0 }}
           transition={{ duration: 0.2, ease: "easeOut", delay }}
         />
         {/* Inner filled circle */}
@@ -983,7 +1005,7 @@ export function PromptGuidelineCard({
           cx="8" cy="8" r="3.5" 
           fill="var(--foreground)"
           initial={{ scale: 0 }}
-          animate={{ scale: 1 }}
+          animate={isInView ? { scale: 1 } : { scale: 0 }}
           transition={{ duration: 0.2, ease: "easeOut", delay }}
         />
         {/* Horizontal line as path - draws left to right */}
@@ -993,13 +1015,13 @@ export function PromptGuidelineCard({
           strokeWidth="1"
           fill="none"
           initial={{ pathLength: 0 }}
-          animate={{ pathLength: 1 }}
+          animate={isInView ? { pathLength: 1 } : { pathLength: 0 }}
           transition={{ 
             duration: 0.25, 
             delay: delay + 0.1,
             ease: "easeOut"
           }}
-          onAnimationComplete={() => setShowCard(true)}
+          onAnimationComplete={() => isInView && setShowCard(true)}
         />
       </svg>
       
@@ -1597,6 +1619,105 @@ export function CyclingPermissionCard({ showCountdown = true }: { showCountdown?
   );
 }
 
+// ===============================
+// SHARED PERMISSION CARD COMPONENTS
+// ===============================
+
+// Platform Avatar Row - shared between desktop and mobile
+function PlatformAvatarRow({ size = 'default' }: { size?: 'default' | 'compact' }) {
+  const isCompact = size === 'compact';
+  const avatarSize = isCompact ? 'w-12 h-12' : 'w-15 h-15';
+  const avatarRadius = isCompact ? 'rounded-[10px]' : 'rounded-[12px]';
+  const connectorWidth = isCompact ? 'w-12' : 'w-16';
+  const imageSize = isCompact ? 48 : 60;
+  
+  return (
+    <div className="flex items-center gap-1">
+      {/* Browserbase Logo */}
+      <div className={`${avatarSize} ${avatarRadius} overflow-hidden bg-white dark:bg-[#3a3a3a] flex items-center justify-center`}>
+        <Image 
+          src={LOGO_URLS.browserbase} 
+          alt="Browserbase" 
+          width={imageSize}
+          height={imageSize}
+          className="object-cover w-full h-full"
+        />
+      </div>
+      
+      {/* Connector Line with Checkmark */}
+      <div className={`flex items-center gap-1 ${connectorWidth}`}>
+        <div className="flex-1 h-[2px] rounded-full bg-black dark:bg-white opacity-20" />
+        <CheckmarkIcon />
+        <div className="flex-1 h-[2px] rounded-full bg-black dark:bg-white opacity-20" />
+      </div>
+      
+      {/* 1Password Logo */}
+      <div className={`${avatarSize} ${avatarRadius} overflow-hidden bg-white dark:bg-[#3a3a3a] flex items-center justify-center`}>
+        <Image 
+          src={LOGO_URLS.onePassword} 
+          alt="1Password" 
+          width={imageSize}
+          height={imageSize}
+          className="object-cover w-full h-full"
+        />
+      </div>
+    </div>
+  );
+}
+
+// Credential Row - shared between desktop and mobile
+interface CredentialRowProps {
+  name: string;
+  username: string;
+  logo: string;
+  showOverflow?: boolean;
+  showCheckbox?: boolean;
+  isLast?: boolean;
+}
+
+function CredentialRow({ name, username, logo, showOverflow = true, showCheckbox = false, isLast = false }: CredentialRowProps) {
+  return (
+    <div className={`flex items-center gap-3 px-3 py-2 ${!isLast && !showCheckbox ? '' : ''}`}>
+      {showCheckbox && (
+        <div className="w-[22px] h-[22px] rounded-full bg-[#0570eb] flex items-center justify-center shrink-0">
+          <svg width="12" height="12" viewBox="0 0 10 10" fill="none">
+            <path d="M2 5L4 7L8 3" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+          </svg>
+        </div>
+      )}
+      <div className="w-8 h-8 rounded-[6px] overflow-hidden bg-white dark:bg-[#3a3a3a] flex items-center justify-center shrink-0">
+        <Image 
+          src={logo} 
+          alt={name} 
+          width={30}
+          height={30}
+          className="object-contain"
+        />
+      </div>
+      <div className="flex-1 flex flex-col gap-0.5 min-w-0">
+        <span className="text-[14px] leading-[1.2] text-[rgba(0,0,0,0.82)] dark:text-[rgba(255,255,255,0.9)] tracking-[-0.09px] truncate">
+          {name}
+        </span>
+        <span className="text-[12px] leading-[1.2] text-[rgba(0,0,0,0.62)] dark:text-[rgba(255,255,255,0.6)] tracking-[0.01px] truncate">
+          {username}
+        </span>
+      </div>
+      {showOverflow && (
+        <button className="p-1.5 rounded-[8px] hover:bg-[rgba(0,0,0,0.05)] dark:hover:bg-[rgba(255,255,255,0.08)] transition-colors shrink-0">
+          <OverflowIcon />
+        </button>
+      )}
+    </div>
+  );
+}
+
+// Credential data used by both desktop and mobile
+const CREDENTIAL_ITEMS = [
+  { name: "Stripe", username: "sonja.johnson@acmeltd.com", logo: LOGO_URLS.stripe },
+  { name: "GitHub", username: "sonja-johnson", logo: LOGO_URLS.github },
+  { name: "Zapier", username: "sonja.johnson@acmeltd.com", logo: LOGO_URLS.zapier },
+];
+
 // Permission card content - Figma accurate design with gray bg and shadow
 export function PermissionCardContent({ onAuthorize }: { onAuthorize?: () => void }) {
   return (
@@ -1617,37 +1738,8 @@ export function PermissionCardContent({ onAuthorize }: { onAuthorize?: () => voi
           
           {/* Access Content: Icon Row + Description */}
           <div className="flex flex-col gap-3 items-center w-full">
-            {/* Icon Row with Connector - gap-[1px] between sections */}
-            <div className="flex items-center gap-1">
-              {/* Browserbase Logo - 64px container, flush */}
-              <div className="w-15 h-15 rounded-[12px] overflow-hidden bg-white dark:bg-[#3a3a3a] flex items-center justify-center">
-                <Image 
-                  src={LOGO_URLS.browserbase} 
-                  alt="Browserbase" 
-                  width={60}
-                  height={60}
-                  className="object-cover w-full h-full"
-                />
-              </div>
-              
-              {/* Connector Line with Checkmark - 64px wide, gap-[4px] */}
-              <div className="flex items-center gap-1 w-16">
-                <div className="flex-1 h-[2px] rounded-full bg-black dark:bg-white opacity-20" />
-                <CheckmarkIcon />
-                <div className="flex-1 h-[2px] rounded-full bg-black dark:bg-white opacity-20" />
-              </div>
-              
-              {/* 1Password Logo - 64px container, flush */}
-              <div className="w-15 h-15 rounded-[12px] overflow-hidden bg-white dark:bg-[#3a3a3a] flex items-center justify-center">
-                <Image 
-                  src={LOGO_URLS.onePassword} 
-                  alt="1Password" 
-                  width={60}
-                  height={60}
-                  className="object-cover w-full h-full"
-                />
-              </div>
-            </div>
+            {/* Icon Row with Connector - using shared component */}
+            <PlatformAvatarRow size="default" />
             
             {/* Description with line break */}
             <p className="text-[16px] leading-[1.2] text-center text-[rgba(0,0,0,0.82)] dark:text-[rgba(255,255,255,0.9)] px-1">
@@ -1657,80 +1749,18 @@ export function PermissionCardContent({ onAuthorize }: { onAuthorize?: () => voi
           </div>
         </div>
         
-        {/* Credential Rows */}
+        {/* Credential Rows - using shared component */}
         <div className="flex flex-col gap-4 items-start w-full">
           <div className="bg-[#fafafa] dark:bg-[#1f1f1f] border border-[rgba(0,0,0,0.13)] dark:border-[rgba(255,255,255,0.13)] rounded-[8px] w-full">
-            {/* Stripe Row */}
-            <div className="flex items-center gap-3 px-3 py-2">
-              <div className="w-8 h-8 rounded-[6px] overflow-hidden bg-white dark:bg-[#3a3a3a] flex items-center justify-center">
-                <Image 
-                  src={LOGO_URLS.stripe} 
-                  alt="Stripe" 
-                  width={30}
-                  height={30}
-                  className="object-contain"
-                />
-              </div>
-              <div className="flex-1 flex flex-col gap-0.5">
-                <span className="text-[14px] leading-[1.2] text-[rgba(0,0,0,0.82)] dark:text-[rgba(255,255,255,0.9)] tracking-[-0.09px]">
-                  Stripe
-                </span>
-                <span className="text-[12px] leading-[1.2] text-[rgba(0,0,0,0.62)] dark:text-[rgba(255,255,255,0.6)] tracking-[0.01px]">
-                  sonja.johnson@acmeltd.com
-                </span>
-              </div>
-              <button className="p-1.5 rounded-[8px] hover:bg-[rgba(0,0,0,0.05)] dark:hover:bg-[rgba(255,255,255,0.08)] transition-colors">
-                <OverflowIcon />
-              </button>
-            </div>
-
-            {/* GitHub Row */}
-            <div className="flex items-center gap-3 px-3 py-2">
-              <div className="w-8 h-8 rounded-[6px] overflow-hidden bg-white dark:bg-[#3a3a3a] flex items-center justify-center">
-                <Image 
-                  src={LOGO_URLS.github} 
-                  alt="GitHub" 
-                  width={30}
-                  height={30}
-                  className="object-contain"
-                />
-              </div>
-              <div className="flex-1 flex flex-col gap-0.5">
-                <span className="text-[14px] leading-[1.2] text-[rgba(0,0,0,0.82)] dark:text-[rgba(255,255,255,0.9)] tracking-[-0.09px]">
-                  GitHub
-                </span>
-                <span className="text-[12px] leading-[1.2] text-[rgba(0,0,0,0.62)] dark:text-[rgba(255,255,255,0.6)] tracking-[0.01px]">
-                  sonja-johnson
-                </span>
-              </div>
-              <button className="p-1.5 rounded-[8px] hover:bg-[rgba(0,0,0,0.05)] dark:hover:bg-[rgba(255,255,255,0.08)] transition-colors">
-                <OverflowIcon />
-              </button>
-            </div>
-
-            {/* Zapier Row */}
-            <div className="flex items-center gap-3 px-3 py-2">
-              <div className="w-8 h-8 rounded-[6px] overflow-hidden bg-white dark:bg-[#3a3a3a] flex items-center justify-center">
-                <Image 
-                  src={LOGO_URLS.zapier} 
-                  alt="Zapier" 
-                  width={30}
-                  height={30}
-                  className="object-contain"
-                />
-              </div>
-              <div className="flex-1 flex flex-col gap-0.5">
-                <span className="text-[14px] leading-[1.2] text-[rgba(0,0,0,0.82)] dark:text-[rgba(255,255,255,0.9)] tracking-[-0.09px]">
-                  Zapier
-                </span>
-                <span className="text-[12px] leading-[1.2] text-[rgba(0,0,0,0.62)] dark:text-[rgba(255,255,255,0.6)] tracking-[0.01px]">
-                  sonja.johnson@acmeltd.com
-                </span>
-              </div>
-              <button className="p-1.5 rounded-[8px] hover:bg-[rgba(0,0,0,0.05)] dark:hover:bg-[rgba(255,255,255,0.08)] transition-colors">
-                <OverflowIcon />
-              </button>
-            </div>
+            {CREDENTIAL_ITEMS.map((item, idx) => (
+              <CredentialRow 
+                key={idx}
+                {...item}
+                showOverflow={true}
+                showCheckbox={false}
+                isLast={idx === CREDENTIAL_ITEMS.length - 1}
+              />
+            ))}
           </div>
           
           {/* Access Duration Row */}
@@ -1758,6 +1788,333 @@ export function PermissionCardContent({ onAuthorize }: { onAuthorize?: () => voi
           >
             Authorize
           </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// Animated credential row for mobile with checkbox
+function AnimatedMobileCredentialRow({ 
+  allNames,
+  allUsernames,
+  currentIndex,
+  logo,
+  isLoading 
+}: { 
+  allNames: string[];
+  allUsernames: string[];
+  currentIndex: number;
+  logo: string;
+  isLoading: boolean;
+}) {
+  const nameRef = useRef<RotatingTextRef>(null);
+  const usernameRef = useRef<RotatingTextRef>(null);
+  
+  useEffect(() => {
+    nameRef.current?.jumpTo(currentIndex);
+    usernameRef.current?.jumpTo(currentIndex);
+  }, [currentIndex]);
+  
+  return (
+    <motion.div 
+      className="flex items-center gap-3 px-3 py-2"
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: -10 }}
+      transition={{ duration: 0.2 }}
+    >
+      {/* Checkbox */}
+      <div className="w-[18px] h-[18px] rounded-full bg-[#0570eb] flex items-center justify-center shrink-0">
+        <svg width="10" height="10" viewBox="0 0 10 10" fill="none">
+          <path d="M2 5L4 7L8 3" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+        </svg>
+      </div>
+      {/* Icon */}
+      <div className="w-8 h-8 rounded-[6px] overflow-hidden bg-white dark:bg-[#3a3a3a] flex items-center justify-center shrink-0">
+        <AnimatePresence mode="wait">
+          {isLoading ? (
+            <motion.div
+              key="skeleton"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.15 }}
+              className="w-full h-full"
+            >
+              <SkeletonShimmer className="w-full h-full" />
+            </motion.div>
+          ) : (
+            <motion.div
+              key={logo}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.2 }}
+              className="w-full h-full flex items-center justify-center bg-white rounded-[6px]"
+            >
+              <Image 
+                src={logo} 
+                alt="" 
+                width={30}
+                height={30}
+                className="object-contain"
+              />
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
+      {/* Text */}
+      <div className="flex-1 flex flex-col gap-0.5 min-w-0 overflow-hidden">
+        <span className="text-[14px] leading-[1.2] text-[rgba(0,0,0,0.82)] dark:text-[rgba(255,255,255,0.9)] tracking-[-0.09px]">
+          <RotatingText 
+            ref={nameRef}
+            texts={allNames}
+            auto={false}
+            rotationInterval={PERMISSION_CYCLE_DURATION}
+            splitBy="characters"
+            staggerDuration={0.008}
+            staggerFrom="first"
+            transition={{ type: 'spring', damping: 30, stiffness: 400 }}
+            mainClassName="h-[17px]"
+          />
+        </span>
+        <span className="text-[12px] leading-[1.2] text-[rgba(0,0,0,0.62)] dark:text-[rgba(255,255,255,0.6)] tracking-[0.01px]">
+          <RotatingText 
+            ref={usernameRef}
+            texts={allUsernames}
+            auto={false}
+            rotationInterval={PERMISSION_CYCLE_DURATION}
+            splitBy="characters"
+            staggerDuration={0.006}
+            staggerFrom="first"
+            transition={{ type: 'spring', damping: 30, stiffness: 400 }}
+            mainClassName="h-[14px]"
+          />
+        </span>
+      </div>
+      {/* Overflow menu */}
+      <button className="p-1.5 rounded-[8px] hover:bg-[rgba(0,0,0,0.05)] dark:hover:bg-[rgba(255,255,255,0.08)] transition-colors shrink-0">
+        <OverflowIcon />
+      </button>
+    </motion.div>
+  );
+}
+
+// Mobile Permission Card - iOS-style bottom sheet version with cycling
+export function MobilePermissionCard() {
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [cycleKey, setCycleKey] = useState(0);
+  const [isActive, setIsActive] = useState(false);
+  const [isLoadingIcons, setIsLoadingIcons] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const platformNameRef = useRef<RotatingTextRef>(null);
+  
+  // Precompute all text arrays for rotation
+  const allPlatformNames = permissionCardConfigs.map(c => c.name);
+  
+  // Precompute credential data for each row position across all configs
+  const credentialRows = [0, 1, 2].map(rowIndex => ({
+    names: permissionCardConfigs.map(c => c.credentials[rowIndex]?.name || ''),
+    usernames: permissionCardConfigs.map(c => c.credentials[rowIndex]?.username || ''),
+    logos: permissionCardConfigs.map(c => c.credentials[rowIndex]?.logo || ''),
+  }));
+  
+  // Start cycling when in view
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsActive(true);
+        }
+      },
+      { threshold: 0.5 }
+    );
+    
+    if (containerRef.current) {
+      observer.observe(containerRef.current);
+    }
+    
+    return () => observer.disconnect();
+  }, []);
+  
+  // Sync rotating text components with current index
+  useEffect(() => {
+    platformNameRef.current?.jumpTo(currentIndex);
+  }, [currentIndex]);
+  
+  // Cycle through configs
+  useEffect(() => {
+    if (!isActive) return;
+    
+    const timer = setTimeout(() => {
+      // Skeleton loading for icons
+      setIsLoadingIcons(true);
+      
+      // Update content while skeleton is showing
+      setTimeout(() => {
+        setCurrentIndex((prev) => (prev + 1) % permissionCardConfigs.length);
+        setCycleKey((prev) => prev + 1);
+      }, 400);
+      
+      // Delay hiding skeleton so it plays longer
+      setTimeout(() => {
+        setIsLoadingIcons(false);
+      }, 900);
+    }, PERMISSION_CYCLE_DURATION);
+    
+    return () => clearTimeout(timer);
+  }, [currentIndex, isActive, cycleKey]);
+  
+  const currentConfig = permissionCardConfigs[currentIndex];
+  
+  return (
+    <div ref={containerRef} className={`flex flex-col h-full ${inter.className}`}>
+      {/* Dark overlay area (app behind) */}
+      <div className="bg-[#4a4a4a] h-[50px]" />
+      
+      {/* iOS Bottom Sheet */}
+      <div className="flex-1 bg-[#ededed] dark:bg-[#2a2a2a] rounded-t-[10px] flex flex-col relative">
+        {/* Drag handle */}
+        <div className="flex justify-center pt-[6px]">
+          <div className="w-[36px] h-[5px] bg-[rgba(0,0,0,0.2)] dark:bg-[rgba(255,255,255,0.3)] rounded-full" />
+        </div>
+        
+        {/* Close button */}
+        <button className="absolute right-3 top-3 w-[26px] h-[26px] bg-[rgba(0,0,0,0.08)] dark:bg-[rgba(255,255,255,0.15)] rounded-full flex items-center justify-center">
+          <svg width="10" height="10" viewBox="0 0 10 10" fill="none">
+            <path d="M1 1L9 9M9 1L1 9" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" className="text-[rgba(0,0,0,0.62)] dark:text-[rgba(255,255,255,0.6)]"/>
+          </svg>
+        </button>
+        
+        {/* Content */}
+        <div className="flex-1 flex flex-col px-5 pt-10 pb-5 overflow-hidden">
+          {/* Title - same styling as desktop */}
+          <h3 className="text-[20px] font-semibold leading-[1.2] text-center text-[rgba(0,0,0,0.82)] dark:text-[rgba(255,255,255,0.9)] tracking-[-0.33px] mb-4">
+            1Password Access Requested
+          </h3>
+          
+          {/* Platform icons - with cycling */}
+          <div className="flex items-center justify-center gap-1 mb-3">
+            {/* Platform Logo - cycling */}
+            <div className="w-12 h-12 rounded-[10px] overflow-hidden bg-white dark:bg-[#3a3a3a] flex items-center justify-center">
+              <AnimatePresence mode="wait">
+                {isLoadingIcons ? (
+                  <motion.div
+                    key="skeleton"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 0.15 }}
+                    className="w-full h-full"
+                  >
+                    <SkeletonShimmer className="w-full h-full" />
+                  </motion.div>
+                ) : (
+                  <motion.div
+                    key={currentConfig.logo}
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 0.2 }}
+                    className="w-full h-full"
+                  >
+                    <Image 
+                      src={currentConfig.logo} 
+                      alt={currentConfig.name} 
+                      width={48}
+                      height={48}
+                      className="object-cover w-full h-full"
+                    />
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
+            
+            {/* Connector Line with Checkmark */}
+            <div className="flex items-center gap-1 w-12">
+              <div className="flex-1 h-[2px] rounded-full bg-black dark:bg-white opacity-20" />
+              <CheckmarkIcon />
+              <div className="flex-1 h-[2px] rounded-full bg-black dark:bg-white opacity-20" />
+            </div>
+            
+            {/* 1Password Logo - always static */}
+            <div className="w-12 h-12 rounded-[10px] overflow-hidden bg-white dark:bg-[#3a3a3a] flex items-center justify-center">
+              <Image 
+                src={LOGO_URLS.onePassword} 
+                alt="1Password" 
+                width={48}
+                height={48}
+                className="object-cover w-full h-full"
+              />
+            </div>
+          </div>
+          
+          {/* Description with rotating text - same styling as desktop */}
+          <p className="text-[16px] leading-[1.2] text-center text-[rgba(0,0,0,0.82)] dark:text-[rgba(255,255,255,0.9)] mb-4">
+            Allow{" "}
+            <span className="font-semibold text-[15.5px] tracking-[-0.17px]">
+              <RotatingText 
+                ref={platformNameRef}
+                texts={allPlatformNames}
+                auto={false}
+                rotationInterval={PERMISSION_CYCLE_DURATION}
+                splitBy="characters"
+                staggerDuration={0.012}
+                staggerFrom="first"
+                transition={{ type: 'spring', damping: 25, stiffness: 500 }}
+              />
+            </span>
+            {" "}to use 1Password to autofill{" "}
+            <span className="font-semibold text-[15.5px] tracking-[-0.17px]">3 items</span>
+            {" "}on your behalf
+          </p>
+          
+          {/* Credential list - with cycling and checkboxes */}
+          <motion.div 
+            className="bg-[#fafafa] dark:bg-[#1f1f1f] border border-[rgba(0,0,0,0.13)] dark:border-[rgba(255,255,255,0.13)] rounded-[8px] mb-3 overflow-hidden"
+            animate={{ height: "auto" }}
+            transition={{ type: "spring", stiffness: 300, damping: 25 }}
+          >
+            {credentialRows.map((row, index) => (
+              <AnimatedMobileCredentialRow 
+                key={index}
+                allNames={row.names}
+                allUsernames={row.usernames}
+                currentIndex={currentIndex}
+                logo={row.logos[currentIndex]}
+                isLoading={isLoadingIcons}
+              />
+            ))}
+          </motion.div>
+          
+          {/* Helper text */}
+          <p className="text-[12px] leading-[1.2] text-[rgba(0,0,0,0.62)] dark:text-[rgba(255,255,255,0.6)] mb-3 px-1">
+            Your credentials are only shared with the remote browser session.
+          </p>
+          
+          {/* Access duration - same pattern as desktop */}
+          <div className="flex items-center justify-between w-full mb-4">
+            <span className="text-[14px] leading-[1.2] text-[rgba(0,0,0,0.82)] dark:text-[rgba(255,255,255,0.9)] tracking-[-0.09px]">
+              Allow access for:
+            </span>
+            <div className="bg-white dark:bg-[#3a3a3a] border border-[rgba(0,0,0,0.13)] dark:border-[rgba(255,255,255,0.13)] rounded-[8px] px-2 py-1.5 flex items-center gap-2">
+              <span className="text-[14px] leading-[1.2] text-[rgba(0,0,0,0.82)] dark:text-[rgba(255,255,255,0.9)] tracking-[-0.09px]">
+                Just this task
+              </span>
+              <ChevronDownIcon />
+            </div>
+          </div>
+          
+          {/* Buttons - mobile full-width style */}
+          <div className="flex flex-col gap-2 mt-auto">
+            <button className="w-full py-2.5 bg-[#0570eb] text-white text-[14px] font-medium rounded-[8px] hover:bg-[#0560d0] transition-colors tracking-[-0.09px]">
+              Allow Access to 3 items
+            </button>
+            <button className="w-full py-2.5 border border-[rgba(0,0,0,0.13)] dark:border-[rgba(255,255,255,0.13)] text-[rgba(0,0,0,0.82)] dark:text-[rgba(255,255,255,0.9)] text-[14px] rounded-[8px] hover:bg-[rgba(0,0,0,0.05)] dark:hover:bg-[rgba(255,255,255,0.08)] transition-colors tracking-[-0.09px]">
+              Cancel
+            </button>
+          </div>
         </div>
       </div>
     </div>
