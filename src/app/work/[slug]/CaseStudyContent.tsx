@@ -14,12 +14,13 @@ import {
   StickyNotesGrid,
   FeatureCardList,
   StatCard,
+  Tabs,
 } from "@/components/case-study";
 import type { FeatureCardItem } from "@/components/case-study";
 import Image from "next/image";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { ZigZagDivider } from "@/components/ZigZagDivider";
-import { SummaryCardDemo, CyclingPermissionCard } from "@/components/SummaryCardDemo";
+import { SummaryCardDemo, CyclingPermissionCard, PromptGuidelineCard } from "@/components/SummaryCardDemo";
 import { FlipCard, CardFace } from "@/components/FlipCard";
 import { FlipCarousel } from "@/components/FlipCarousel";
 import { SkewedTag } from "@/components/SkewedTag";
@@ -723,10 +724,100 @@ export function AgenticAutofillContent({ caseStudy }: { caseStudy: CaseStudy }) 
       </NarrowContent>
 
       <WideContent>
-        <div className="flex justify-center py-8">
-          <CyclingPermissionCard />
+        {/* Platform Tabs */}
+        <div className="mb-6">
+          <Tabs
+            options={[
+              { id: 'desktop', label: 'Desktop' },
+              { id: 'mobile', label: 'Mobile' }
+            ]}
+            defaultTab="desktop"
+          />
+        </div>
+        
+        {/* Prompt and callouts */}
+        <div className="flex justify-center py-8 relative">
+          <CyclingPermissionCard showCountdown={false} />
+          
+          {/* Guideline callout positioned to the left, connecting to platform avatar */}
+          <div className="hidden lg:block absolute right-[calc(50%+180px)] top-[95px]">
+            <PromptGuidelineCard 
+              title="The Requester" 
+              description="The platform or AI agent requesting access to your 1Password item(s)."
+              alignRight={true}
+              showLabel={true}
+              labelText="UX Callout"
+            />
+          </div>
+          
+          {/* Guideline callout positioned to the right, upper section */}
+          <div className="hidden lg:block absolute left-[calc(50%+190px)] top-[275px]">
+            <PromptGuidelineCard 
+              title="Choose a different item" 
+              description="If the Agent requests the wrong item, the user can choose a different item or remove it."
+              alignRight={false}
+              showLabel={true}
+              labelText="UX Callout"
+              delay={2}
+            />
+          </div>
         </div>
       </WideContent>
+
+      {/* Pros and Cons Section */}
+      <NarrowContent>
+        <div className="grid md:grid-cols-2 gap-6 mt-12">
+          {/* Pros */}
+          <div className="bg-[var(--background)] border border-[var(--foreground)] p-6 rounded-lg">
+            <div className="flex items-center gap-2 mb-4">
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                <circle cx="10" cy="10" r="9" stroke="var(--foreground)" strokeWidth="1.5" fill="none"/>
+                <path d="M6 10l3 3 5-6" stroke="var(--foreground)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" fill="none"/>
+              </svg>
+              <h3 className="text-xl font-bold text-[var(--foreground)]">Advantages</h3>
+            </div>
+            <ul className="space-y-3">
+              <li className="text-[var(--foreground)] opacity-80 leading-relaxed">
+                <strong className="opacity-100">Transparency:</strong> Users see exactly which credentials are being requested and by which service in real-time
+              </li>
+              <li className="text-[var(--foreground)] opacity-80 leading-relaxed">
+                <strong className="opacity-100">Control:</strong> Provides immediate ability to approve, deny, or modify access requests
+              </li>
+              <li className="text-[var(--foreground)] opacity-80 leading-relaxed">
+                <strong className="opacity-100">Context:</strong> Shows the requesting service and specific items needed, helping users make informed decisions
+              </li>
+              <li className="text-[var(--foreground)] opacity-80 leading-relaxed">
+                <strong className="opacity-100">Security:</strong> Time-bound access and explicit consent reduce the risk of unauthorized credential use
+              </li>
+            </ul>
+          </div>
+
+          {/* Cons */}
+          <div className="bg-[var(--background)] border border-[var(--foreground)] p-6 rounded-lg">
+            <div className="flex items-center gap-2 mb-4">
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                <circle cx="10" cy="10" r="9" stroke="var(--foreground)" strokeWidth="1.5" fill="none"/>
+                <path d="M10 6v5M10 14v.5" stroke="var(--foreground)" strokeWidth="1.5" strokeLinecap="round" fill="none"/>
+              </svg>
+              <h3 className="text-xl font-bold text-[var(--foreground)]">Trade-offs</h3>
+            </div>
+            <ul className="space-y-3">
+              <li className="text-[var(--foreground)] opacity-80 leading-relaxed">
+                <strong className="opacity-100">Interruption:</strong> Prompts break the user's workflow, requiring active attention and decision-making
+              </li>
+              <li className="text-[var(--foreground)] opacity-80 leading-relaxed">
+                <strong className="opacity-100">Frequency:</strong> Multiple requests from the same agent could lead to prompt fatigue
+              </li>
+              <li className="text-[var(--foreground)] opacity-80 leading-relaxed">
+                <strong className="opacity-100">Cognitive load:</strong> Users must evaluate each request, which can be taxing when agents need frequent access
+              </li>
+              <li className="text-[var(--foreground)] opacity-80 leading-relaxed">
+                <strong className="opacity-100">Blocking:</strong> Agent workflow pauses until user responds, which may not align with autonomous operation expectations
+              </li>
+            </ul>
+          </div>
+        </div>
+      </NarrowContent>
 
       <NarrowContent>
         <ZigZagDivider />
@@ -736,7 +827,7 @@ export function AgenticAutofillContent({ caseStudy }: { caseStudy: CaseStudy }) 
       <NarrowContent id="prompt-guidelines" className="scroll-mt-8">
         <SkewedTag size="xl">Prompt Design Guidelines</SkewedTag>
         <p className="text-2xl sm:text-3xl md:text-4xl font-medium text-[var(--foreground)] leading-tight">
-          How do you design for something you can&apos;t control?
+          How do you design for something that's non-deterministic?
         </p>
         <BodyText>
           AI agents are inherently unpredictable. A key part of this project was defining guidelines that create predictable, trustworthy behavior when agents handle sensitive credentials—ensuring transparency, minimal access, and user control at every step.

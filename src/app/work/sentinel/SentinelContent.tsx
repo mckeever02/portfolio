@@ -236,16 +236,16 @@ const stickyNotes: Record<string, StickyNote[]> = {
 
 // Competitive analysis data
 const competitors = [
-  { name: "Okta", logo: "/images/work/sentinel/logo-okta.png", genAI: true, conversational: true, predictive: true, personalisation: true, agentic: false },
-  { name: "CrowdStrike", logo: "/images/work/sentinel/logo-crowdstrike.png", genAI: true, conversational: true, predictive: true, personalisation: true, agentic: true },
-  { name: "Atlassian", logo: "/images/work/sentinel/logo-atlassian.png", genAI: true, conversational: true, predictive: "partial", personalisation: true, agentic: true },
-  { name: "HubSpot", logo: "/images/work/sentinel/logo-hubspot.png", genAI: true, conversational: true, predictive: false, personalisation: true, agentic: true },
-  { name: "Monday.com", logo: "/images/work/sentinel/logo-monday.png", genAI: true, conversational: true, predictive: "partial", personalisation: true, agentic: false },
-  { name: "Notion", logo: "/images/work/sentinel/logo-notion.png", genAI: true, conversational: true, predictive: false, personalisation: true, agentic: true },
-  { name: "Zoho", logo: "/images/work/sentinel/logo-zoho.png", genAI: true, conversational: true, predictive: true, personalisation: true, agentic: true },
-  { name: "Google Workspace", logo: "/images/work/sentinel/logo-google-workspace.png", genAI: true, conversational: true, predictive: "partial", personalisation: true, agentic: false },
-  { name: "Salesforce", logo: "/images/work/sentinel/logo-salesforce.png", genAI: true, conversational: true, predictive: true, personalisation: true, agentic: true },
-  { name: "1Password", logo: "/images/work/sentinel/logo-1password.png", genAI: false, conversational: false, predictive: false, personalisation: false, agentic: false, highlight: true },
+  { name: "Okta", logo: "/images/logos/okta.png", genAI: true, conversational: true, predictive: true, personalisation: true, agentic: false },
+  { name: "CrowdStrike", logo: "/images/logos/crowdstrike.png", genAI: true, conversational: true, predictive: true, personalisation: true, agentic: true },
+  { name: "Atlassian", logo: "/images/logos/atlassian.png", genAI: true, conversational: true, predictive: "partial", personalisation: true, agentic: true },
+  { name: "HubSpot", logo: "/images/logos/hubspot.png", genAI: true, conversational: true, predictive: false, personalisation: true, agentic: true },
+  { name: "Monday.com", logo: "/images/logos/monday.png", genAI: true, conversational: true, predictive: "partial", personalisation: true, agentic: false },
+  { name: "Notion", logo: "/images/logos/notion.png", genAI: true, conversational: true, predictive: false, personalisation: true, agentic: true },
+  { name: "Zoho", logo: "/images/logos/zoho.png", genAI: true, conversational: true, predictive: true, personalisation: true, agentic: true },
+  { name: "Google Workspace", logo: "/images/logos/google-workspace.png", genAI: true, conversational: true, predictive: "partial", personalisation: true, agentic: false },
+  { name: "Salesforce", logo: "/images/logos/salesforce.png", genAI: true, conversational: true, predictive: true, personalisation: true, agentic: true },
+  { name: "1Password", logo: "/images/logos/1password.png", genAI: false, conversational: false, predictive: false, personalisation: false, agentic: false, highlight: true },
 ];
 
 function StatusIcon({ status }: { status: boolean | "partial" }) {

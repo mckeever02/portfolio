@@ -4,6 +4,7 @@ import { useState, useEffect, useRef, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
 import { Inter } from "next/font/google";
+import RotatingText, { RotatingTextRef } from "./RotatingText";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -511,22 +512,22 @@ const cardConfigs: Record<Exclude<CardType, "skeleton">, CardConfig> = {
     body: (
       <div className="flex flex-col">
         <Row
-          icon={<Image src="/images/work/sentinel/logo-netsuite.png" alt="NetSuite" width={24} height={24} className="rounded-[4px]" />}
+          icon={<Image src="/images/logos/netsuite.png" alt="NetSuite" width={24} height={24} className="rounded-[4px]" />}
           title="NetSuite"
           subtitle="Work4WorkFinance"
         />
         <Row
-          icon={<Image src="/images/work/sentinel/logo-aws.png" alt="AWS" width={24} height={24} className="rounded-[4px]" />}
+          icon={<Image src="/images/logos/aws.png" alt="AWS" width={24} height={24} className="rounded-[4px]" />}
           title="Amazon test"
           subtitle="emma.brown@work4work.org"
         />
         <Row
-          icon={<Image src="/images/work/sentinel/logo-starbucks.png" alt="Starbucks" width={24} height={24} className="rounded-[4px]" />}
+          icon={<Image src="/images/logos/starbucks.png" alt="Starbucks" width={24} height={24} className="rounded-[4px]" />}
           title="Starbucks"
           subtitle="emma.brown@work4work.org"
         />
         <Row
-          icon={<Image src="/images/work/sentinel/logo-plex.png" alt="Plex" width={24} height={24} className="rounded-[4px]" />}
+          icon={<Image src="/images/logos/plex.png" alt="Plex" width={24} height={24} className="rounded-[4px]" />}
           title="Plex"
           subtitle="emma.brown@work4work.org"
         />
@@ -537,7 +538,7 @@ const cardConfigs: Record<Exclude<CardType, "skeleton">, CardConfig> = {
     header: {
       icon: (
         <Image 
-          src="/images/work/sentinel/logo-netsuite.png" 
+          src="/images/logos/netsuite.png" 
           alt="NetSuite" 
           width={32} 
           height={32}
@@ -607,7 +608,7 @@ const cardConfigs: Record<Exclude<CardType, "skeleton">, CardConfig> = {
     header: {
       icon: (
         <Image 
-          src="/images/work/sentinel/logo-plex.png" 
+          src="/images/logos/plex.png" 
           alt="Plex" 
           width={32} 
           height={32}
@@ -933,24 +934,40 @@ function OverflowIcon() {
 }
 
 // Prompt Design Guideline card component with line-draw animation
-function PromptGuidelineCard({ 
+export function PromptGuidelineCard({ 
   title, 
   description,
+  alignRight = false,
+  showLabel = true,
+  labelText = "Prompt Design Guidelines",
+  delay = 0,
 }: { 
   title: string; 
   description: string;
+  alignRight?: boolean;
+  showLabel?: boolean;
+  labelText?: string;
+  delay?: number;
 }) {
   const [showCard, setShowCard] = useState(false);
   
   return (
     <motion.div
-      className="flex items-center"
-      initial={{ opacity: 1 }}
+      className={`flex items-center ${alignRight ? 'flex-row-reverse' : ''}`}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      transition={{ duration: 0.2 }}
+      transition={{ duration: 0.2, delay }}
     >
-      {/* Connector line with circle - line draws left to right */}
-      <svg width="70" height="16" viewBox="0 0 70 16" fill="none" className="shrink-0 -ml-5">
+      {/* Connector line with circle - line draws based on alignment */}
+      <svg 
+        width="80" 
+        height="16" 
+        viewBox="0 0 80 16" 
+        fill="none" 
+        className={`shrink-0 ${alignRight ? '-mr-5' : '-ml-5'}`}
+        style={alignRight ? { transform: 'scaleX(-1)' } : undefined}
+      >
         {/* Outer circle ring - pops in first */}
         <motion.circle 
           cx="8" cy="8" r="7" 
@@ -959,7 +976,7 @@ function PromptGuidelineCard({
           fill="none"
           initial={{ scale: 0, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
-          transition={{ duration: 0.2, ease: "easeOut" }}
+          transition={{ duration: 0.2, ease: "easeOut", delay }}
         />
         {/* Inner filled circle */}
         <motion.circle 
@@ -967,11 +984,11 @@ function PromptGuidelineCard({
           fill="var(--foreground)"
           initial={{ scale: 0 }}
           animate={{ scale: 1 }}
-          transition={{ duration: 0.2, ease: "easeOut" }}
+          transition={{ duration: 0.2, ease: "easeOut", delay }}
         />
         {/* Horizontal line as path - draws left to right */}
         <motion.path 
-          d="M15 8 L70 8"
+          d="M15 8 L80 8"
           stroke="var(--foreground)"
           strokeWidth="1"
           fill="none"
@@ -979,7 +996,7 @@ function PromptGuidelineCard({
           animate={{ pathLength: 1 }}
           transition={{ 
             duration: 0.25, 
-            delay: 0.1,
+            delay: delay + 0.1,
             ease: "easeOut"
           }}
           onAnimationComplete={() => setShowCard(true)}
@@ -988,7 +1005,7 @@ function PromptGuidelineCard({
       
       {/* Guideline card - always rendered to maintain layout, visibility animated */}
       <motion.div 
-        className="bg-[var(--background)] border border-[var(--foreground)] w-[275px] p-4 flex flex-col gap-3 overflow-hidden origin-left"
+        className={`bg-[var(--background)] border border-[var(--foreground)] w-[275px] p-4 flex flex-col gap-3 overflow-hidden ${alignRight ? 'origin-right' : 'origin-left'}`}
         initial={{ scale: 0.8, opacity: 0 }}
         animate={{ 
           scale: showCard ? 1 : 0.8, 
@@ -1000,12 +1017,14 @@ function PromptGuidelineCard({
           damping: 25 
         }}
       >
-            {/* Header badge */}
-            <div className="bg-[var(--foreground)] px-2 py-1 self-start">
-              <span className="text-[var(--background)] text-sm font-bold tracking-[-0.18px]">
-                Prompt Design Guidelines
-              </span>
-            </div>
+            {/* Header badge - optional */}
+            {showLabel && (
+              <div className="bg-[var(--foreground)] px-2 py-1 self-start">
+                <span className="text-[var(--background)] text-sm font-bold tracking-[-0.18px]">
+                  {labelText}
+                </span>
+              </div>
+            )}
             
             {/* Title */}
             <h4 className="text-lg font-bold leading-tight text-[var(--foreground)]">
@@ -1041,8 +1060,8 @@ const permissionCardConfigs: PlatformConfig[] = [
     name: "Browserbase",
     logo: "/images/logo-browserbase.png",
     credentials: [
-      { name: "Stripe", logo: "/images/logo-stripe.png", username: "sonja.johnson@acmeltd.com" },
-      { name: "GitHub", logo: "/images/logos/github-copilot.png", username: "sonja-johnson" },
+      { name: "Stripe", logo: "/images/logos/stripe.svg", username: "sonja.johnson@acmeltd.com" },
+      { name: "GitHub", logo: "/images/logos/github.svg", username: "sonja-johnson" },
       { name: "Zapier", logo: "/images/logos/zapier.png", username: "sonja.johnson@acmeltd.com" },
     ],
   },
@@ -1050,15 +1069,27 @@ const permissionCardConfigs: PlatformConfig[] = [
     name: "Claude",
     logo: "/images/logos/claude.png",
     credentials: [
-      { name: "Stripe", logo: "/images/logo-stripe.png", username: "sonja.johnson@acmeltd.com" },
+      { name: "Slack", logo: "/images/logos/slack.svg", username: "sonja.johnson@acmeltd.com" },
+      { name: "Notion", logo: "/images/logos/notion.svg", username: "sonja.johnson@acmeltd.com" },
+      { name: "Linear", logo: "/images/logos/linear.svg", username: "sonja-johnson" },
     ],
   },
   {
     name: "ChatGPT",
     logo: "/images/logos/chatgpt.png",
     credentials: [
-      { name: "GitHub", logo: "/images/logos/github-copilot.png", username: "sonja-johnson" },
-      { name: "Zapier", logo: "/images/logos/zapier.png", username: "sonja.johnson@acmeltd.com" },
+      { name: "Figma", logo: "/images/logos/figma.svg", username: "sonja.johnson@acmeltd.com" },
+      { name: "Vercel", logo: "/images/logos/vercel.svg", username: "sonja-johnson" },
+      { name: "AWS", logo: "/images/logos/aws.svg", username: "sonja.johnson@acmeltd.com" },
+    ],
+  },
+  {
+    name: "Devin",
+    logo: "/images/logos/devin.png",
+    credentials: [
+      { name: "Jira", logo: "/images/logos/jira.svg", username: "sonja.johnson@acmeltd.com" },
+      { name: "Datadog", logo: "/images/logos/datadog.svg", username: "sonja-johnson" },
+      { name: "Twilio", logo: "/images/logos/twilio.svg", username: "sonja.johnson@acmeltd.com" },
     ],
   },
 ];
@@ -1186,77 +1217,34 @@ export function ConfigurablePermissionCard({
 }
 
 // Cycling Permission Card with countdown - cycles through different platforms and credentials
-const PERMISSION_CYCLE_DURATION = 5000; // 5 seconds per config
-const SCRAMBLE_DURATION = 600; // Duration of text scramble effect
-const SCRAMBLE_CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+const PERMISSION_CYCLE_DURATION = 4000; // 4 seconds per config
 
 // Skeleton shimmer component for inline use
 function SkeletonShimmer({ className = "" }: { className?: string }) {
   return <div className={`skeleton-shimmer rounded ${className}`} />;
 }
 
-// Text scramble hook that triggers on text change
-function useScrambleText(text: string, duration: number = SCRAMBLE_DURATION) {
-  const [displayText, setDisplayText] = useState(text);
-  const prevTextRef = useRef(text);
-  
-  useEffect(() => {
-    // Skip if text hasn't changed
-    if (prevTextRef.current === text) return;
-    prevTextRef.current = text;
-    
-    const finalText = text;
-    const length = finalText.length;
-    const scrambleIterations = 8;
-    const intervalPerChar = duration / (length * scrambleIterations);
-    
-    let iteration = 0;
-    const maxIterations = length * scrambleIterations;
-
-    const interval = setInterval(() => {
-      setDisplayText(
-        finalText
-          .split("")
-          .map((char, index) => {
-            if (char === " " || char === "." || char === "," || char === "'" || char === "-") {
-              return char;
-            }
-            
-            const charResolveAt = (index + 1) * scrambleIterations;
-            
-            if (iteration >= charResolveAt) {
-              return char;
-            }
-            
-            return SCRAMBLE_CHARS[Math.floor(Math.random() * SCRAMBLE_CHARS.length)];
-          })
-          .join("")
-      );
-
-      iteration++;
-
-      if (iteration >= maxIterations) {
-        clearInterval(interval);
-        setDisplayText(finalText);
-      }
-    }, intervalPerChar);
-
-    return () => clearInterval(interval);
-  }, [text, duration]);
-  
-  return displayText;
-}
-
-// Animated credential row with scramble text
+// Animated credential row with rotating text
 function AnimatedCredentialRow({ 
-  cred, 
+  allNames,
+  allUsernames,
+  currentIndex,
+  logo,
   isLoading 
 }: { 
-  cred: CredentialItem; 
+  allNames: string[];
+  allUsernames: string[];
+  currentIndex: number;
+  logo: string;
   isLoading: boolean;
 }) {
-  const scrambledName = useScrambleText(cred.name);
-  const scrambledUsername = useScrambleText(cred.username);
+  const nameRef = useRef<RotatingTextRef>(null);
+  const usernameRef = useRef<RotatingTextRef>(null);
+  
+  useEffect(() => {
+    nameRef.current?.jumpTo(currentIndex);
+    usernameRef.current?.jumpTo(currentIndex);
+  }, [currentIndex]);
   
   return (
     <motion.div 
@@ -1267,24 +1255,62 @@ function AnimatedCredentialRow({
       transition={{ duration: 0.2 }}
     >
       <div className="w-8 h-8 rounded-[6px] overflow-hidden bg-white dark:bg-[#3a3a3a] flex items-center justify-center">
-        {isLoading ? (
-          <SkeletonShimmer className="w-full h-full" />
-        ) : (
-          <Image 
-            src={cred.logo} 
-            alt={cred.name} 
-            width={30}
-            height={30}
-            className="object-contain"
-          />
-        )}
+        <AnimatePresence mode="wait">
+          {isLoading ? (
+            <motion.div
+              key="skeleton"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.15 }}
+              className="w-full h-full"
+            >
+              <SkeletonShimmer className="w-full h-full" />
+            </motion.div>
+          ) : (
+            <motion.div
+              key={logo}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.2 }}
+              className="w-full h-full flex items-center justify-center bg-white rounded-[6px]"
+            >
+              <Image 
+                src={logo} 
+                alt={allNames[currentIndex]} 
+                width={22}
+                height={22}
+                className="object-contain"
+              />
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
       <div className="flex-1 flex flex-col gap-0.5">
         <span className="text-[14px] leading-[1.2] text-[rgba(0,0,0,0.82)] dark:text-[rgba(255,255,255,0.9)] tracking-[-0.09px]">
-          {scrambledName}
+          <RotatingText 
+            ref={nameRef}
+            texts={allNames}
+            auto={false}
+            rotationInterval={PERMISSION_CYCLE_DURATION}
+            splitBy="characters"
+            staggerDuration={0.01}
+            staggerFrom="first"
+            transition={{ type: 'spring', damping: 25, stiffness: 500 }}
+          />
         </span>
         <span className="text-[12px] leading-[1.2] text-[rgba(0,0,0,0.62)] dark:text-[rgba(255,255,255,0.6)] tracking-[0.01px]">
-          {scrambledUsername}
+          <RotatingText 
+            ref={usernameRef}
+            texts={allUsernames}
+            auto={false}
+            rotationInterval={PERMISSION_CYCLE_DURATION}
+            splitBy="characters"
+            staggerDuration={0.008}
+            staggerFrom="first"
+            transition={{ type: 'spring', damping: 25, stiffness: 500 }}
+          />
         </span>
       </div>
       <button className="p-1.5 rounded-[8px] hover:bg-[rgba(0,0,0,0.05)] dark:hover:bg-[rgba(255,255,255,0.08)] transition-colors">
@@ -1294,13 +1320,24 @@ function AnimatedCredentialRow({
   );
 }
 
-export function CyclingPermissionCard() {
+export function CyclingPermissionCard({ showCountdown = true }: { showCountdown?: boolean } = {}) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [cycleKey, setCycleKey] = useState(0);
   const [isActive, setIsActive] = useState(false);
   const [isLoadingIcons, setIsLoadingIcons] = useState(false);
   const [countdownProgress, setCountdownProgress] = useState(0); // 0 = full circle, 1 = empty
   const containerRef = useRef<HTMLDivElement>(null);
+  const platformNameRef = useRef<RotatingTextRef>(null);
+  
+  // Precompute all text arrays for rotation
+  const allPlatformNames = permissionCardConfigs.map(c => c.name);
+  
+  // Precompute credential data for each row position across all configs
+  const credentialRows = [0, 1, 2].map(rowIndex => ({
+    names: permissionCardConfigs.map(c => c.credentials[rowIndex]?.name || ''),
+    usernames: permissionCardConfigs.map(c => c.credentials[rowIndex]?.username || ''),
+    logos: permissionCardConfigs.map(c => c.credentials[rowIndex]?.logo || ''),
+  }));
   
   // Start cycling when in view
   useEffect(() => {
@@ -1335,31 +1372,35 @@ export function CyclingPermissionCard() {
     return () => clearTimeout(startTimer);
   }, [cycleKey, isActive]);
   
+  // Sync rotating text components with current index
+  useEffect(() => {
+    platformNameRef.current?.jumpTo(currentIndex);
+  }, [currentIndex]);
+  
   // Cycle through configs
   useEffect(() => {
     if (!isActive) return;
     
     const timer = setTimeout(() => {
-      // Brief skeleton for icons only
+      // Skeleton loading for icons
       setIsLoadingIcons(true);
       
+      // Update content while skeleton is showing
       setTimeout(() => {
         setCurrentIndex((prev) => (prev + 1) % permissionCardConfigs.length);
         setCycleKey((prev) => prev + 1);
+      }, 400);
+      
+      // Delay hiding skeleton so it plays longer
+      setTimeout(() => {
         setIsLoadingIcons(false);
-      }, 200);
+      }, 900);
     }, PERMISSION_CYCLE_DURATION);
     
     return () => clearTimeout(timer);
   }, [currentIndex, isActive, cycleKey]);
   
   const currentConfig = permissionCardConfigs[currentIndex];
-  const itemCount = currentConfig.credentials.length;
-  const itemText = itemCount === 1 ? currentConfig.credentials[0].name : `${itemCount} items`;
-  
-  // Scramble text for platform name and item count
-  const scrambledPlatformName = useScrambleText(currentConfig.name);
-  const scrambledItemText = useScrambleText(itemText);
   
   // Countdown ring
   const size = 32;
@@ -1371,45 +1412,47 @@ export function CyclingPermissionCard() {
   return (
     <div ref={containerRef} className="flex flex-col items-center gap-4">
       {/* Countdown Ring */}
-      <div className="flex items-center justify-center">
-        <div
-          className="relative flex items-center justify-center"
-          style={{ width: size, height: size }}
-        >
-          <svg
-            key={cycleKey}
-            className="absolute inset-0 -rotate-90"
-            width={size}
-            height={size}
+      {showCountdown && (
+        <div className="flex items-center justify-center">
+          <div
+            className="relative flex items-center justify-center"
+            style={{ width: size, height: size }}
           >
-            <circle
-              cx={size / 2}
-              cy={size / 2}
-              r={radius}
-              fill="none"
-              stroke="currentColor"
-              strokeWidth={strokeWidth}
-              className="text-[var(--foreground)]/20"
-            />
-            <circle
-              cx={size / 2}
-              cy={size / 2}
-              r={radius}
-              fill="none"
-              stroke="currentColor"
-              strokeWidth={strokeWidth}
-              strokeLinecap="round"
-              className="text-[var(--foreground)]"
-              style={{
-                strokeDasharray: circumference,
-                strokeDashoffset: strokeDashoffset,
-                transition: countdownProgress === 1 ? `stroke-dashoffset ${PERMISSION_CYCLE_DURATION}ms linear` : "none",
-              }}
-            />
-          </svg>
-          <SentinelIcon size={16} />
+            <svg
+              key={cycleKey}
+              className="absolute inset-0 -rotate-90"
+              width={size}
+              height={size}
+            >
+              <circle
+                cx={size / 2}
+                cy={size / 2}
+                r={radius}
+                fill="none"
+                stroke="currentColor"
+                strokeWidth={strokeWidth}
+                className="text-[var(--foreground)]/20"
+              />
+              <circle
+                cx={size / 2}
+                cy={size / 2}
+                r={radius}
+                fill="none"
+                stroke="currentColor"
+                strokeWidth={strokeWidth}
+                strokeLinecap="round"
+                className="text-[var(--foreground)]"
+                style={{
+                  strokeDasharray: circumference,
+                  strokeDashoffset: strokeDashoffset,
+                  transition: countdownProgress === 1 ? `stroke-dashoffset ${PERMISSION_CYCLE_DURATION}ms linear` : "none",
+                }}
+              />
+            </svg>
+            <SentinelIcon size={16} />
+          </div>
         </div>
-      </div>
+      )}
       
       {/* Permission Card */}
       <div 
@@ -1430,17 +1473,37 @@ export function CyclingPermissionCard() {
               <div className="flex items-center gap-1">
                 {/* Platform Logo */}
                 <div className="w-15 h-15 rounded-[12px] overflow-hidden bg-white dark:bg-[#3a3a3a] flex items-center justify-center">
-                  {isLoadingIcons ? (
-                    <SkeletonShimmer className="w-full h-full" />
-                  ) : (
-                    <Image 
-                      src={currentConfig.logo} 
-                      alt={currentConfig.name} 
-                      width={60}
-                      height={60}
-                      className="object-cover w-full h-full"
-                    />
-                  )}
+                  <AnimatePresence mode="wait">
+                    {isLoadingIcons ? (
+                      <motion.div
+                        key="skeleton"
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        transition={{ duration: 0.15 }}
+                        className="w-full h-full"
+                      >
+                        <SkeletonShimmer className="w-full h-full" />
+                      </motion.div>
+                    ) : (
+                      <motion.div
+                        key={currentConfig.logo}
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        transition={{ duration: 0.2 }}
+                        className="w-full h-full"
+                      >
+                        <Image 
+                          src={currentConfig.logo} 
+                          alt={currentConfig.name} 
+                          width={60}
+                          height={60}
+                          className="object-cover w-full h-full"
+                        />
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
                 </div>
                 
                 <div className="flex items-center gap-1 w-16">
@@ -1461,13 +1524,24 @@ export function CyclingPermissionCard() {
                 </div>
               </div>
               
-              {/* Description with scramble text */}
+              {/* Description with rotating text */}
               <p className="text-[16px] leading-[1.2] text-center text-[rgba(0,0,0,0.82)] dark:text-[rgba(255,255,255,0.9)] px-1">
                 Allow{" "}
-                <span className="font-semibold text-[15.5px] tracking-[-0.17px]">{scrambledPlatformName}</span>
+                <span className="font-semibold text-[15.5px] tracking-[-0.17px]">
+                  <RotatingText 
+                    ref={platformNameRef}
+                    texts={allPlatformNames}
+                    auto={false}
+                    rotationInterval={PERMISSION_CYCLE_DURATION}
+                    splitBy="characters"
+                    staggerDuration={0.012}
+                    staggerFrom="first"
+                    transition={{ type: 'spring', damping: 25, stiffness: 500 }}
+                  />
+                </span>
                 {" "}to use 1Password to<br />
                 autofill{" "}
-                <span className="font-semibold text-[15.5px] tracking-[-0.17px]">{scrambledItemText}</span>
+                <span className="font-semibold text-[15.5px] tracking-[-0.17px]">3 items</span>
                 {" "}on your behalf
               </p>
             </div>
@@ -1480,23 +1554,16 @@ export function CyclingPermissionCard() {
               animate={{ height: "auto" }}
               transition={{ type: "spring", stiffness: 300, damping: 25 }}
             >
-              <AnimatePresence mode="wait">
-                <motion.div
-                  key={currentIndex}
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  transition={{ duration: 0.2 }}
-                >
-                  {currentConfig.credentials.map((cred, index) => (
-                    <AnimatedCredentialRow 
-                      key={`${currentIndex}-${index}`} 
-                      cred={cred} 
-                      isLoading={isLoadingIcons}
-                    />
-                  ))}
-                </motion.div>
-              </AnimatePresence>
+              {credentialRows.map((row, index) => (
+                <AnimatedCredentialRow 
+                  key={index}
+                  allNames={row.names}
+                  allUsernames={row.usernames}
+                  currentIndex={currentIndex}
+                  logo={row.logos[currentIndex]}
+                  isLoading={isLoadingIcons}
+                />
+              ))}
             </motion.div>
             
             {/* Access Duration Row */}
