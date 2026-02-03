@@ -78,10 +78,12 @@ export const caseStudies: Record<string, CaseStudy> = {
     role: "Design Lead",
     team: [
       { name: "Michael", role: "Design Lead", avatar: "/images/michael-mckeever-pixel-portrait-4.png" },
-      { name: "Dennis", role: "Product Lead", avatar: "/images/work/agentic-autofill/dennis.jpg" },
-      { name: "Simon", role: "Engineering Lead", avatar: "/images/work/agentic-autofill/simon.jpg" },
-      { name: "Horia", role: "Engineering", avatar: "/images/work/agentic-autofill/horia.jpg" },
-      { name: "Omar", role: "Engineering", avatar: "/images/work/agentic-autofill/omar.jpg" },
+      { name: "Dennis", role: "Product Lead", avatar: "/images/team/dennis.jpg" },
+      { name: "Marta", role: "Research Lead", avatar: "/images/team/marta.jpg" },
+      { name: "Simon", role: "Engineering Manager", avatar: "/images/team/simon.jpg" },
+      { name: "Horia", role: "Engineering", avatar: "/images/team/horia.jpg" },
+      { name: "Marton", role: "Engineering", avatar: "/images/team/marton.jpg" },
+      { name: "Omar", role: "Engineering", avatar: "/images/team/omar.jpg" },
     ],
     sections: [
       { id: "overview", title: "Overview" },
@@ -102,10 +104,11 @@ export const caseStudies: Record<string, CaseStudy> = {
     role: "Lead Designer",
     team: [
       { name: "Michael", role: "Design Lead", avatar: "/images/michael-mckeever-pixel-portrait-4.png" },
-      { name: "Danny", role: "Sr PM", avatar: "/images/work/verifier/danny.jpg" },
-      { name: "Gennadiy", role: "Engineering Lead", avatar: "/images/work/verifier/gennadiy.jpg" },
-      { name: "Ben", role: "Engineering", avatar: "/images/work/verifier/ben.jpg" },
-      { name: "Mitch", role: "Product Lead", avatar: "/images/work/verifier/mitch.jpg" },
+      { name: "Danny", role: "Sr PM", avatar: "/images/team/danny.jpg" },
+      { name: "Julie", role: "Research Lead", avatar: "/images/team/julie.jpg" },
+      { name: "Gennadiy", role: "Engineering Lead", avatar: "/images/team/gennadiy.jpg" },
+      { name: "Ben", role: "Engineering", avatar: "/images/team/ben.jpg" },
+      { name: "Mitch", role: "Product Lead", avatar: "/images/team/mitch.jpg" },
     ],
     sections: [
       { id: "overview", title: "Overview" },
