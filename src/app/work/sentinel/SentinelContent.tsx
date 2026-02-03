@@ -45,6 +45,9 @@ function ScrollScaleImage({
   });
   const scale = useTransform(scrollYProgress, [0, 1], [0.85, 1]);
 
+  // Parse maxWidth to get numeric value for sizes calculation
+  const maxWidthNum = parseInt(maxWidth, 10) || 1000;
+
   return (
     <motion.div
       ref={containerRef}
@@ -60,7 +63,9 @@ function ScrollScaleImage({
           alt={alt}
           fill
           className="object-cover"
-          sizes={`(max-width: 768px) 100vw, ${maxWidth}`}
+          sizes={`(max-width: 768px) 100vw, ${maxWidthNum}px`}
+          quality={90}
+          priority
         />
       </div>
     </motion.div>
@@ -403,156 +408,21 @@ const imageTransforms: Record<NonNullable<ImageFocus>, string> = {
   support: "scale(2) translate(-25%, -15%)",
 };
 
-// Order of auto-cycling: 1. insights, 2. tasks, 3. support
-const FOCUS_ORDER: NonNullable<ImageFocus>[] = ["insights", "support", "tasks"];
-
 function SolutionSection() {
-  const [imageFocus, setImageFocus] = useState<ImageFocus>(null);
-  const [isManualHover, setIsManualHover] = useState(false);
-  const [autoCycleIndex, setAutoCycleIndex] = useState(0);
-  const [progress, setProgress] = useState(100);
-  const [phase, setPhase] = useState<"waiting" | "expanding" | "paused" | "shrinking">("waiting");
-  const [expandProgress, setExpandProgress] = useState(0); // 0 to 100 for expansion
-  const [isInView, setIsInView] = useState(false);
-  const sectionRef = useRef<HTMLDivElement>(null);
-  const INITIAL_DELAY = 3000; // 3 second delay before cycle starts
-  const EXPAND_DURATION = 500; // 0.5 seconds for expansion
-  const PAUSE_DURATION = 1200; // 1.2 second pause at top before shrinking
-  const SHRINK_DURATION = 5500; // 5.5 seconds for the shrink animation
-  const TICK_INTERVAL = 16; // ~60fps for smooth animation
-  
-  // Spring-like overshoot easing for expansion
-  const easeOutBack = (t: number) => {
-    const c1 = 1.70158;
-    const c3 = c1 + 1;
-    return 1 + c3 * Math.pow(t - 1, 3) + c1 * Math.pow(t - 1, 2);
-  };
-  
-  // Track when section is in view
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          setIsInView(entry.isIntersecting && entry.intersectionRatio >= 0.5);
-        });
-      },
-      { threshold: 0.5 }
-    );
-    
-    if (sectionRef.current) {
-      observer.observe(sectionRef.current);
-    }
-    
-    return () => observer.disconnect();
-  }, []);
-  
-  // Initial waiting phase (3s delay before starting)
-  useEffect(() => {
-    if (isManualHover || !isInView || phase !== "waiting") return;
-    
-    const timeout = setTimeout(() => {
-      setPhase("expanding");
-    }, INITIAL_DELAY);
-    
-    return () => clearTimeout(timeout);
-  }, [phase, isManualHover, isInView]);
-  
-  // Expansion phase
-  useEffect(() => {
-    if (isManualHover || !isInView || phase !== "expanding") return;
-    
-    const tickAmount = (TICK_INTERVAL / EXPAND_DURATION) * 100;
-    
-    const interval = setInterval(() => {
-      setExpandProgress((prev) => {
-        const next = prev + tickAmount;
-        if (next >= 100) {
-          setPhase("paused");
-          return 100;
-        }
-        return next;
-      });
-    }, TICK_INTERVAL);
-    
-    return () => clearInterval(interval);
-  }, [phase, isManualHover, isInView]);
-  
-  // Pause phase
-  useEffect(() => {
-    if (isManualHover || !isInView || phase !== "paused") return;
-    
-    const timeout = setTimeout(() => {
-      setPhase("shrinking");
-    }, PAUSE_DURATION);
-    
-    return () => clearTimeout(timeout);
-  }, [phase, isManualHover, isInView]);
-  
-  // Shrinking phase
-  useEffect(() => {
-    if (isManualHover || !isInView || phase !== "shrinking") return;
-    
-    const tickAmount = (TICK_INTERVAL / SHRINK_DURATION) * 100;
-    
-    const interval = setInterval(() => {
-      setProgress((prev) => {
-        const next = prev - tickAmount;
-        if (next <= 0) {
-          // Move to next highlight
-          setAutoCycleIndex((prevIndex) => (prevIndex + 1) % FOCUS_ORDER.length);
-          setPhase("expanding");
-          setExpandProgress(0);
-          return 100;
-        }
-        return next;
-      });
-    }, TICK_INTERVAL);
-    
-    return () => clearInterval(interval);
-  }, [phase, isManualHover, isInView]);
-  
-  // Determine the active focus (manual hover takes priority, null during waiting)
-  const activeFocus = isManualHover ? imageFocus : (phase === "waiting" ? null : FOCUS_ORDER[autoCycleIndex]);
-  
-  // Calculate the visual progress based on current phase
-  const getVisualProgress = () => {
-    if (phase === "waiting") {
-      return 0; // No highlight during initial delay
-    } else if (phase === "expanding") {
-      // Animate from 0 to 100 with spring easing
-      return easeOutBack(expandProgress / 100) * 100;
-    } else if (phase === "paused") {
-      return 100; // Full height during pause
-    } else {
-      // Shrinking - linear countdown
-      return progress;
-    }
-  };
-  
-  const visualProgress = getVisualProgress();
-  
-  // Handle manual hover - pause auto cycle
+  const [activeFocus, setActiveFocus] = useState<ImageFocus>(null);
+
   const handleMouseEnter = (focus: ImageFocus) => {
-    setIsManualHover(true);
-    setImageFocus(focus);
+    setActiveFocus(focus);
   };
   
   const handleMouseLeave = () => {
-    setIsManualHover(false);
-    setImageFocus(null);
-    // Reset to expanding phase when leaving hover
-    setProgress(100);
-    setExpandProgress(0);
-    setPhase("expanding");
+    setActiveFocus(null);
   };
 
   return (
     <FullWidthContent className="mt-0">
-      <div 
-        ref={sectionRef}
-        className="grid grid-cols-1 bg-[var(--background)] border border-[var(--foreground)]/20 lg:grid-cols-2 items-center"
-      >
-        <div className="p-6 xs:p-8 sm:p-12">
+      <div className="grid grid-cols-1 bg-[var(--background)] border border-[var(--foreground)]/20 lg:grid-cols-2 items-stretch overflow-hidden">
+        <div className="p-6 xs:p-8 sm:p-12 flex items-center">
           <section id="solution" className="flex flex-col gap-4 xs:gap-5 sm:gap-6 scroll-mt-8">
             <SkewedTag as="h3" className="text-lg lg:text-xl">The solution</SkewedTag>
             <p className="text-[var(--foreground)] text-2xl md:text-3xl lg:text-4xl leading-relaxed">
@@ -562,7 +432,6 @@ function SolutionSection() {
                 onMouseEnter={() => handleMouseEnter("insights")}
                 onMouseLeave={handleMouseLeave}
                 isActive={activeFocus === "insights"}
-                progress={!isManualHover && activeFocus === "insights" ? visualProgress : undefined}
               >
                 generate insights
               </HighlightText>
@@ -572,7 +441,6 @@ function SolutionSection() {
                 onMouseEnter={() => handleMouseEnter("tasks")}
                 onMouseLeave={handleMouseLeave}
                 isActive={activeFocus === "tasks"}
-                progress={!isManualHover && activeFocus === "tasks" ? visualProgress : undefined}
               >
                 automate tasks
               </HighlightText>{" "}
@@ -582,7 +450,6 @@ function SolutionSection() {
                 onMouseEnter={() => handleMouseEnter("support")}
                 onMouseLeave={handleMouseLeave}
                 isActive={activeFocus === "support"}
-                progress={!isManualHover && activeFocus === "support" ? visualProgress : undefined}
               >
                 provide support
               </HighlightText>
@@ -592,15 +459,14 @@ function SolutionSection() {
         </div>
 
         <div 
-          className="p-6 pl-0 overflow-hidden relative"
+          className="p-6 pl-0 relative"
+          style={{
+            backgroundImage: "url('/images/work/sentinel/preview-bg.png')",
+            backgroundSize: "cover",
+            backgroundPosition: "left center",
+          }}
         >
-            <Image
-              src="/images/work/sentinel/preview-bg.png"
-              alt=""
-              fill
-              className="object-cover object-center -z-10"
-              sizes="50vw"
-            />
+          <div className="relative overflow-hidden">
             <motion.div 
               className="relative w-full aspect-[2760/3045] overflow-hidden rounded-lg rounded-l-none shadow-2xl border border-[var(--foreground)]/10 border-l-0"
               initial={{ x: "-75%", opacity: 0 }}
@@ -675,6 +541,7 @@ function SolutionSection() {
                 </motion.div>
               ))}
             </AnimatePresence>
+          </div>
         </div>
       </div>
     </FullWidthContent>
