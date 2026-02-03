@@ -311,13 +311,13 @@ export function VerifierContent({ caseStudy }: { caseStudy: CaseStudy }) {
             {
               name: "Danny",
               role: "Sr PM",
-              image: "/images/work/verifier/danny.jpg",
+              image: "/images/team/danny.jpg",
               icon: "/images/work/verifier/among-us-icon.png",
             },
             {
               name: "Shiner",
               role: "CEO",
-              image: "/images/work/verifier/shiner.jpg",
+              image: "/images/team/shiner.jpg",
             },
           ]}
           resultImage="/images/work/verifier/deepfake-danny.mp4"

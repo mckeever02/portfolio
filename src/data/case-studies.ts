@@ -1,5 +1,6 @@
 export interface TeamMember {
   name: string;
+  role: string;
   avatar: string;
 }
 
@@ -75,7 +76,15 @@ export const caseStudies: Record<string, CaseStudy> = {
     heroVideoPoster: "/images/agentic-autofill-card-hero.jpg",
     timeline: "2025",
     role: "Design Lead",
-    team: [],
+    team: [
+      { name: "Michael", role: "Design Lead", avatar: "/images/michael-mckeever-pixel-portrait-4.png" },
+      { name: "Dennis", role: "Product Lead", avatar: "/images/team/dennis.jpg" },
+      { name: "Marta", role: "Research Lead", avatar: "/images/team/marta.jpg" },
+      { name: "Simon", role: "Engineering Manager", avatar: "/images/team/simon.jpg" },
+      { name: "Horia", role: "Engineering", avatar: "/images/team/horia.jpg" },
+      { name: "Marton", role: "Engineering", avatar: "/images/team/marton.jpg" },
+      { name: "Omar", role: "Engineering", avatar: "/images/team/omar.jpg" },
+    ],
     sections: [
       { id: "overview", title: "Overview" },
       { id: "the-problem", title: "The problem" },
@@ -94,12 +103,12 @@ export const caseStudies: Record<string, CaseStudy> = {
     timeline: "H1 2025",
     role: "Lead Designer",
     team: [
-      { name: "Michael", avatar: "/images/michael-mckeever.jpg" },
-      { name: "Danny", avatar: "/images/work/verifier/danny.jpg" },
-      { name: "Gennadiy", avatar: "/images/work/verifier/gennadiy.jpg" },
-      { name: "Ben", avatar: "/images/work/verifier/ben.jpg" },
-      { name: "Mitch", avatar: "/images/work/verifier/mitch.jpg" },
-      { name: "Shiner", avatar: "/images/work/verifier/shiner.jpg" },
+      { name: "Michael", role: "Design Lead", avatar: "/images/michael-mckeever-pixel-portrait-4.png" },
+      { name: "Danny", role: "Sr PM", avatar: "/images/team/danny.jpg" },
+      { name: "Julie", role: "Research Lead", avatar: "/images/team/julie.jpg" },
+      { name: "Gennadiy", role: "Engineering Lead", avatar: "/images/team/gennadiy.jpg" },
+      { name: "Ben", role: "Engineering", avatar: "/images/team/ben.jpg" },
+      { name: "Mitch", role: "Product Lead", avatar: "/images/team/mitch.jpg" },
     ],
     sections: [
       { id: "overview", title: "Overview" },

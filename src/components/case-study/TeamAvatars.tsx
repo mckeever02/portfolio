@@ -6,6 +6,7 @@ import "./tooltip.css";
 
 interface TeamMember {
   name: string;
+  role: string;
   avatar: string;
 }
 
@@ -28,7 +29,7 @@ export function TeamAvatars({ team }: TeamAvatarsProps) {
           <Tooltip.Root key={member.name}>
             <Tooltip.Trigger asChild>
               <div
-                className="relative w-[25px] h-[25px] rounded-full border border-white bg-[rgba(0,0,0,0.1)] overflow-hidden -mr-[5px] cursor-pointer"
+                className="relative w-[25px] h-[25px] rounded-full border-2 border-white bg-[rgba(0,0,0,0.1)] overflow-hidden -mr-[6px] cursor-pointer transition-transform duration-150 hover:scale-125 hover:z-50"
                 style={{ zIndex: team.length - index }}
               >
                 <Image
@@ -44,7 +45,10 @@ export function TeamAvatars({ team }: TeamAvatarsProps) {
                 className="TooltipContent"
                 sideOffset={5}
               >
-                {member.name}
+                <div className="flex flex-col">
+                  <span className="font-bold">{member.name}</span>
+                  <span className="opacity-70">{member.role}</span>
+                </div>
                 <Tooltip.Arrow className="TooltipArrow" />
               </Tooltip.Content>
             </Tooltip.Portal>
