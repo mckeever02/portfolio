@@ -68,7 +68,7 @@ export const caseStudies: Record<string, CaseStudy> = {
     slug: "agentic-autofill",
     title: "Autofill for AI Agents",
     company: "1Password",
-    subtitle: "1Password for the age of AI agents",
+    subtitle: "Bringing 1Password's security to AI agents",
     description: "Led the design for a brand new experience that allows AI agents to authenticate and act online using 1Password.",
     heroColor: "#DD4825",
     heroVideo: "/images/work/agentic-autofill/agentic-autofill-project-hero.mp4",

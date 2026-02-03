@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import { CaseStudy } from "@/data/case-studies";
 import {
   CaseStudyLayout,
@@ -11,15 +11,18 @@ import {
   QuoteCard,
   HackathonSection,
   BodyText,
+  BodyList,
   StickyNotesGrid,
+  FeatureCard,
   FeatureCardList,
   StatCard,
+  Tabs,
 } from "@/components/case-study";
 import type { FeatureCardItem } from "@/components/case-study";
 import Image from "next/image";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { ZigZagDivider } from "@/components/ZigZagDivider";
-import { SummaryCardDemo } from "@/components/SummaryCardDemo";
+import { SummaryCardDemo, CyclingPermissionCard, PromptGuidelineCard, MobilePermissionCard } from "@/components/SummaryCardDemo";
 import { FlipCard, CardFace } from "@/components/FlipCard";
 import { FlipCarousel } from "@/components/FlipCarousel";
 import { SkewedTag } from "@/components/SkewedTag";
@@ -150,8 +153,8 @@ const agenticAutofillSections = [
   { id: "browser-agents", title: "Browser Agents" },
   { id: "research", title: "Research Insights" },
   { id: "prompt-guidelines", title: "Prompt Guidelines" },
-  // { id: "autonomous-agents", title: "Autonomous Agents" }, // Hidden while adding content
   { id: "impact", title: "Impact" },
+  { id: "whats-next", title: "What's Next" },
 ];
 
 // Agent types card data with examples for flip cards
@@ -471,6 +474,8 @@ export function VerifierContent({ caseStudy }: { caseStudy: CaseStudy }) {
 }
 
 export function AgenticAutofillContent({ caseStudy }: { caseStudy: CaseStudy }) {
+  const [platformTab, setPlatformTab] = useState<'desktop' | 'mobile'>('desktop');
+  
   return (
     <CaseStudyLayout caseStudy={caseStudy} sections={agenticAutofillSections}>
       <NarrowContent>
@@ -697,10 +702,10 @@ export function AgenticAutofillContent({ caseStudy }: { caseStudy: CaseStudy }) 
       <NarrowContent>
         <SkewedTag size="xl">Why not MCP?</SkewedTag>
         <p className="text-2xl sm:text-3xl md:text-4xl font-medium text-[var(--foreground)] leading-tight">
-          MCP isn&apos;t the answer for credentials – agentic autofill is.
+          MCP wasn't the answer for credentials, so we built our own.
         </p>
         <BodyText>
-          MCP servers are designed for general-purpose integrations—not for handling sensitive credentials. Exposing passwords through an MCP server would create a security vulnerability, as credentials could be logged, cached, or accessed by unintended processes. Not ideal.
+          MCP servers are designed for general-purpose integrations—not for handling sensitive credentials. Exposing passwords through an MCP server would create a security vulnerability, as credentials could be logged, cached, or accessed by unintended processes. It was a pathway that we ruled out pretty early on.
         </BodyText>
         <BodyText>
           Agentic Autofill takes a different approach. Credentials never leave 1Password&apos;s secure vault. Instead of passing secrets through the model context, 1Password injects credentials directly into the browser at the moment of authentication—keeping them encrypted and invisible to the agent itself.
@@ -711,11 +716,116 @@ export function AgenticAutofillContent({ caseStudy }: { caseStudy: CaseStudy }) 
         <ZigZagDivider />
       </NarrowContent>
 
+      {/* The Prompt Section */}
+      <NarrowContent id="the-prompt" className="scroll-mt-8">
+        <SkewedTag size="xl">The Prompt</SkewedTag>
+        <p className="text-2xl sm:text-3xl md:text-4xl font-medium text-[var(--foreground)] leading-tight">
+          The 1Password access request.
+        </p>
+        <BodyText>
+          When an AI agent needs to authenticate, 1Password presents the user with a clear authorization request—showing exactly which service is requesting access and which credentials will be used.
+        </BodyText>
+      </NarrowContent>
+
+      <WideContent>
+        {/* Platform Tabs */}
+        <div className="mb-6">
+          <Tabs
+            options={[
+              { id: 'desktop', label: 'Desktop' },
+              { id: 'mobile', label: 'Mobile' }
+            ]}
+            defaultTab="desktop"
+            onChange={(id) => setPlatformTab(id as 'desktop' | 'mobile')}
+          />
+        </div>
+        
+        {/* Desktop: Prompt and callouts - hidden but not unmounted when mobile tab is active */}
+        <div className={`flex justify-center py-8 relative ${platformTab !== 'desktop' ? 'hidden' : ''}`}>
+          <CyclingPermissionCard showCountdown={false} />
+          
+          {/* Guideline callout positioned to the left, connecting to platform avatar */}
+          <div className="hidden lg:block absolute right-[calc(50%+180px)] top-[95px]">
+            <PromptGuidelineCard 
+              title="The Requester" 
+              description="High visiblity given to the platform or AI agent requesting access to your 1Password item(s)."
+              alignRight={true}
+              showLabel={true}
+              labelText="UX Callout"
+            />
+          </div>
+          
+          {/* Guideline callout positioned to the right, upper section */}
+          <div className="hidden lg:block absolute left-[calc(50%+190px)] top-[275px]">
+            <PromptGuidelineCard 
+              title="Choose a different item" 
+              description="If the Agent requests the wrong item, the user can choose a different item or remove it."
+              alignRight={false}
+              showLabel={true}
+              labelText="UX Callout"
+              delay={2}
+            />
+          </div>
+        </div>
+        
+        {/* Mobile: Phone frame with content - hidden but not unmounted when desktop tab is active */}
+        <div className={`flex justify-center py-8 ${platformTab !== 'mobile' ? 'hidden' : ''}`}>
+          <div className="relative">
+            {/* Phone frame SVG - larger size */}
+            <svg width="375" height="767" viewBox="0 0 506 1023" fill="none" xmlns="http://www.w3.org/2000/svg" className="relative z-10">
+              <rect width="498" height="1022.4" transform="translate(3.59998)" fill="black" fillOpacity="0.01" />
+              <path d="M400.8 4.34676e-05C413.845 4.32929e-05 425.072 -0.0188523 434.28 0.733442C443.768 1.50866 453.206 3.22077 462.287 7.8477C475.835 14.7505 486.849 25.7651 493.752 39.3125C498.379 48.3936 500.091 57.8311 500.866 67.3194C501.525 75.3763 501.593 84.9793 501.6 95.9932V235.2C503.588 235.2 505.2 236.78 505.2 238.729V349.273C505.2 351.221 503.588 352.8 501.6 352.8V926.007C501.593 937.021 501.525 946.624 500.866 954.681C500.091 964.169 498.379 973.606 493.752 982.688C486.849 996.235 475.835 1007.25 462.287 1014.15C453.206 1018.78 443.768 1020.49 434.28 1021.27C425.072 1022.02 413.845 1022 400.8 1022H104.399C91.3544 1022 80.1269 1022.02 70.9189 1021.27C61.4308 1020.49 51.9931 1018.78 42.9121 1014.15C29.3647 1007.25 18.3501 996.235 11.4473 982.688C6.82028 973.606 5.10823 964.169 4.33301 954.681C3.58069 945.473 3.59961 934.245 3.59961 921.2V378.667C1.61172 378.667 0.000248749 377.078 0 375.117V307.667C0 305.707 1.61156 304.117 3.59961 304.117V285.184C1.6117 285.183 0.000223667 283.594 0 281.634V214.184C0 212.223 1.61156 210.634 3.59961 210.634V178.684C1.6117 178.683 0.000225235 177.094 0 175.134V142C2.41368e-05 140.04 1.61158 138.45 3.59961 138.45V100.8C3.59961 87.7547 3.58068 76.5274 4.33301 67.3194C5.10823 57.8311 6.82026 48.3936 11.4473 39.3125C18.3501 25.7651 29.3647 14.7506 42.9121 7.8477C51.9931 3.22071 61.4308 1.50868 70.9189 0.733442C80.1269 -0.0188769 91.3544 4.28928e-05 104.399 4.34676e-05H400.8ZM104.399 24C77.5173 24 64.0753 23.9998 53.8076 29.2315C44.7762 33.8334 37.4329 41.1766 32.8311 50.2081C27.5994 60.4758 27.5996 73.9176 27.5996 100.8V921.2L27.6006 926.086C27.6197 949.75 27.9265 962.166 32.8311 971.792C37.4329 980.824 44.7762 988.167 53.8076 992.769C64.0753 998 77.5173 998 104.399 998H400.8L405.686 997.999C428.955 997.98 441.348 997.683 450.907 993.01L451.392 992.769C460.141 988.31 467.306 981.279 471.929 972.633L472.368 971.792C477.273 962.166 477.579 949.75 477.599 926.086L477.6 921.2V100.8C477.6 74.3377 477.6 60.8998 472.609 50.6924L472.368 50.2081C467.91 41.4586 460.879 34.2939 452.232 29.6709L451.392 29.2315C441.766 24.327 429.35 24.0202 405.686 24.001L400.8 24H386.281C377.082 24.0001 377.081 29.2622 377.081 34.8086C377.081 45.9353 368.599 60.0293 349.081 60.0293H154.682C135.164 60.0293 126.682 45.9353 126.682 34.4082C126.682 29.2622 126.681 24.0001 117.481 24H104.399Z" fill="var(--foreground)" />
+            </svg>
+            {/* Screen content - iOS Bottom Sheet */}
+            <div 
+              className="absolute overflow-hidden"
+              style={{
+                top: '2.35%',
+                left: '5.5%',
+                right: '5.5%',
+                bottom: '2.35%',
+                borderRadius: '30px',
+              }}
+            >
+              <MobilePermissionCard />
+            </div>
+          </div>
+        </div>
+      </WideContent>
+
+      {/* Pros and Cons Section */}
+      <NarrowContent className="mt-12">
+        <BodyText>There were pros and cons to this approach of displaying a Just in Time Prompt (JITP) to the user via their desktop or mobile device.</BodyText>
+        <ContentSection title="Advantages">
+          <BodyList>
+            <li><strong>Transparency:</strong> Users see exactly which credentials are being requested and by which service</li>
+            <li><strong>Trust:</strong> Leverages the trusted 1Password brand that users already rely on for security</li>
+            <li><strong>Control:</strong> Granular ability to approve, deny, or modify access on a per-request basis</li>
+            <li><strong>Security:</strong> Time-bound access and explicit consent reduce risk of unauthorized use</li>
+          </BodyList>
+        </ContentSection>
+      </NarrowContent>
+
+      <NarrowContent className="mt-8">
+        <ContentSection title="Trade-offs">
+          <BodyList>
+            <li><strong>Interruption:</strong> Breaks automation flow—the very thing users are trying to achieve</li>
+            <li><strong>Prompt fatigue:</strong> Frequent requests from the same agent could lead to approval fatigue</li>
+            <li><strong>Cognitive load:</strong> Users must evaluate each request, which can be taxing during complex workflows</li>
+            <li><strong>Blocking:</strong> Agent workflow pauses until user responds, limiting autonomous operation</li>
+          </BodyList>
+        </ContentSection>
+      </NarrowContent>
+
+      <NarrowContent>
+        <ZigZagDivider />
+      </NarrowContent>
+
       {/* Prompt Design Section */}
       <NarrowContent id="prompt-guidelines" className="scroll-mt-8">
         <SkewedTag size="xl">Prompt Design Guidelines</SkewedTag>
         <p className="text-2xl sm:text-3xl md:text-4xl font-medium text-[var(--foreground)] leading-tight">
-          How do you design for something you can&apos;t control?
+          How do you design for something that's non-deterministic?
         </p>
         <BodyText>
           AI agents are inherently unpredictable. A key part of this project was defining guidelines that create predictable, trustworthy behavior when agents handle sensitive credentials—ensuring transparency, minimal access, and user control at every step.
@@ -729,24 +839,6 @@ export function AgenticAutofillContent({ caseStudy }: { caseStudy: CaseStudy }) 
           showBackground={false}
         />
       </FullWidthContent>
-
-      {/* Hidden along with Autonomous Agents section
-      <NarrowContent>
-        <ZigZagDivider />
-      </NarrowContent>
-      */}
-
-      {/* Autonomous Agents Section - hidden while adding content
-      <NarrowContent id="autonomous-agents" className="mt-8 scroll-mt-8">
-        <SkewedTag size="xl">Autonomous Agents</SkewedTag>
-        <p className="text-2xl sm:text-3xl md:text-4xl font-medium text-[var(--foreground)] leading-tight mt-4">
-          Coming soon.
-        </p>
-        <BodyText className="mt-4">
-          We are exploring how 1Password can securely provide credentials to autonomous agents that operate independently without human oversight.
-        </BodyText>
-      </NarrowContent>
-      */}
 
       <NarrowContent>
         <ZigZagDivider />
@@ -777,17 +869,15 @@ export function AgenticAutofillContent({ caseStudy }: { caseStudy: CaseStudy }) 
       {/* Full-bleed press coverage section */}
       <motion.div 
         className="w-screen relative left-1/2 right-1/2 -ml-[50vw] -mr-[50vw] overflow-hidden"
+        style={{
+          backgroundImage: 'url(/images/work/agentic-autofill/problem-solution-bg-4.png)',
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+        }}
         initial="hidden"
         whileInView="visible"
         viewport={{ once: true, amount: 0.3 }}
       >
-        <Image
-          src="/images/work/agentic-autofill/problem-solution-bg-4.png"
-          alt=""
-          fill
-          className="object-cover object-center -z-10"
-          sizes="100vw"
-        />
         <div className="max-w-[1400px] mx-auto px-4 md:px-8 flex flex-col md:flex-row items-start justify-center gap-8 md:gap-12 pt-16">
           <motion.div
             variants={{
@@ -824,12 +914,76 @@ export function AgenticAutofillContent({ caseStudy }: { caseStudy: CaseStudy }) 
         </div>
       </motion.div>
 
-      <NarrowContent>
+      <NarrowContent className="-mt-24 md:-mt-38 relative z-10">
         <QuoteCard
           quote="It remembers the passwords that you can't, and hides them from AI bots that can't be trusted to forget."
           attribution="The Verge"
         />
       </NarrowContent>
+
+      <NarrowContent className="mt-12">
+        <p className="text-2xl sm:text-3xl md:text-4xl font-medium text-[var(--foreground)] leading-tight">
+          Actual usage was low – but that was never the goal.
+        </p>
+        <BodyText>
+          The usage of the 1Password integration with Browserbase was low. That wasn&apos;t surprising or unexpected news for our team given a couple of factors:
+        </BodyText>
+        <BodyList ordered>
+          <li>The user needs to have both a Browserbase and 1Password account.</li>
+          <li>The user needs to use the specific Director.ai web interface.</li>
+        </BodyList>
+        <BodyText>
+          So usage was never a success factor for this project. Success was measured on how successful the launch was as a means of publicly positioning 1Password as the trusted security layer for agentic AI, and therefore paving the way for future integrations with other platforms and use cases.
+        </BodyText>
+      </NarrowContent>
+
+      <NarrowContent className="mt-8">
+        <ZigZagDivider />
+      </NarrowContent>
+
+      {/* What's Next Section */}
+      <NarrowContent id="whats-next" className="scroll-mt-8">
+        <SkewedTag size="xl">What&apos;s Next</SkewedTag>
+        <p className="text-2xl sm:text-3xl md:text-4xl font-medium text-[var(--foreground)] leading-tight mt-4">
+          From Browser Agents to Autonomous Agents.
+        </p>
+        <BodyText className="mt-4">
+          The Browserbase integration was just the beginning. We&apos;re now exploring how 1Password can securely provide credentials to fully autonomous agents that operate independently—without human oversight or real-time approval flows.
+        </BodyText>
+        <BodyText>
+          This raises new design challenges around trust, delegation, and control. How do you grant an AI agent access to sensitive credentials when there&apos;s no human in the loop? We&apos;re actively researching policy-based access controls, time-bound permissions, and audit trails that give organizations confidence to automate at scale.
+        </BodyText>
+      </NarrowContent>
+
+      {/* Admin console with sticky notes overlay */}
+      <WideContent className="mt-8">
+        <div className="relative">
+          <div className="relative rounded-xl overflow-hidden shadow-xl border border-[var(--border-darker)]/20">
+          <Image
+            src="/images/work/agentic-autofill/autonomous-agents-admin-console-4.png"
+            alt="Autonomous agents admin console concept"
+            width={1600}
+            height={900}
+            className="w-full h-auto"
+          />
+          
+        </div>
+          {/* Sticky notes positioned at bottom of image */}
+          <div className="absolute bottom-0 left-0 right-0 translate-y-1/2">
+            <StickyNotesGrid
+              notes={[
+                { src: "/images/work/agentic-autofill/activity-auditing-sticky.png", alt: "Activity and Auditing" },
+                { src: "/images/work/agentic-autofill/item-vault-access-sticky.png", alt: "Item and vault access" },
+                { src: "/images/work/agentic-autofill/granular-permissions-sticky.png", alt: "Granular permissions" },
+                { src: "/images/work/agentic-autofill/autonomous-agents-sticky.png", alt: "Autonomous agents" },
+              ]}
+            />
+          </div>
+        </div>
+      </WideContent>
+      
+      {/* Spacer for sticky notes overflow */}
+      <div className="h-24 md:h-32" />
 
     </CaseStudyLayout>
   );
