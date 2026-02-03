@@ -3,12 +3,7 @@
 import Image from "next/image";
 import * as Tooltip from "@radix-ui/react-tooltip";
 import "./tooltip.css";
-
-interface TeamMember {
-  name: string;
-  role: string;
-  avatar: string;
-}
+import { TeamMember } from "@/data/case-studies";
 
 interface TeamAvatarsProps {
   team: TeamMember[];

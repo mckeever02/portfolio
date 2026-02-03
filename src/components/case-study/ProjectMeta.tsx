@@ -1,10 +1,6 @@
 import { ReactNode } from "react";
 import { TeamAvatars } from "./TeamAvatars";
-
-interface TeamMember {
-  name: string;
-  avatar: string;
-}
+import { TeamMember } from "@/data/case-studies";
 
 interface ProjectMetaProps {
   subtitle: string;
