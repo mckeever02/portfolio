@@ -17,6 +17,7 @@ import {
   FeatureCardList,
   StatCard,
   Tabs,
+  LargeText,
 } from "@/components/case-study";
 import type { FeatureCardItem } from "@/components/case-study";
 import Image from "next/image";
@@ -590,9 +591,9 @@ export function AgenticAutofillContent({ caseStudy }: { caseStudy: CaseStudy }) 
 
       <NarrowContent id="browser-agents" className="scroll-mt-8">
         <SkewedTag size="xl">Browser-based Agents</SkewedTag>
-        <p className="text-2xl sm:text-3xl md:text-4xl font-medium text-[var(--foreground)] leading-tight">
+        <LargeText as="h3">
           Browserbase enters the chat.
-        </p>
+        </LargeText>
 
         <BodyText linkColor="neutral">
           1Password partnered with <a href="https://browserbase.com" target="_blank" rel="noopener noreferrer">Browserbase</a> – an AI agent browser platform – to develop an integration for their product <a href="https://director.ai" target="_blank" rel="noopener noreferrer">Director.ai</a> that would allow users to securely provide their credentials to AI agents.
@@ -614,12 +615,12 @@ export function AgenticAutofillContent({ caseStudy }: { caseStudy: CaseStudy }) 
       </FullWidthContent>
 
       {/* Research Insights Section */}
-      <NarrowContent className="mt-16">
-        <ContentSection id="research" title="Research Insights">
+      <NarrowContent className="mt-16" id="research">
+          <SkewedTag size="xl">Research Insights</SkewedTag>
+          <LargeText as="h3">Speaking with 6 Browserbase customers to understand their needs.</LargeText>
           <BodyText>
-            We teamed up with the Browserbase team to conduct a research study with 6 of their customers to understand how they are using Browserbase and how they are currently handling credentials when using agentic AI. Three distinct personas emerged from the research:
+            Marta, the research lead on this project and myself teamed up with the Browserbase team to conduct a research study with 6 of their customers to understand how they are using Browserbase and how they are currently handling credentials when using agentic AI. Three distinct personas emerged from the research:
           </BodyText>
-        </ContentSection>
       </NarrowContent>
 
       {/* User Personas - FlipCarousel style */}
@@ -689,9 +690,9 @@ export function AgenticAutofillContent({ caseStudy }: { caseStudy: CaseStudy }) 
       {/* Trust Quote */}
       <NarrowContent className="-mt-6 gap-3">
         <h4 className="text-base uppercase tracking-wider text-[var(--foreground)]/70 font-bold text-center">The tl;dr</h4>
-        <p className="text-2xl sm:text-3xl md:text-4xl font-medium text-[var(--foreground)] leading-normal">
+        <LargeText leading="normal">
           Individual users will sacrifice <span className="bg-[var(--foreground)]/10 px-1">security for automation</span>. Admins will sacrifice <span className="bg-[var(--foreground)]/10 px-1">automation for security</span>.
-        </p>
+        </LargeText>
       </NarrowContent>
 
       <NarrowContent>
@@ -701,9 +702,9 @@ export function AgenticAutofillContent({ caseStudy }: { caseStudy: CaseStudy }) 
       {/* Why not MCP Section */}
       <NarrowContent>
         <SkewedTag size="xl">Why not MCP?</SkewedTag>
-        <p className="text-2xl sm:text-3xl md:text-4xl font-medium text-[var(--foreground)] leading-tight">
+        <LargeText>
           MCP wasn't the answer for credentials, so we built our own.
-        </p>
+        </LargeText>
         <BodyText>
           MCP servers are designed for general-purpose integrations—not for handling sensitive credentials. Exposing passwords through an MCP server would create a security vulnerability, as credentials could be logged, cached, or accessed by unintended processes. It was a pathway that we ruled out pretty early on.
         </BodyText>
@@ -719,9 +720,9 @@ export function AgenticAutofillContent({ caseStudy }: { caseStudy: CaseStudy }) 
       {/* The Prompt Section */}
       <NarrowContent id="the-prompt" className="scroll-mt-8">
         <SkewedTag size="xl">The Prompt</SkewedTag>
-        <p className="text-2xl sm:text-3xl md:text-4xl font-medium text-[var(--foreground)] leading-tight">
+        <LargeText as="h3">
           The 1Password access request.
-        </p>
+        </LargeText>
         <BodyText>
           When an AI agent needs to authenticate, 1Password presents the user with a clear authorization request—showing exactly which service is requesting access and which credentials will be used.
         </BodyText>
@@ -822,11 +823,11 @@ export function AgenticAutofillContent({ caseStudy }: { caseStudy: CaseStudy }) 
       </NarrowContent>
 
       {/* Prompt Design Section */}
-      <NarrowContent id="prompt-guidelines" className="scroll-mt-8">
+      <NarrowContent id="prompt-guidelines">
         <SkewedTag size="xl">Prompt Design Guidelines</SkewedTag>
-        <p className="text-2xl sm:text-3xl md:text-4xl font-medium text-[var(--foreground)] leading-tight">
+        <LargeText>
           How do you design for something that's non-deterministic?
-        </p>
+        </LargeText>
         <BodyText>
           AI agents are inherently unpredictable. A key part of this project was defining guidelines that create predictable, trustworthy behavior when agents handle sensitive credentials—ensuring transparency, minimal access, and user control at every step.
         </BodyText>
@@ -846,15 +847,13 @@ export function AgenticAutofillContent({ caseStudy }: { caseStudy: CaseStudy }) 
 
       {/* Impact Section */}
       <NarrowContent id="impact" className="mt-8 scroll-mt-8">
-        <ContentSection>
         <SkewedTag size="xl">Impact</SkewedTag>
-        <p className="text-2xl sm:text-3xl md:text-4xl font-medium text-[var(--foreground)] leading-tight mt-4">
-        Agentic Autofill was one of 1Password's most visible launches to date.
-        </p>
-        <BodyText className="mt-4">
+        <LargeText>
+        Agentic Autofill was one of 1Password's most visible and successful launches to date.
+        </LargeText>
+        <BodyText>
           The Secure Agentic Autofill launch with Browserbase generated significant media coverage, positioning 1Password as the trusted security layer for agentic AI.
         </BodyText>
-        </ContentSection>
       </NarrowContent>
 
       <WideContent>
@@ -922,11 +921,13 @@ export function AgenticAutofillContent({ caseStudy }: { caseStudy: CaseStudy }) 
       </NarrowContent>
 
       <NarrowContent className="mt-12">
-        <p className="text-2xl sm:text-3xl md:text-4xl font-medium text-[var(--foreground)] leading-tight">
+        <SkewedTag size="xl">What about usage?</SkewedTag>
+
+        <LargeText>
           Actual usage was low – but that was never the goal.
-        </p>
+        </LargeText>
         <BodyText>
-          The usage of the 1Password integration with Browserbase was low. That wasn&apos;t surprising or unexpected news for our team given a couple of factors:
+          That wasn&apos;t surprising or unexpected news for our team given a couple of factors:
         </BodyText>
         <BodyList ordered>
           <li>The user needs to have both a Browserbase and 1Password account.</li>
@@ -944,11 +945,11 @@ export function AgenticAutofillContent({ caseStudy }: { caseStudy: CaseStudy }) 
       {/* What's Next Section */}
       <NarrowContent id="whats-next" className="scroll-mt-8">
         <SkewedTag size="xl">What&apos;s Next</SkewedTag>
-        <p className="text-2xl sm:text-3xl md:text-4xl font-medium text-[var(--foreground)] leading-tight mt-4">
+        <LargeText className="mt-4">
           From Browser Agents to Autonomous Agents.
-        </p>
+        </LargeText>
         <BodyText className="mt-4">
-          The Browserbase integration was just the beginning. We&apos;re now exploring how 1Password can securely provide credentials to fully autonomous agents that operate independently—without human oversight or real-time approval flows.
+          The Browserbase integration was just the testing ground. We&apos;re now exploring how 1Password can securely provide credentials to fully autonomous agents that operate independently—without human oversight or real-time approval flows.
         </BodyText>
         <BodyText>
           This raises new design challenges around trust, delegation, and control. How do you grant an AI agent access to sensitive credentials when there&apos;s no human in the loop? We&apos;re actively researching policy-based access controls, time-bound permissions, and audit trails that give organizations confidence to automate at scale.
@@ -958,7 +959,7 @@ export function AgenticAutofillContent({ caseStudy }: { caseStudy: CaseStudy }) 
       {/* Admin console with sticky notes overlay */}
       <WideContent className="mt-8">
         <div className="relative">
-          <div className="relative rounded-xl overflow-hidden shadow-xl border border-[var(--border-darker)]/20">
+          <div className="relative rounded-xl overflow-hidden border border-[var(--border-darker)]">
           <Image
             src="/images/work/agentic-autofill/autonomous-agents-admin-console-4.png"
             alt="Autonomous agents admin console concept"

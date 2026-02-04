@@ -62,6 +62,7 @@ export const caseStudies: Record<string, CaseStudy> = {
       { id: "agentic-ui", title: "Agentic UI" },
       { id: "user-testing", title: "User Testing" },
       { id: "storytelling", title: "Storytelling" },
+      { id: "impact", title: "Impact" },
     ],
     protected: true,
   },
@@ -74,7 +75,7 @@ export const caseStudies: Record<string, CaseStudy> = {
     heroColor: "#DD4825",
     heroVideo: "/images/work/agentic-autofill/agentic-autofill-project-hero.mp4",
     heroVideoPoster: "/images/agentic-autofill-card-hero.jpg",
-    timeline: "2025",
+    timeline: "Q4 2025",
     role: "Design Lead",
     team: [
       { name: "Michael", role: "Design Lead", avatar: "/images/michael-mckeever-pixel-portrait-4.png" },

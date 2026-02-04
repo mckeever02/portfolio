@@ -20,3 +20,4 @@ export type { GridCardItem } from "./GridCard";
 export { StatCard } from "./StatCard";
 export { TableOfContents } from "./TableOfContents";
 export { Tabs } from "./Tabs";
+export { LargeText } from "./LargeText";

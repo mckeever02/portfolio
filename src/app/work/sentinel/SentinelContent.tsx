@@ -9,6 +9,7 @@ import {
   FullWidthContent,
   ContentSection,
   BodyText,
+  LargeText,
 } from "@/components/case-study";
 import { LightboxImage } from "@/components/Lightbox";
 import Image from "next/image";
@@ -18,7 +19,6 @@ import { MediaCarousel } from "@/components/MediaCarousel";
 import { HighlightText } from "@/components/HighlightText";
 import { HoverImageText } from "@/components/HoverImageText";
 import { ZigZagDivider } from "@/components/ZigZagDivider";
-import { SpotlightEffect } from "@/components/SpotlightEffect";
 import { TextCarousel, QuoteProgressIndicator } from "@/components/TextCarousel";
 import { SummaryCardDemo } from "@/components/SummaryCardDemo";
 import { SkewedTag } from "@/components/SkewedTag";
@@ -45,6 +45,9 @@ function ScrollScaleImage({
   });
   const scale = useTransform(scrollYProgress, [0, 1], [0.85, 1]);
 
+  // Parse maxWidth to get numeric value for sizes calculation
+  const maxWidthNum = parseInt(maxWidth, 10) || 1000;
+
   return (
     <motion.div
       ref={containerRef}
@@ -60,7 +63,9 @@ function ScrollScaleImage({
           alt={alt}
           fill
           className="object-cover"
-          sizes={`(max-width: 768px) 100vw, ${maxWidth}`}
+          sizes={`(max-width: 768px) 100vw, ${maxWidthNum}px`}
+          quality={90}
+          priority
         />
       </div>
     </motion.div>
@@ -403,156 +408,21 @@ const imageTransforms: Record<NonNullable<ImageFocus>, string> = {
   support: "scale(2) translate(-25%, -15%)",
 };
 
-// Order of auto-cycling: 1. insights, 2. tasks, 3. support
-const FOCUS_ORDER: NonNullable<ImageFocus>[] = ["insights", "support", "tasks"];
-
 function SolutionSection() {
-  const [imageFocus, setImageFocus] = useState<ImageFocus>(null);
-  const [isManualHover, setIsManualHover] = useState(false);
-  const [autoCycleIndex, setAutoCycleIndex] = useState(0);
-  const [progress, setProgress] = useState(100);
-  const [phase, setPhase] = useState<"waiting" | "expanding" | "paused" | "shrinking">("waiting");
-  const [expandProgress, setExpandProgress] = useState(0); // 0 to 100 for expansion
-  const [isInView, setIsInView] = useState(false);
-  const sectionRef = useRef<HTMLDivElement>(null);
-  const INITIAL_DELAY = 3000; // 3 second delay before cycle starts
-  const EXPAND_DURATION = 500; // 0.5 seconds for expansion
-  const PAUSE_DURATION = 1200; // 1.2 second pause at top before shrinking
-  const SHRINK_DURATION = 5500; // 5.5 seconds for the shrink animation
-  const TICK_INTERVAL = 16; // ~60fps for smooth animation
-  
-  // Spring-like overshoot easing for expansion
-  const easeOutBack = (t: number) => {
-    const c1 = 1.70158;
-    const c3 = c1 + 1;
-    return 1 + c3 * Math.pow(t - 1, 3) + c1 * Math.pow(t - 1, 2);
-  };
-  
-  // Track when section is in view
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          setIsInView(entry.isIntersecting && entry.intersectionRatio >= 0.5);
-        });
-      },
-      { threshold: 0.5 }
-    );
-    
-    if (sectionRef.current) {
-      observer.observe(sectionRef.current);
-    }
-    
-    return () => observer.disconnect();
-  }, []);
-  
-  // Initial waiting phase (3s delay before starting)
-  useEffect(() => {
-    if (isManualHover || !isInView || phase !== "waiting") return;
-    
-    const timeout = setTimeout(() => {
-      setPhase("expanding");
-    }, INITIAL_DELAY);
-    
-    return () => clearTimeout(timeout);
-  }, [phase, isManualHover, isInView]);
-  
-  // Expansion phase
-  useEffect(() => {
-    if (isManualHover || !isInView || phase !== "expanding") return;
-    
-    const tickAmount = (TICK_INTERVAL / EXPAND_DURATION) * 100;
-    
-    const interval = setInterval(() => {
-      setExpandProgress((prev) => {
-        const next = prev + tickAmount;
-        if (next >= 100) {
-          setPhase("paused");
-          return 100;
-        }
-        return next;
-      });
-    }, TICK_INTERVAL);
-    
-    return () => clearInterval(interval);
-  }, [phase, isManualHover, isInView]);
-  
-  // Pause phase
-  useEffect(() => {
-    if (isManualHover || !isInView || phase !== "paused") return;
-    
-    const timeout = setTimeout(() => {
-      setPhase("shrinking");
-    }, PAUSE_DURATION);
-    
-    return () => clearTimeout(timeout);
-  }, [phase, isManualHover, isInView]);
-  
-  // Shrinking phase
-  useEffect(() => {
-    if (isManualHover || !isInView || phase !== "shrinking") return;
-    
-    const tickAmount = (TICK_INTERVAL / SHRINK_DURATION) * 100;
-    
-    const interval = setInterval(() => {
-      setProgress((prev) => {
-        const next = prev - tickAmount;
-        if (next <= 0) {
-          // Move to next highlight
-          setAutoCycleIndex((prevIndex) => (prevIndex + 1) % FOCUS_ORDER.length);
-          setPhase("expanding");
-          setExpandProgress(0);
-          return 100;
-        }
-        return next;
-      });
-    }, TICK_INTERVAL);
-    
-    return () => clearInterval(interval);
-  }, [phase, isManualHover, isInView]);
-  
-  // Determine the active focus (manual hover takes priority, null during waiting)
-  const activeFocus = isManualHover ? imageFocus : (phase === "waiting" ? null : FOCUS_ORDER[autoCycleIndex]);
-  
-  // Calculate the visual progress based on current phase
-  const getVisualProgress = () => {
-    if (phase === "waiting") {
-      return 0; // No highlight during initial delay
-    } else if (phase === "expanding") {
-      // Animate from 0 to 100 with spring easing
-      return easeOutBack(expandProgress / 100) * 100;
-    } else if (phase === "paused") {
-      return 100; // Full height during pause
-    } else {
-      // Shrinking - linear countdown
-      return progress;
-    }
-  };
-  
-  const visualProgress = getVisualProgress();
-  
-  // Handle manual hover - pause auto cycle
+  const [activeFocus, setActiveFocus] = useState<ImageFocus>(null);
+
   const handleMouseEnter = (focus: ImageFocus) => {
-    setIsManualHover(true);
-    setImageFocus(focus);
+    setActiveFocus(focus);
   };
   
   const handleMouseLeave = () => {
-    setIsManualHover(false);
-    setImageFocus(null);
-    // Reset to expanding phase when leaving hover
-    setProgress(100);
-    setExpandProgress(0);
-    setPhase("expanding");
+    setActiveFocus(null);
   };
 
   return (
     <FullWidthContent className="mt-0">
-      <div 
-        ref={sectionRef}
-        className="grid grid-cols-1 bg-[var(--background)] border border-[var(--foreground)]/20 lg:grid-cols-2 items-center"
-      >
-        <div className="p-6 xs:p-8 sm:p-12">
+      <div className="grid grid-cols-1 bg-[var(--background)] border border-[var(--foreground)]/20 lg:grid-cols-2 items-stretch overflow-hidden">
+        <div className="p-6 xs:p-8 sm:p-12 flex items-center">
           <section id="solution" className="flex flex-col gap-4 xs:gap-5 sm:gap-6 scroll-mt-8">
             <SkewedTag as="h3" className="text-lg lg:text-xl">The solution</SkewedTag>
             <p className="text-[var(--foreground)] text-2xl md:text-3xl lg:text-4xl leading-relaxed">
@@ -562,7 +432,6 @@ function SolutionSection() {
                 onMouseEnter={() => handleMouseEnter("insights")}
                 onMouseLeave={handleMouseLeave}
                 isActive={activeFocus === "insights"}
-                progress={!isManualHover && activeFocus === "insights" ? visualProgress : undefined}
               >
                 generate insights
               </HighlightText>
@@ -572,7 +441,6 @@ function SolutionSection() {
                 onMouseEnter={() => handleMouseEnter("tasks")}
                 onMouseLeave={handleMouseLeave}
                 isActive={activeFocus === "tasks"}
-                progress={!isManualHover && activeFocus === "tasks" ? visualProgress : undefined}
               >
                 automate tasks
               </HighlightText>{" "}
@@ -582,7 +450,6 @@ function SolutionSection() {
                 onMouseEnter={() => handleMouseEnter("support")}
                 onMouseLeave={handleMouseLeave}
                 isActive={activeFocus === "support"}
-                progress={!isManualHover && activeFocus === "support" ? visualProgress : undefined}
               >
                 provide support
               </HighlightText>
@@ -592,15 +459,14 @@ function SolutionSection() {
         </div>
 
         <div 
-          className="p-6 pl-0 overflow-hidden relative"
+          className="p-6 pl-0 relative"
+          style={{
+            backgroundImage: "url('/images/work/sentinel/preview-bg.png')",
+            backgroundSize: "cover",
+            backgroundPosition: "left center",
+          }}
         >
-            <Image
-              src="/images/work/sentinel/preview-bg.png"
-              alt=""
-              fill
-              className="object-cover object-center -z-10"
-              sizes="50vw"
-            />
+          <div className="relative overflow-hidden">
             <motion.div 
               className="relative w-full aspect-[2760/3045] overflow-hidden rounded-lg rounded-l-none shadow-2xl border border-[var(--foreground)]/10 border-l-0"
               initial={{ x: "-75%", opacity: 0 }}
@@ -675,6 +541,7 @@ function SolutionSection() {
                 </motion.div>
               ))}
             </AnimatePresence>
+          </div>
         </div>
       </div>
     </FullWidthContent>
@@ -859,8 +726,9 @@ export function SentinelContent({ caseStudy }: { caseStudy: CaseStudy }) {
       </WideContent>
 
       {/* Making a case for Agentic AI */}
-      <NarrowContent className="mt-16">
-        <ContentSection id="comparative-audit" title="Making a case for Agentic AI in 1Password">
+      <NarrowContent className="mt-16" id="comparative-audit">
+          <SkewedTag as="h2" className="text-lg lg:text-xl">Making the case for Agentic AI</SkewedTag>
+          <LargeText as="h3">Choosing not to play was an existential risk.</LargeText>
           <BodyText>
             As AI capabilities rapidly evolved across the industry, 1Password risked falling behind competitors who were already shipping AI-powered features. I conducted{" "}
             <HoverImageText
@@ -877,7 +745,6 @@ export function SentinelContent({ caseStudy }: { caseStudy: CaseStudy }) {
             >a comparative analysis</HoverImageText>{" "}
             to understand where the market was heading and identify the opportunity for 1Password to differentiate.
           </BodyText>
-        </ContentSection>
       </NarrowContent>
 
       <WideContent className="mt-0">
@@ -891,7 +758,7 @@ export function SentinelContent({ caseStudy }: { caseStudy: CaseStudy }) {
 
       <NarrowContent className="mt-8">
         <BodyText>
-            The case I made to leadership was simple—we needed to catch up, and fast. Falling behind wasn&apos;t just a competitive issue—it was an existential one.
+            I put together a summary to share with stakeholders and Product leadership to demonstrate where we were falling behind and why we needed to act.
         </BodyText>
 
         <QuoteCard attribution="Buzz Woeckener – 1Password Customer Advisory Board">
@@ -1028,12 +895,16 @@ export function SentinelContent({ caseStudy }: { caseStudy: CaseStudy }) {
         <ZigZagDivider />
 
       {/* User Testing Section */}
-      <NarrowContent>
-        <ContentSection id="user-testing" title="User testing">
+      <NarrowContent id="user-testing">
+          <SkewedTag as="h2" className="text-lg lg:text-xl">User testing</SkewedTag>
+          <LargeText as="h3">Is a chatbot truly valuable for Admins – or just another case of AI slop?</LargeText>
           <BodyText>
-            I partnered with a researcher to run a study to validate the concept and get insights into how organisation's are using AI internally to help them manage their security.
+            I partnered with Marta, our AI researcher, to run a study to validate the concept and get insights into how organisation's are using AI internally to help them manage their security.
           </BodyText>
-        </ContentSection>
+
+        <BodyText>
+          We expected admins to be skeptical of Agentic AI within 1Password. Instead, many were excited about using AI to help manage their security and reduce their workload.
+        </BodyText>
       </NarrowContent>
 
       {/* Full Width Quote Section */}
@@ -1187,39 +1058,16 @@ export function SentinelContent({ caseStudy }: { caseStudy: CaseStudy }) {
 
         <ZigZagDivider />
 
-        <div className="flex flex-col items-center justify-center gap-8">
-          <FlipCard
-            className="w-full max-w-md aspect-square"
-            front={
-              <div className="w-full h-full bg-[var(--background)] flex items-center justify-center p-8 border border-[var(--foreground)]">
-                <h2 className="text-4xl md:text-5xl font-normal text-[var(--foreground)] text-center">
-                  Did it ship?
-                </h2>
-              </div>
-            }
-            back={
-              <div className="w-full h-full bg-[var(--foreground)] flex items-center justify-center overflow-hidden border border-[var(--foreground)]">
-                <video
-                  src="/images/work/sentinel/no.mp4"
-                  autoPlay
-                  loop
-                  muted
-                  playsInline
-                  className="w-full h-full object-cover"
-                />
-              </div>
-            }
-            autoFlipHint
-          />
-          <NarrowContent>
+          <NarrowContent id="impact">
+            <SkewedTag as="h2" className="text-lg lg:text-xl">Impact and next steps?</SkewedTag>
+            <LargeText as="h3">Sentinel was paused to focus on external AI security efforts.</LargeText>
             <BodyText>
-              Despite strong internal and external signals that an agentic AI system like Sentinel within the 1Password admin console would be a valuable undertaking, the AI team was ultimately repurposed and Sentinel was paused to focus on external AI security efforts.
+              Despite strong internal and external signals that an agentic AI system like Sentinel within the 1Password admin console would be a valuable undertaking, the AI team was ultimately repurposed to focus on external AI security efforts, and therefore Sentinel was put on ice for the time being.
             </BodyText>
             <BodyText>
-              Still, I'm proud of the work that went into crafting and selling this vision. As the underlying technology matures and becomes more secure and easier to integrate, I'm confident something like Sentinel will find its way into the product in the future.
+              I'm proud of the work that went into crafting and selling this vision. It helped paint a picture of the future of AI in the admin console and as the technology matures, I'm confident something like Sentinel will find its way into the product in the future.
             </BodyText>
           </NarrowContent>
-        </div>
     </CaseStudyLayout>
   );
 }

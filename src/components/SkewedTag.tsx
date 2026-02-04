@@ -1,6 +1,6 @@
 "use client";
 
-import { ReactNode } from "react";
+import { ReactNode, ElementType } from "react";
 import { twMerge } from "tailwind-merge";
 
 type TagVariant = "muted" | "colored";
@@ -17,7 +17,7 @@ interface SkewedTagProps {
   /** Additional CSS classes */
   className?: string;
   /** Render as different HTML element */
-  as?: "span" | "h3" | "h4";
+  as?: ElementType;
 }
 
 const sizeClasses: Record<TagSize, string> = {
@@ -33,7 +33,7 @@ export function SkewedTag({
   bgColor,
   size = "base",
   className = "",
-  as: Component = "h3",
+  as: Component = "h2",
 }: SkewedTagProps) {
   const baseClasses = "font-bold tracking-wide py-1 px-2 uppercase -skew-x-8 transform inline-block w-fit";
   
