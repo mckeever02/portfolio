@@ -39,6 +39,28 @@ export function TableOfContents({ sections }: TableOfContentsProps) {
   const buttonOffsetsRef = useRef<number[]>([]); // Cached button center positions
   const barRef = useRef<HTMLDivElement>(null);
   const [proximityScale, setProximityScale] = useState(1);
+  const [isHintExpanded, setIsHintExpanded] = useState(false);
+  
+  // Hint animation: expand briefly after page load to show users the nav exists
+  useEffect(() => {
+    // Short delay before expanding
+    const expandTimer = setTimeout(() => {
+      setIsHintExpanded(true);
+    }, 400);
+    
+    // Contract after being visible
+    const contractTimer = setTimeout(() => {
+      setIsHintExpanded(false);
+    }, 2200); // 400ms delay + 1800ms visible
+    
+    return () => {
+      clearTimeout(expandTimer);
+      clearTimeout(contractTimer);
+    };
+  }, []);
+  
+  // Combined expanded state: hover OR hint animation
+  const isExpanded = isHovered || isHintExpanded;
   
   // Measure expanded content size and button positions from hidden measurement div
   useLayoutEffect(() => {
@@ -64,13 +86,13 @@ export function TableOfContents({ sections }: TableOfContentsProps) {
   
   // Track mouse proximity to collapsed bar
   useEffect(() => {
-    if (isHovered) {
+    if (isExpanded) {
       setProximityScale(1);
       return;
     }
     
     const handleMouseMove = (e: MouseEvent) => {
-      if (!barRef.current || isHovered) return;
+      if (!barRef.current || isExpanded) return;
       
       const rect = barRef.current.getBoundingClientRect();
       const barCenterX = rect.left + rect.width / 2;
@@ -97,7 +119,7 @@ export function TableOfContents({ sections }: TableOfContentsProps) {
     
     window.addEventListener("mousemove", handleMouseMove);
     return () => window.removeEventListener("mousemove", handleMouseMove);
-  }, [isHovered]);
+  }, [isExpanded]);
   
   // Skip spin on first render
   useEffect(() => {
@@ -133,18 +155,18 @@ export function TableOfContents({ sections }: TableOfContentsProps) {
   
   // When menu closes, disable star animation for next open
   useEffect(() => {
-    if (!isHovered) {
+    if (!isExpanded) {
       setShouldAnimateStar(false);
     }
-  }, [isHovered]);
+  }, [isExpanded]);
   
   // Enable animation after menu opens (so initial position doesn't animate)
   useEffect(() => {
-    if (!isHovered) return;
+    if (!isExpanded) return;
     // Enable animation after a brief delay (after initial position is shown)
     const enableAnimation = setTimeout(() => setShouldAnimateStar(true), 50);
     return () => clearTimeout(enableAnimation);
-  }, [isHovered]);
+  }, [isExpanded]);
 
   const handleClick = (id: string, index: number) => {
     // Don't do anything if already at target
@@ -196,10 +218,10 @@ export function TableOfContents({ sections }: TableOfContentsProps) {
         className="fixed left-4 top-1/2 z-40 hidden xl:block pointer-events-none"
         initial={false}
         animate={{
-          width: isHovered ? expandedSize.width : COLLAPSED_WIDTH,
-          height: isHovered ? expandedSize.height : COLLAPSED_HEIGHT,
-          borderRadius: isHovered ? 0 : COLLAPSED_BORDER_RADIUS,
-          opacity: isHovered ? 1 : 0,
+          width: isExpanded ? expandedSize.width : COLLAPSED_WIDTH,
+          height: isExpanded ? expandedSize.height : COLLAPSED_HEIGHT,
+          borderRadius: isExpanded ? 0 : COLLAPSED_BORDER_RADIUS,
+          opacity: isExpanded ? 1 : 0,
           x: 4,
           y: "calc(-50% + 4px)",
         }}
@@ -219,14 +241,14 @@ export function TableOfContents({ sections }: TableOfContentsProps) {
         onMouseLeave={() => setIsHovered(false)}
         initial={false}
         animate={{
-          width: isHovered ? expandedSize.width : COLLAPSED_WIDTH,
-          height: isHovered ? expandedSize.height : COLLAPSED_HEIGHT,
-          borderRadius: isHovered ? 0 : COLLAPSED_BORDER_RADIUS,
-          backgroundColor: isHovered ? "var(--background)" : "color-mix(in srgb, var(--foreground) 40%, transparent)",
-          borderWidth: isHovered ? 1 : 0,
-          borderColor: isHovered ? "var(--foreground)" : "transparent",
+          width: isExpanded ? expandedSize.width : COLLAPSED_WIDTH,
+          height: isExpanded ? expandedSize.height : COLLAPSED_HEIGHT,
+          borderRadius: isExpanded ? 0 : COLLAPSED_BORDER_RADIUS,
+          backgroundColor: isExpanded ? "var(--background)" : "color-mix(in srgb, var(--foreground) 40%, transparent)",
+          borderWidth: isExpanded ? 1 : 0,
+          borderColor: isExpanded ? "var(--foreground)" : "transparent",
           y: "-50%",
-          scale: isHovered ? 1 : proximityScale,
+          scale: isExpanded ? 1 : proximityScale,
         }}
         transition={springTransition}
         style={{ borderStyle: "solid" }}
@@ -237,10 +259,10 @@ export function TableOfContents({ sections }: TableOfContentsProps) {
         className="pl-2 pr-4 py-2"
         initial={false}
         animate={{
-          opacity: isHovered ? 1 : 0,
+          opacity: isExpanded ? 1 : 0,
         }}
-        transition={{ duration: 0.2, delay: isHovered ? 0.1 : 0 }}
-        style={{ pointerEvents: isHovered ? "auto" : "none" }}
+        transition={{ duration: 0.2, delay: isExpanded ? 0.1 : 0 }}
+        style={{ pointerEvents: isExpanded ? "auto" : "none" }}
       >
         {/* Container for indicator line and nav - shares same coordinate space */}
         <div ref={containerRef} className="relative flex">
