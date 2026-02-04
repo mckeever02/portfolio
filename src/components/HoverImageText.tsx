@@ -12,6 +12,7 @@ interface HoverImage {
   height: number;
   offset?: { x: number; y: number };
   rotation?: number;
+  className?: string;
 }
 
 interface HoverImageTextProps {
@@ -77,15 +78,15 @@ export function HoverImageText({
               key={index}
               className="fixed pointer-events-none z-[9999]"
               style={{
-                left: mousePos.x + (image.offset?.x || 0) - 90,
-                top: mousePos.y - 20 + (image.offset?.y || 0),
+                left: mousePos.x + (image.offset?.x || 0),
+                top: mousePos.y + (image.offset?.y || 0),
               }}
-              initial={{ scale: 0.8, opacity: 0, rotate: 0, y: -image.height - 120 }}
+              initial={{ scale: 0.8, opacity: 0, rotate: 0, y: -image.height - 40 }}
               animate={{ 
                 scale: isHovered ? 1 : 0.8, 
                 opacity: isHovered ? 1 : 0,
                 rotate: image.rotation || 0,
-                y: -image.height - 60,
+                y: -image.height,
               }}
               transition={{
                 type: "spring",
@@ -99,7 +100,7 @@ export function HoverImageText({
                 alt={image.alt}
                 width={image.width}
                 height={image.height}
-                className="rounded-lg shadow-2xl"
+                className={image.className || "rounded-lg shadow-2xl"}
               />
             </motion.div>
           ))}
