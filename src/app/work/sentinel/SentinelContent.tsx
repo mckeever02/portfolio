@@ -9,6 +9,7 @@ import {
   FullWidthContent,
   ContentSection,
   BodyText,
+  LargeText,
 } from "@/components/case-study";
 import { LightboxImage } from "@/components/Lightbox";
 import Image from "next/image";
@@ -18,7 +19,6 @@ import { MediaCarousel } from "@/components/MediaCarousel";
 import { HighlightText } from "@/components/HighlightText";
 import { HoverImageText } from "@/components/HoverImageText";
 import { ZigZagDivider } from "@/components/ZigZagDivider";
-import { SpotlightEffect } from "@/components/SpotlightEffect";
 import { TextCarousel, QuoteProgressIndicator } from "@/components/TextCarousel";
 import { SummaryCardDemo } from "@/components/SummaryCardDemo";
 import { SkewedTag } from "@/components/SkewedTag";
@@ -726,8 +726,9 @@ export function SentinelContent({ caseStudy }: { caseStudy: CaseStudy }) {
       </WideContent>
 
       {/* Making a case for Agentic AI */}
-      <NarrowContent className="mt-16">
-        <ContentSection id="comparative-audit" title="Making a case for Agentic AI in 1Password">
+      <NarrowContent className="mt-16" id="comparative-audit">
+          <SkewedTag as="h2" className="text-lg lg:text-xl">Making the case for Agentic AI</SkewedTag>
+          <LargeText as="h3">Choosing not to play was an existential risk.</LargeText>
           <BodyText>
             As AI capabilities rapidly evolved across the industry, 1Password risked falling behind competitors who were already shipping AI-powered features. I conducted{" "}
             <HoverImageText
@@ -744,7 +745,6 @@ export function SentinelContent({ caseStudy }: { caseStudy: CaseStudy }) {
             >a comparative analysis</HoverImageText>{" "}
             to understand where the market was heading and identify the opportunity for 1Password to differentiate.
           </BodyText>
-        </ContentSection>
       </NarrowContent>
 
       <WideContent className="mt-0">
@@ -758,7 +758,7 @@ export function SentinelContent({ caseStudy }: { caseStudy: CaseStudy }) {
 
       <NarrowContent className="mt-8">
         <BodyText>
-            The case I made to leadership was simple—we needed to catch up, and fast. Falling behind wasn&apos;t just a competitive issue—it was an existential one.
+            I put together a summary to share with stakeholders and Product leadership to demonstrate where we were falling behind and why we needed to act.
         </BodyText>
 
         <QuoteCard attribution="Buzz Woeckener – 1Password Customer Advisory Board">
@@ -895,12 +895,16 @@ export function SentinelContent({ caseStudy }: { caseStudy: CaseStudy }) {
         <ZigZagDivider />
 
       {/* User Testing Section */}
-      <NarrowContent>
-        <ContentSection id="user-testing" title="User testing">
+      <NarrowContent id="user-testing">
+          <SkewedTag as="h2" className="text-lg lg:text-xl">User testing</SkewedTag>
+          <LargeText as="h3">Is a chatbot truly valuable for Admins – or just another case of AI slop?</LargeText>
           <BodyText>
-            I partnered with a researcher to run a study to validate the concept and get insights into how organisation's are using AI internally to help them manage their security.
+            I partnered with Marta, our AI researcher, to run a study to validate the concept and get insights into how organisation's are using AI internally to help them manage their security.
           </BodyText>
-        </ContentSection>
+
+        <BodyText>
+          We expected admins to be skeptical of Agentic AI within 1Password. Instead, many were excited about using AI to help manage their security and reduce their workload.
+        </BodyText>
       </NarrowContent>
 
       {/* Full Width Quote Section */}
@@ -1054,39 +1058,16 @@ export function SentinelContent({ caseStudy }: { caseStudy: CaseStudy }) {
 
         <ZigZagDivider />
 
-        <div className="flex flex-col items-center justify-center gap-8">
-          <FlipCard
-            className="w-full max-w-md aspect-square"
-            front={
-              <div className="w-full h-full bg-[var(--background)] flex items-center justify-center p-8 border border-[var(--foreground)]">
-                <h2 className="text-4xl md:text-5xl font-normal text-[var(--foreground)] text-center">
-                  Did it ship?
-                </h2>
-              </div>
-            }
-            back={
-              <div className="w-full h-full bg-[var(--foreground)] flex items-center justify-center overflow-hidden border border-[var(--foreground)]">
-                <video
-                  src="/images/work/sentinel/no.mp4"
-                  autoPlay
-                  loop
-                  muted
-                  playsInline
-                  className="w-full h-full object-cover"
-                />
-              </div>
-            }
-            autoFlipHint
-          />
-          <NarrowContent>
+          <NarrowContent id="impact">
+            <SkewedTag as="h2" className="text-lg lg:text-xl">Impact and next steps?</SkewedTag>
+            <LargeText as="h3">Sentinel was paused to focus on external AI security efforts.</LargeText>
             <BodyText>
-              Despite strong internal and external signals that an agentic AI system like Sentinel within the 1Password admin console would be a valuable undertaking, the AI team was ultimately repurposed and Sentinel was paused to focus on external AI security efforts.
+              Despite strong internal and external signals that an agentic AI system like Sentinel within the 1Password admin console would be a valuable undertaking, the AI team was ultimately repurposed to focus on external AI security efforts, and therefore Sentinel was put on ice for the time being.
             </BodyText>
             <BodyText>
-              Still, I'm proud of the work that went into crafting and selling this vision. As the underlying technology matures and becomes more secure and easier to integrate, I'm confident something like Sentinel will find its way into the product in the future.
+              I'm proud of the work that went into crafting and selling this vision. It helped paint a picture of the future of AI in the admin console and as the technology matures, I'm confident something like Sentinel will find its way into the product in the future.
             </BodyText>
           </NarrowContent>
-        </div>
     </CaseStudyLayout>
   );
 }
