@@ -1,8 +1,8 @@
 "use client";
 
-import { useState, useRef, useEffect, ReactNode } from "react";
+import { useState, useEffect, ReactNode } from "react";
 import { createPortal } from "react-dom";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
 
 interface HoverImage {
@@ -13,6 +13,9 @@ interface HoverImage {
   offset?: { x: number; y: number };
   rotation?: number;
   className?: string;
+  cycleSrcs?: string[]; // Optional array of sources to cycle through
+  cycleInterval?: number; // Interval in ms (default 1500)
+  cycleRotations?: number[]; // Optional rotations for each cycle (including initial)
 }
 
 interface HoverImageTextProps {
@@ -39,10 +42,38 @@ export function HoverImageText({
   const [isHovered, setIsHovered] = useState(false);
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
   const [mounted, setMounted] = useState(false);
+  const [cycleIndices, setCycleIndices] = useState<number[]>(images.map(() => 0));
 
   useEffect(() => {
     setMounted(true);
   }, []);
+  
+  // Cycle through images while hovered
+  useEffect(() => {
+    if (!isHovered) {
+      // Reset to first image when not hovered
+      setCycleIndices(images.map(() => 0));
+      return;
+    }
+    
+    const intervals: NodeJS.Timeout[] = [];
+    
+    images.forEach((image, imageIndex) => {
+      if (image.cycleSrcs && image.cycleSrcs.length > 0) {
+        const allSrcs = [image.src, ...image.cycleSrcs];
+        const interval = setInterval(() => {
+          setCycleIndices(prev => {
+            const newIndices = [...prev];
+            newIndices[imageIndex] = (newIndices[imageIndex] + 1) % allSrcs.length;
+            return newIndices;
+          });
+        }, image.cycleInterval || 1500);
+        intervals.push(interval);
+      }
+    });
+    
+    return () => intervals.forEach(clearInterval);
+  }, [isHovered, images]);
 
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
@@ -73,7 +104,13 @@ export function HoverImageText({
       
       {mounted && createPortal(
         <>
-          {images.map((image, index) => (
+          {images.map((image, index) => {
+            // Get rotation based on cycle index if cycleRotations is provided
+            const currentRotation = image.cycleRotations && image.cycleRotations.length > 0
+              ? image.cycleRotations[cycleIndices[index] % image.cycleRotations.length]
+              : (image.rotation || 0);
+            
+            return (
             <motion.div
               key={index}
               className="fixed pointer-events-none z-[9999]"
@@ -85,25 +122,54 @@ export function HoverImageText({
               animate={{ 
                 scale: isHovered ? 1 : 0.8, 
                 opacity: isHovered ? 1 : 0,
-                rotate: image.rotation || 0,
+                rotate: isHovered ? currentRotation : 0,
                 y: -image.height,
               }}
               transition={{
                 type: "spring",
                 stiffness: 300,
                 damping: 20,
-                delay: index * 0.05,
+                delay: index * 0.12,
               }}
             >
-              <Image
-                src={image.src}
-                alt={image.alt}
-                width={image.width}
-                height={image.height}
-                className={image.className || "rounded-lg shadow-2xl"}
-              />
+              {image.cycleSrcs && image.cycleSrcs.length > 0 ? (
+                <AnimatePresence mode="popLayout" initial={false}>
+                  <motion.div
+                    key={cycleIndices[index]}
+                    initial={{ opacity: 0, x: 50, scale: 0.9 }}
+                    animate={{ opacity: 1, x: 0, scale: 1 }}
+                    exit={{ opacity: 0, x: -50, scale: 0.9 }}
+                    transition={{ 
+                      type: "spring",
+                      stiffness: 300,
+                      damping: 25,
+                    }}
+                  >
+                    <Image
+                      src={[image.src, ...image.cycleSrcs][cycleIndices[index]]}
+                      alt={image.alt}
+                      width={image.width}
+                      height={image.height}
+                      className={image.className || "rounded-lg shadow-2xl"}
+                      sizes={`${image.width}px`}
+                      quality={85}
+                    />
+                  </motion.div>
+                </AnimatePresence>
+              ) : (
+                <Image
+                  src={image.src}
+                  alt={image.alt}
+                  width={image.width}
+                  height={image.height}
+                  className={image.className || "rounded-lg shadow-2xl"}
+                  sizes={`${image.width}px`}
+                  quality={85}
+                />
+              )}
             </motion.div>
-          ))}
+          );
+          })}
         </>,
         document.body
       )}

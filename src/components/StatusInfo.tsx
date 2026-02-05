@@ -17,8 +17,8 @@ export function StatusInfo() {
                 width: 180,
                 height: 107,
                 offset: { x: 20, y: -60 },
-                rotation: 5,
-                className: "rounded-lg shadow-2xl border-4 border-white",
+                rotation: -6,
+                className: "shadow-sm border-4 border-white",
               },
               {
                 src: "/images/1password-app-icon.png",
@@ -26,7 +26,7 @@ export function StatusInfo() {
                 width: 65,
                 height: 65,
                 offset: { x: -15, y: -40 },
-                rotation: -10,
+                rotation: 8,
                 className: "rounded-2xl shadow-2xl",
               },
             ]}
@@ -42,7 +42,44 @@ export function StatusInfo() {
           Location
         </span>
         <span className="text-base text-[var(--foreground)]">
-          Belfast, N.Ireland
+          <HoverImageText
+            images={[
+              {
+                src: "/images/belfast-1.jpg",
+                alt: "Belfast cityscape",
+                width: 160,
+                height: 107,
+                offset: { x: -90, y: -60 },
+                rotation: -8,
+                className: "shadow-2xl border-4 border-white",
+                cycleSrcs: [
+                  "/images/belfast-3.jpg",
+                  "/images/belfast-5.jpg",
+                  "/images/belfast-7.jpg",
+                  "/images/belfast-9.jpg",
+                ],
+                cycleInterval: 1800,
+              },
+              {
+                src: "/images/belfast-2.jpg",
+                alt: "Belfast scenery",
+                width: 160,
+                height: 107,
+                offset: { x: 50, y: -50 },
+                rotation: 6,
+                className: "shadow-2xl border-4 border-white",
+                cycleSrcs: [
+                  "/images/belfast-4.jpg",
+                  "/images/belfast-6.jpg",
+                  "/images/belfast-8.jpg",
+                  "/images/belfast-10.jpg",
+                ],
+                cycleInterval: 1800,
+              },
+            ]}
+          >
+            Belfast, N.Ireland
+          </HoverImageText>
         </span>
       </div>
     </div>
