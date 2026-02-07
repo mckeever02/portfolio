@@ -63,7 +63,7 @@ export function ProfileHeader() {
         <AnimatePresence>
           {isHovered && (
             <motion.div
-              className="absolute -bottom-2 -right-2 w-7 h-7 bg-[var(--background)] rounded-full flex items-center justify-center shadow-sm border border-[var(--foreground)]/10"
+              className="absolute -bottom-2 -right-2 w-7 h-7 bg-[var(--background)] rounded-full flex items-center justify-center border border-[var(--foreground)]/20"
               initial={{ scale: 0, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0, opacity: 0 }}

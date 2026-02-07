@@ -624,6 +624,11 @@ body {
   animation: shiny-text-shine var(--shiny-duration, 2s) linear infinite;
 }
 
+@keyframes blink-caret {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
 /* Hide scrollbar while keeping functionality */
 .scrollbar-hide {
   -ms-overflow-style: none;  /* IE and Edge */
