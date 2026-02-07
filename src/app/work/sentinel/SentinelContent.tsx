@@ -130,7 +130,7 @@ function ComicSlide({
   isActive?: boolean;
 }) {
   return (
-    <div className="bg-white/20 backdrop-blur-xl p-3 border border-white/30 rounded-xl relative">
+    <div className="rounded-lg border border-black/5 overflow-hidden">
       <div className="relative">
         {children}
         {/* Light grey overlay for inactive slides */}
@@ -176,7 +176,7 @@ function ComicVideoSlide({
   }, [isActive]);
 
   return (
-    <div className="bg-white/20 backdrop-blur-xl p-3 border border-white/30 rounded-xl relative">
+    <div className="relative">
       <div className="relative">
         <video
           ref={videoRef}
@@ -185,7 +185,7 @@ function ComicVideoSlide({
           playsInline
           poster={posterSrc}
           preload={isActive ? "auto" : "none"}
-          className="w-full rounded-lg"
+          className="w-full rounded-lg bg-black/20 border border-black/5 overflow-hidden"
         >
           <source src={src} type="video/mp4" />
         </video>
@@ -777,7 +777,8 @@ function EndUserSearchUI() {
   }, [isInView]);
 
   return (
-    <div ref={containerRef} className="relative z-10 bg-white/20 backdrop-blur-xl rounded-2xl p-2 border border-white/30 max-w-[660px] mx-4 sm:mx-auto" style={{ fontFamily: "'Inter', sans-serif" }}>
+    <div ref={containerRef} className="relative z-10 flex flex-col items-center max-w-[660px] mx-4 sm:mx-auto" style={{ fontFamily: "'Inter', sans-serif" }}>
+      <div className="w-full bg-white/20 backdrop-blur-xl rounded-2xl p-2 border border-white/30">
       <div className="bg-[var(--background)] rounded-xl p-6 md:p-8 flex flex-col items-center gap-6">
         {/* Search bar with popover anchor */}
         <div className="relative w-full">
@@ -817,6 +818,7 @@ function EndUserSearchUI() {
             <AppTile key={app.name} name={app.name} logo={app.logo} />
           ))}
         </div>
+      </div>
       </div>
     </div>
   );
@@ -1409,16 +1411,9 @@ export function SentinelContent({ caseStudy }: { caseStudy: CaseStudy }) {
       </NarrowContent>
 
       {/* Sonja Story Carousel - outside width wrappers like FlipCarousel */}
-      <div className="relative w-full py-16 overflow-hidden">
-        {/* Background image - optimized by Next.js */}
-        <Image
-          src="/images/work/sentinel/sonja-story-bg.jpg"
-          alt=""
-          fill
-          className="object-cover"
-          sizes="100vw"
-        />
-        <MediaCarousel cardWidth={1000} gap={48} className="relative z-10">
+      <div className="relative w-full overflow-hidden">
+
+        <MediaCarousel cardWidth={1000} gap={48} className="relative py-8 z-10">
           {/* Slide 1: Comic intro */}
           <ComicSlide>
             <Image
@@ -1426,7 +1421,6 @@ export function SentinelContent({ caseStudy }: { caseStudy: CaseStudy }) {
               alt="Sonja's day-in-the-life comic introduction"
               width={1040}
               height={567}
-              className="w-full rounded-lg"
             />
           </ComicSlide>
           {/* Slide 2 */}
@@ -1472,7 +1466,6 @@ export function SentinelContent({ caseStudy }: { caseStudy: CaseStudy }) {
               alt="Sonja's story conclusion"
               width={1040}
               height={567}
-              className="w-full rounded-lg"
             />
           </ComicSlide>
         </MediaCarousel>
@@ -1481,23 +1474,17 @@ export function SentinelContent({ caseStudy }: { caseStudy: CaseStudy }) {
         <ZigZagDivider />
 
       {/* The End-User Section */}
-      <NarrowContent className="mt-16">
-        <ContentSection id="end-user" title="The end-user">
+      <NarrowContent id="end-user">
+          <SkewedTag as="h2" className="text-lg lg:text-xl">Agentic Search</SkewedTag>
+          <LargeText as="h3">Helping employees find the apps and tools for their organisation using intelligent search.</LargeText>
           <BodyText>
-            While Sentinel was designed primarily for administrators, we also explored how end-users—the employees within an organization—could benefit from an AI-powered assistant to help them manage their security hygiene.
+            Sentinel is about solving pain points for the admin experience. However a common pain point for the employees using 1Password within organisations is often not knowing the software they have access to. How do I book time off? Where do I find those analytics again? Where do I file bug reports? SaaS sprawl across organisations means that employees often struggle to find what they're looking for.
           </BodyText>
-        </ContentSection>
-      </NarrowContent>
-
-      <NarrowContent className="mt-8">
-        <LargeText as="h3">Helping employees help themselves</LargeText>
-        <BodyText>
-          End-users often face friction when dealing with security-related tasks: forgotten passwords, understanding why certain policies exist, or knowing how to respond to security alerts. Sentinel could serve as a knowledgeable companion, guiding users through these moments without requiring admin intervention.
-        </BodyText>
+          
       </NarrowContent>
 
       {/* Pixel grassy field background section with app search UI */}
-      <div className="relative w-full py-16 md:py-28 mt-16 overflow-hidden">
+      <div className="relative w-full py-16 md:py-28 overflow-hidden">
         <Image
           src="/images/shared/pixel-grassy-field.png"
           alt=""
@@ -1508,6 +1495,15 @@ export function SentinelContent({ caseStudy }: { caseStudy: CaseStudy }) {
         />
         <EndUserSearchUI />
       </div>
+
+      <NarrowContent>
+        <BodyText>
+          Agentic search is a way to help employees find the apps and tools for their organisation by using simple, natural language.
+        </BodyText>
+        <BodyText>
+          I created a proof of concept for agentic search that uses the OpenAI API to search the apps and tools for an organisation.
+        </BodyText>
+      </NarrowContent>
 
         <ZigZagDivider />
 
