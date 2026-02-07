@@ -1058,6 +1058,24 @@ export function SentinelContent({ caseStudy }: { caseStudy: CaseStudy }) {
 
         <ZigZagDivider />
 
+      {/* The End-User Section */}
+      <NarrowContent className="mt-16">
+        <ContentSection id="end-user" title="The end-user">
+          <BodyText>
+            While Sentinel was designed primarily for administrators, we also explored how end-users—the employees within an organization—could benefit from an AI-powered assistant to help them manage their security hygiene.
+          </BodyText>
+        </ContentSection>
+      </NarrowContent>
+
+      <NarrowContent className="mt-8">
+        <LargeText as="h3">Helping employees help themselves</LargeText>
+        <BodyText>
+          End-users often face friction when dealing with security-related tasks: forgotten passwords, understanding why certain policies exist, or knowing how to respond to security alerts. Sentinel could serve as a knowledgeable companion, guiding users through these moments without requiring admin intervention.
+        </BodyText>
+      </NarrowContent>
+
+        <ZigZagDivider />
+
           <NarrowContent id="impact">
             <SkewedTag as="h2" className="text-lg lg:text-xl">Impact and next steps?</SkewedTag>
             <LargeText as="h3">Sentinel was paused to focus on external AI security efforts.</LargeText>

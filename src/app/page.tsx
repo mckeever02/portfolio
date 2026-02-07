@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import {
   ProfileHeader,
   StatusInfo,
@@ -18,6 +19,7 @@ const sections = ["works", "projects", "about"] as const;
 
 export default function Home() {
   const activeSection = useActiveSection(sections);
+  const [statusHoverY, setStatusHoverY] = useState<number | null>(null);
 
   return (
     <div className="min-h-screen bg-[var(--page-background)]">
@@ -25,8 +27,8 @@ export default function Home() {
         {/* Fixed Left Sidebar */}
         <aside aria-label="Profile and navigation" className="md:sticky md:top-4 lg:top-8 h-fit flex flex-col gap-10 md:gap-16 px-1 py-4 lg:py-8">
           <ProfileHeader />
-          <StatusInfo />
-          <SectionNav activeSection={activeSection} />
+          <StatusInfo onLinkHover={setStatusHoverY} />
+          <SectionNav activeSection={activeSection} externalHoverY={statusHoverY} />
         </aside>
 
         {/* Scrollable Right Content */}

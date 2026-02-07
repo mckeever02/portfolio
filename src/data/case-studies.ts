@@ -62,6 +62,7 @@ export const caseStudies: Record<string, CaseStudy> = {
       { id: "agentic-ui", title: "Agentic UI" },
       { id: "user-testing", title: "User Testing" },
       { id: "storytelling", title: "Storytelling" },
+      { id: "end-user", title: "The end-user" },
       { id: "impact", title: "Impact" },
     ],
     protected: true,
