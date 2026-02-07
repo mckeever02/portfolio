@@ -5,6 +5,8 @@ import { motion } from "framer-motion";
 
 interface SectionNavProps {
   activeSection: string;
+  /** Viewport Y center of an external hovered element (e.g. StatusInfo link). null = no external hover. */
+  externalHoverY?: number | null;
 }
 
 const navItems = [
@@ -13,12 +15,13 @@ const navItems = [
   { id: "about", label: "About" },
 ];
 
-export function SectionNav({ activeSection }: SectionNavProps) {
+export function SectionNav({ activeSection, externalHoverY }: SectionNavProps) {
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
   const [targetIndex, setTargetIndex] = useState<number | null>(null);
   const [spinCount, setSpinCount] = useState(0);
   const prevActiveIndexRef = useRef<number>(-1);
   const isFirstRender = useRef(true);
+  const containerRef = useRef<HTMLDivElement>(null);
   const activeIndex = navItems.findIndex((item) => item.id === activeSection);
 
   // Skip spin on first render
@@ -47,6 +50,16 @@ export function SectionNav({ activeSection }: SectionNavProps) {
   // Use target during navigation, otherwise follow activeSection
   const indicatorIndex = targetIndex ?? activeIndex;
 
+  // Default top position for the indicator within this container
+  const defaultTop = indicatorIndex * (24 + 32) + 7;
+
+  // Compute external offset relative to this container
+  let starTop = defaultTop;
+  if (externalHoverY != null && containerRef.current) {
+    const containerRect = containerRef.current.getBoundingClientRect();
+    starTop = externalHoverY - containerRect.top - 5; // 5 = half of 10px icon
+  }
+
   const handleClick = (id: string, index: number) => {
     // Don't do anything if already at target
     if (index === activeIndex && targetIndex === null) {
@@ -64,6 +77,7 @@ export function SectionNav({ activeSection }: SectionNavProps) {
 
   return (
     <div 
+      ref={containerRef}
       className="relative hidden md:flex flex-col gap-8 w-3/4"
       onMouseLeave={() => setHoveredIndex(null)}
     >
@@ -74,8 +88,8 @@ export function SectionNav({ activeSection }: SectionNavProps) {
         className="absolute left-[-22px] w-[10px] h-[10px] fill-[var(--nav-indicator)]"
         initial={false}
         animate={{
-          top: indicatorIndex * (24 + 32) + 7, // line-height (24px) + gap-8 (32px) + offset to center (24 - 10) / 2
-          rotate: spinCount * 720, // 2 full rotations per arrival
+          top: starTop,
+          rotate: spinCount * 720,
         }}
         transition={{
           top: {
@@ -87,7 +101,7 @@ export function SectionNav({ activeSection }: SectionNavProps) {
           rotate: {
             type: "tween",
             duration: 1,
-            ease: [0.12, 1, 0.2, 1], // custom ease - dramatic deceleration at end
+            ease: [0.12, 1, 0.2, 1],
             delay: 0.25,
           },
         }}

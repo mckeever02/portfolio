@@ -5,7 +5,7 @@ import { createPortal } from "react-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
 
-interface HoverImage {
+export interface HoverImage {
   src: string;
   alt: string;
   width: number;
@@ -23,6 +23,8 @@ interface HoverImageTextProps {
   images: HoverImage[];
   highlightColor?: "blue" | "purple" | "brown" | "orange" | "neutral";
   className?: string;
+  /** When true, skips the highlight-expand underline classes (use when parent handles styling). */
+  noHighlight?: boolean;
 }
 
 const colorClasses = {
@@ -38,6 +40,7 @@ export function HoverImageText({
   images,
   highlightColor = "neutral",
   className = "",
+  noHighlight = false,
 }: HoverImageTextProps) {
   const [isHovered, setIsHovered] = useState(false);
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
@@ -94,7 +97,7 @@ export function HoverImageText({
   return (
     <>
       <span
-        className={`highlight-expand ${colorClasses[highlightColor]} ${className}`}
+        className={`${noHighlight ? "" : `highlight-expand ${colorClasses[highlightColor]}`} ${className}`.trim()}
         onMouseEnter={handleMouseEnter}
         onMouseLeave={() => setIsHovered(false)}
         style={{ cursor: "help" }}
@@ -113,7 +116,7 @@ export function HoverImageText({
             return (
             <motion.div
               key={index}
-              className="fixed pointer-events-none z-[9999]"
+              className="fixed pointer-events-none z-[9999] bg-neutral-300 rounded-lg shadow-2xl"
               style={{
                 left: mousePos.x + (image.offset?.x || 0),
                 top: mousePos.y + (image.offset?.y || 0),

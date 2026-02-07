@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import { CaseStudy } from "@/data/case-studies";
 import {
   CaseStudyLayout,
@@ -22,7 +22,7 @@ import { ZigZagDivider } from "@/components/ZigZagDivider";
 import { TextCarousel, QuoteProgressIndicator } from "@/components/TextCarousel";
 import { SummaryCardDemo } from "@/components/SummaryCardDemo";
 import { SkewedTag } from "@/components/SkewedTag";
-import { motion, AnimatePresence, useScroll, useTransform } from "framer-motion";
+import { motion, AnimatePresence, useScroll, useTransform, useInView } from "framer-motion";
 
 type StickyNote = { src: string; alt: string; rotation: number; delay: number; position: { top?: string; bottom?: string; left: string; translateX: string; translateY: string } };
 
@@ -130,7 +130,7 @@ function ComicSlide({
   isActive?: boolean;
 }) {
   return (
-    <div className="bg-white/20 backdrop-blur-xl p-3 border border-white/30 rounded-xl relative">
+    <div className="rounded-lg border border-black/5 overflow-hidden">
       <div className="relative">
         {children}
         {/* Light grey overlay for inactive slides */}
@@ -176,7 +176,7 @@ function ComicVideoSlide({
   }, [isActive]);
 
   return (
-    <div className="bg-white/20 backdrop-blur-xl p-3 border border-white/30 rounded-xl relative">
+    <div className="relative">
       <div className="relative">
         <video
           ref={videoRef}
@@ -185,7 +185,7 @@ function ComicVideoSlide({
           playsInline
           poster={posterSrc}
           preload={isActive ? "auto" : "none"}
-          className="w-full rounded-lg"
+          className="w-full rounded-lg bg-black/20 border border-black/5 overflow-hidden"
         >
           <source src={src} type="video/mp4" />
         </video>
@@ -399,6 +399,430 @@ const WarningIcon = (
     <line x1="12" y1="17" x2="12.01" y2="17" />
   </svg>
 );
+
+type ListItem = {
+  name: string;
+  type: string;
+  icon: string;
+};
+
+type SearchUseCase = {
+  query: string;
+  response: string;
+  results: { name: string; logo: string }[];
+  items?: ListItem[];
+};
+
+const searchUseCases: SearchUseCase[] = [
+  {
+    query: "What's my login for taxes?",
+    response: "Here's your login for the company tax portal.",
+    results: [{ name: "Xero", logo: "/images/logos/xero.svg" }],
+  },
+  {
+    query: "Where do I book time off?",
+    response: "You can request time off through Personio.",
+    results: [{ name: "Personio", logo: "/images/logos/personio.svg" }],
+  },
+  {
+    query: "Stuff for onboarding",
+    response: "Found 5 relevant items for onboarding preparation.",
+    results: [
+      { name: "Google Workspace", logo: "/images/logos/google-workspace.svg" },
+      { name: "Slack", logo: "/images/logos/slack.svg" },
+      { name: "Notion", logo: "/images/logos/notion.svg" },
+    ],
+    items: [
+      { name: "HR Onboarding Checklist", type: "Secure Note", icon: "/images/logos/secure-note.png" },
+      { name: "Employee Handbook Document", type: "Document", icon: "/images/logos/document-file.png" },
+    ],
+  },
+  {
+    query: "What do I need for travel?",
+    response: "Found 4 relevant items for travel preparation.",
+    results: [
+      { name: "Navan", logo: "/images/logos/navan.png" },
+    ],
+    items: [
+      { name: "Travel Passport", type: "Passport", icon: "/images/logos/passport.png" },
+      { name: "Corporate Airline Loyalty Program", type: "Reward Program", icon: "/images/logos/rewards.png" },
+      { name: "Sales Travel Amex", type: "Credit Card", icon: "/images/logos/credit-card-amex.png" },
+    ],
+  },
+  {
+    query: "Do I have access to the finance dashboard?",
+    response: "Yes — you have viewer access to the finance dashboard.",
+    results: [{ name: "QuickBooks", logo: "/images/logos/quickbooks.svg" }],
+  },
+  {
+    query: "What's the app to use for expenses?",
+    response: "Expensify is your company's expense management tool.",
+    results: [{ name: "Expensify", logo: "/images/logos/expensify.svg" }],
+  },
+];
+
+type DropdownState =
+  | { phase: "hidden" }
+  | { phase: "thinking"; resultCount: number; itemCount: number }
+  | { phase: "responding"; response: string; results: SearchUseCase["results"]; items?: ListItem[] }
+  | { phase: "done"; response: string; results: SearchUseCase["results"]; items?: ListItem[] };
+
+function SentinelIconSmall({ size = 16 }: { size?: number }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" className="text-[var(--foreground)]">
+      <g clipPath="url(#sentinel-search-clip)">
+        <path d="M0 8C0 7.55817 0.358172 7.2 0.8 7.2H3.508C3.99291 7.2 4.47307 7.10448 4.92105 6.91889C5.36904 6.7333 5.77608 6.46127 6.11892 6.11836C6.46177 5.77544 6.7337 5.36834 6.91919 4.92031C7.10469 4.47229 7.20011 3.99211 7.2 3.5072V0.799999C7.2 0.358172 7.55817 0 8 0C8.44183 0 8.8 0.358172 8.8 0.8V3.5072C8.7999 3.99217 8.89534 4.47242 9.08088 4.9205C9.26643 5.36858 9.53843 5.77571 9.88136 6.11864C10.2243 6.46157 10.6314 6.73357 11.0795 6.91912C11.5276 7.10466 12.0078 7.20011 12.4928 7.2H15.2C15.6418 7.2 16 7.55817 16 8C16 8.44183 15.6418 8.8 15.2 8.8H12.4928C12.0079 8.7999 11.5277 8.89531 11.0797 9.08081C10.6317 9.2663 10.2246 9.53823 9.88164 9.88108C9.53873 10.2239 9.2667 10.631 9.08111 11.0789C8.89552 11.5269 8.8 12.0071 8.8 12.492V15.2C8.8 15.6418 8.44183 16 8 16C7.55817 16 7.2 15.6418 7.2 15.2V12.492C7.2 11.5128 6.81102 10.5737 6.11864 9.88136C5.42625 9.18898 4.48718 8.8 3.508 8.8H0.799999C0.358171 8.8 0 8.44183 0 8Z" fill="currentColor"/>
+        <path d="M2.16525 13.8345C1.85286 13.5221 1.85286 13.0157 2.16525 12.7033L3.86245 11.0061C4.17499 10.6935 4.68174 10.6936 4.99417 11.0063C5.30647 11.3188 5.30635 11.8253 4.99389 12.1377L3.29645 13.8346C2.98404 14.1469 2.47761 14.1469 2.16525 13.8345ZM13.834 2.1657C13.5216 1.85333 13.0152 1.85333 12.7028 2.1657L11.0052 3.8633C10.6928 4.17567 10.6928 4.68213 11.0052 4.9945C11.3176 5.30687 11.824 5.30687 12.1364 4.9945L13.834 3.2969C14.1464 2.98453 14.1464 2.47807 13.834 2.1657ZM2.16517 2.16574C2.47756 1.85334 2.98406 1.85334 3.29645 2.16574L4.99365 3.86294C5.30619 4.17548 5.3061 4.68223 4.99345 4.99466C4.68093 5.30696 4.17442 5.30684 3.86205 4.99438L2.16509 3.29694C1.85277 2.98453 1.85281 2.4781 2.16517 2.16574ZM13.834 13.8345C14.1464 13.5221 14.1464 13.0156 13.8341 12.7032L12.1375 11.0062C11.825 10.6936 11.3182 10.6935 11.0056 11.0061C10.693 11.3187 10.6931 11.8255 11.0057 12.138L12.7027 13.8346C13.0152 14.1469 13.5216 14.1469 13.834 13.8345Z" fill="currentColor"/>
+      </g>
+      <defs>
+        <clipPath id="sentinel-search-clip">
+          <rect width="16" height="16" fill="white"/>
+        </clipPath>
+      </defs>
+    </svg>
+  );
+}
+
+const shinyTextStyle: React.CSSProperties = {
+  backgroundImage: "linear-gradient(90deg, var(--shiny-text-base, rgba(0,0,0,0.35)) 0%, var(--shiny-text-base, rgba(0,0,0,0.35)) 35%, var(--shiny-text-shine, rgba(0,0,0,1)) 50%, var(--shiny-text-base, rgba(0,0,0,0.35)) 65%, var(--shiny-text-base, rgba(0,0,0,0.35)) 100%)",
+  backgroundSize: "200% auto",
+  backgroundPosition: "150% center",
+  WebkitBackgroundClip: "text",
+  backgroundClip: "text",
+  WebkitTextFillColor: "transparent",
+  ["--shiny-duration" as string]: "1.2s",
+};
+
+// Typed text component matching the Sentinel agent chat pattern
+function ResponseTextType({ text, onComplete }: { text: string; onComplete?: () => void }) {
+  const [displayed, setDisplayed] = useState("");
+  const [charIndex, setCharIndex] = useState(0);
+  const [complete, setComplete] = useState(false);
+
+  useEffect(() => {
+    setDisplayed("");
+    setCharIndex(0);
+    setComplete(false);
+  }, [text]);
+
+  useEffect(() => {
+    if (complete) return;
+    if (charIndex < text.length) {
+      const timeout = setTimeout(() => {
+        setDisplayed(prev => prev + text[charIndex]);
+        setCharIndex(prev => prev + 1);
+      }, 12);
+      return () => clearTimeout(timeout);
+    } else if (charIndex === text.length && text.length > 0) {
+      setComplete(true);
+      onComplete?.();
+    }
+  }, [charIndex, text, complete, onComplete]);
+
+  return <span>{displayed}</span>;
+}
+
+function SearchDropdownContent({ dropdown, onResponseComplete }: { dropdown: DropdownState; onResponseComplete?: () => void }) {
+  if (dropdown.phase === "hidden") return null;
+
+  const skeletonCount = dropdown.phase === "thinking" ? dropdown.resultCount : 0;
+  const skeletonItemCount = dropdown.phase === "thinking" ? dropdown.itemCount : 0;
+  const showResults = dropdown.phase === "responding" || dropdown.phase === "done";
+  const results = showResults ? dropdown.results : [];
+  const items = showResults && "items" in dropdown ? dropdown.items ?? [] : [];
+
+  return (
+    <motion.div
+      className="absolute left-0 right-0 top-full mt-2 bg-[var(--background)] rounded-xl border border-[var(--foreground)]/10 shadow-lg p-4 z-20"
+      initial={{ opacity: 0, y: -4 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: -4 }}
+      transition={{ duration: 0.25, ease: "easeOut" }}
+    >
+      {/* Thinking state */}
+      {dropdown.phase === "thinking" && (
+        <>
+          <div className="flex items-start gap-2">
+            <motion.div className="mt-[3px] shrink-0 flex items-center" animate={{ rotate: 360 }} transition={{ duration: 2, repeat: Infinity, ease: "linear" }}>
+              <SentinelIconSmall size={16} />
+            </motion.div>
+            <span className="text-base shiny-text-animate" style={shinyTextStyle}>thinking...</span>
+          </div>
+          <div className="grid grid-cols-4 gap-3 mt-3">
+            {Array.from({ length: skeletonCount }).map((_, i) => (
+              <SkeletonTile key={i} />
+            ))}
+          </div>
+          {skeletonItemCount > 0 && (
+            <div className="mt-3 flex flex-col">
+              {Array.from({ length: skeletonItemCount }).map((_, i) => (
+                <SkeletonListItemRow key={i} />
+              ))}
+            </div>
+          )}
+        </>
+      )}
+
+      {/* Response state - typed text + real result tiles */}
+      {showResults && (
+        <>
+          <div className="flex items-start gap-2">
+            <div className="mt-[3px] shrink-0 flex items-center">
+              <SentinelIconSmall size={16} />
+            </div>
+            <span className="text-base text-[var(--foreground)]">
+              {dropdown.phase === "responding" ? (
+                <ResponseTextType text={dropdown.response} onComplete={onResponseComplete} />
+              ) : (
+                dropdown.response
+              )}
+            </span>
+          </div>
+          <div className="grid grid-cols-4 gap-3 mt-3">
+            {results.map((result, i) => (
+              <AppTile key={result.name} name={result.name} logo={result.logo} animate delay={i * 0.08} />
+            ))}
+          </div>
+          {items.length > 0 && (
+            <div className="mt-3 flex flex-col">
+              {items.map((item, i) => (
+                <ListItemRow key={item.name} {...item} animate delay={(results.length + i) * 0.08} />
+              ))}
+            </div>
+          )}
+        </>
+      )}
+    </motion.div>
+  );
+}
+
+function AppTile({ name, logo, animate: shouldAnimate, delay = 0 }: { name: string; logo: string; animate?: boolean; delay?: number }) {
+  const content = (
+    <>
+      <div className="w-8 h-8 relative">
+        <Image src={logo} alt={`${name} logo`} fill className="object-contain" />
+      </div>
+      <span className="text-sm text-[var(--foreground)]/70 font-medium text-center leading-tight">{name}</span>
+    </>
+  );
+
+  if (shouldAnimate) {
+    return (
+      <motion.div
+        className="bg-[var(--foreground)]/[0.03] rounded-xl p-4 flex flex-col items-center gap-2.5 border border-[var(--foreground)]/10"
+        initial={{ opacity: 0, y: 4 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.3, delay }}
+      >
+        {content}
+      </motion.div>
+    );
+  }
+
+  return (
+    <div className="bg-[var(--foreground)]/[0.03] rounded-xl p-4 flex flex-col items-center gap-2.5 border border-[var(--foreground)]/10">
+      {content}
+    </div>
+  );
+}
+
+function SkeletonTile() {
+  return (
+    <div className="bg-[var(--foreground)]/[0.04] rounded-xl p-4 flex flex-col items-center gap-2.5 animate-pulse">
+      <div className="w-8 h-8 rounded-md bg-[var(--foreground)]/[0.06]" />
+      <div className="w-10 h-3.5 rounded-full bg-[var(--foreground)]/[0.06]" />
+    </div>
+  );
+}
+
+function ListItemRow({ name, type, icon, animate: shouldAnimate, delay = 0 }: ListItem & { animate?: boolean; delay?: number }) {
+  const content = (
+    <div className="flex items-center gap-3 px-3 py-2.5 rounded-lg">
+      <div className="w-6 h-6 relative shrink-0">
+        <Image src={icon} alt={`${type} icon`} fill className="object-contain" />
+      </div>
+      <div className="flex-1 min-w-0">
+        <p className="text-sm font-medium text-[var(--foreground)] truncate">{name}</p>
+        <p className="text-xs text-[var(--foreground)]/50">{type}</p>
+      </div>
+      <span className="text-xs font-medium text-blue-500 shrink-0">View</span>
+    </div>
+  );
+
+  if (shouldAnimate) {
+    return (
+      <motion.div
+        className="border-t border-[var(--foreground)]/[0.06] first:border-t-0"
+        initial={{ opacity: 0, y: 4 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.3, delay }}
+      >
+        {content}
+      </motion.div>
+    );
+  }
+
+  return (
+    <div className="border-t border-[var(--foreground)]/[0.06] first:border-t-0">
+      {content}
+    </div>
+  );
+}
+
+function SkeletonListItemRow() {
+  return (
+    <div className="flex items-center gap-3 px-3 py-2.5 rounded-lg animate-pulse border-t border-[var(--foreground)]/[0.06] first:border-t-0">
+      <div className="w-6 h-6 rounded-md bg-[var(--foreground)]/[0.06] shrink-0" />
+      <div className="flex-1 min-w-0 flex flex-col gap-1.5">
+        <div className="w-28 h-2.5 rounded-full bg-[var(--foreground)]/[0.06]" />
+        <div className="w-16 h-2 rounded-full bg-[var(--foreground)]/[0.06]" />
+      </div>
+      <div className="w-6 h-2 rounded-full bg-[var(--foreground)]/[0.06] shrink-0" />
+    </div>
+  );
+}
+
+const appTiles = [
+  { name: "Slack", logo: "/images/logos/slack.svg" },
+  { name: "Notion", logo: "/images/logos/notion.svg" },
+  { name: "Google Drive", logo: "/images/logos/googledrive.svg" },
+  { name: "Okta", logo: "/images/logos/okta.svg" },
+  { name: "Personio", logo: "/images/logos/personio.svg" },
+  { name: "Xero", logo: "/images/logos/xero.svg" },
+  { name: "Expensify", logo: "/images/logos/expensify.svg" },
+  { name: "QuickBooks", logo: "/images/logos/quickbooks.svg" },
+];
+
+function EndUserSearchUI() {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const isInView = useInView(containerRef, { once: true, margin: "-100px" });
+  const [searchValue, setSearchValue] = useState("");
+  const [showCaret, setShowCaret] = useState(false);
+  const [dropdown, setDropdown] = useState<DropdownState>({ phase: "hidden" });
+  const cancelledRef = useRef(false);
+  const responseCompleteRef = useRef<(() => void) | null>(null);
+
+  const wait = (ms: number) => new Promise(r => setTimeout(r, ms));
+
+  const typeText = async (text: string, speed: number, setter: (v: string) => void) => {
+    for (let i = 1; i <= text.length; i++) {
+      if (cancelledRef.current) return;
+      await wait(speed);
+      setter(text.slice(0, i));
+    }
+  };
+
+  const eraseText = async (text: string, speed: number, setter: (v: string) => void) => {
+    for (let i = text.length - 1; i >= 0; i--) {
+      if (cancelledRef.current) return;
+      await wait(speed);
+      setter(text.slice(0, i));
+    }
+  };
+
+  // Wait for ResponseTextType to finish typing
+  const waitForResponseComplete = (): Promise<void> => new Promise<void>((resolve) => {
+    responseCompleteRef.current = resolve;
+  });
+
+  const handleResponseComplete = useCallback(() => {
+    responseCompleteRef.current?.();
+  }, []);
+
+  useEffect(() => {
+    if (!isInView) return;
+    cancelledRef.current = false;
+
+    async function runCycle() {
+      await wait(800);
+
+      while (!cancelledRef.current) {
+        for (const useCase of searchUseCases) {
+          if (cancelledRef.current) return;
+
+          // 1. Type query into search
+          setShowCaret(true);
+          await typeText(useCase.query, 50, setSearchValue);
+          if (cancelledRef.current) return;
+
+          await wait(400);
+
+          // 2. Show thinking with skeleton tiles
+          setDropdown({ phase: "thinking", resultCount: useCase.results.length, itemCount: useCase.items?.length ?? 0 });
+          if (cancelledRef.current) return;
+
+          await wait(2000);
+
+          // 3. Switch to responding — TextType component handles the typing
+          setDropdown({ phase: "responding", response: useCase.response, results: useCase.results, items: useCase.items });
+          await waitForResponseComplete();
+          if (cancelledRef.current) return;
+
+          // 4. Mark as done, hold result
+          setDropdown({ phase: "done", response: useCase.response, results: useCase.results, items: useCase.items });
+          await wait(3000);
+
+          // 5. Close dropdown, erase search, pause
+          setDropdown({ phase: "hidden" });
+          await wait(300);
+          await eraseText(useCase.query, 20, setSearchValue);
+          setShowCaret(false);
+          await wait(800);
+        }
+      }
+    }
+
+    runCycle();
+    return () => { cancelledRef.current = true; };
+  }, [isInView]);
+
+  return (
+    <div ref={containerRef} className="relative z-10 flex flex-col items-center max-w-[660px] mx-4 sm:mx-auto" style={{ fontFamily: "'Inter', sans-serif" }}>
+      <div className="w-full bg-white/20 backdrop-blur-xl rounded-2xl p-2 border border-white/30">
+      <div className="bg-[var(--background)] rounded-xl p-6 md:p-8 flex flex-col items-center gap-6">
+        {/* Search bar with popover anchor */}
+        <div className="relative w-full">
+          <div className="w-full flex items-center gap-3 bg-[var(--background)] rounded-full px-5 py-3 border border-[var(--foreground)]/15 cursor-default select-none">
+            <svg className="w-5 h-5 text-[var(--foreground)]/40 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <circle cx="11" cy="11" r="8" />
+              <path d="m21 21-4.3-4.3" />
+            </svg>
+            <div className="flex-1 text-base min-h-[1.5em] flex items-center">
+              {searchValue ? (
+                <span className="text-[var(--foreground)]">
+                  {searchValue}
+                  {showCaret && (
+                    <span
+                      className="inline-block w-[2px] h-[1.1em] bg-[var(--foreground)] align-text-bottom ml-px"
+                      style={{ animation: "blink-caret 1s step-end infinite" }}
+                    />
+                  )}
+                </span>
+              ) : (
+                <span className="text-[var(--foreground)]/40">Search apps or ask a question</span>
+              )}
+            </div>
+          </div>
+
+          {/* Dropdown popover */}
+          <AnimatePresence>
+            {dropdown.phase !== "hidden" && (
+              <SearchDropdownContent dropdown={dropdown} onResponseComplete={handleResponseComplete} />
+            )}
+          </AnimatePresence>
+        </div>
+
+        {/* App tiles grid - always visible */}
+        <div className="grid grid-cols-4 gap-3 w-full">
+          {appTiles.map((app) => (
+            <AppTile key={app.name} name={app.name} logo={app.logo} />
+          ))}
+        </div>
+      </div>
+      </div>
+    </div>
+  );
+}
 
 type ImageFocus = "insights" | "tasks" | "support" | null;
 
@@ -987,16 +1411,9 @@ export function SentinelContent({ caseStudy }: { caseStudy: CaseStudy }) {
       </NarrowContent>
 
       {/* Sonja Story Carousel - outside width wrappers like FlipCarousel */}
-      <div className="relative w-full py-16 overflow-hidden">
-        {/* Background image - optimized by Next.js */}
-        <Image
-          src="/images/work/sentinel/sonja-story-bg.jpg"
-          alt=""
-          fill
-          className="object-cover"
-          sizes="100vw"
-        />
-        <MediaCarousel cardWidth={1000} gap={48} className="relative z-10">
+      <div className="relative w-full overflow-hidden">
+
+        <MediaCarousel cardWidth={1000} gap={48} className="relative py-8 z-10">
           {/* Slide 1: Comic intro */}
           <ComicSlide>
             <Image
@@ -1004,7 +1421,6 @@ export function SentinelContent({ caseStudy }: { caseStudy: CaseStudy }) {
               alt="Sonja's day-in-the-life comic introduction"
               width={1040}
               height={567}
-              className="w-full rounded-lg"
             />
           </ComicSlide>
           {/* Slide 2 */}
@@ -1050,11 +1466,44 @@ export function SentinelContent({ caseStudy }: { caseStudy: CaseStudy }) {
               alt="Sonja's story conclusion"
               width={1040}
               height={567}
-              className="w-full rounded-lg"
             />
           </ComicSlide>
         </MediaCarousel>
         </div>
+
+        <ZigZagDivider />
+
+      {/* The End-User Section */}
+      <NarrowContent id="end-user">
+          <SkewedTag as="h2" className="text-lg lg:text-xl">Agentic Search</SkewedTag>
+          <LargeText as="h3">Helping employees find the apps and tools for their organisation using intelligent search.</LargeText>
+          <BodyText>
+            Sentinel is about solving pain points for the admin experience. However a common pain point for the employees using 1Password within organisations is often not knowing the software they have access to. How do I book time off? Where do I find those analytics again? Where do I file bug reports? SaaS sprawl across organisations means that employees often struggle to find what they're looking for.
+          </BodyText>
+          
+      </NarrowContent>
+
+      {/* Pixel grassy field background section with app search UI */}
+      <div className="relative w-full py-16 md:py-28 overflow-hidden">
+        <Image
+          src="/images/shared/pixel-grassy-field.png"
+          alt=""
+          fill
+          className="object-cover"
+          sizes="100vw"
+          quality={90}
+        />
+        <EndUserSearchUI />
+      </div>
+
+      <NarrowContent>
+        <BodyText>
+          Agentic search is a way to help employees find the apps and tools for their organisation by using simple, natural language.
+        </BodyText>
+        <BodyText>
+          I created a proof of concept for agentic search that uses the OpenAI API to search the apps and tools for an organisation.
+        </BodyText>
+      </NarrowContent>
 
         <ZigZagDivider />
 
