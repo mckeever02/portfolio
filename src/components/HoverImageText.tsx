@@ -116,7 +116,7 @@ export function HoverImageText({
             return (
             <motion.div
               key={index}
-              className="fixed pointer-events-none z-[9999] bg-neutral-300 rounded-lg shadow-2xl"
+              className="fixed pointer-events-none z-[9999]"
               style={{
                 left: mousePos.x + (image.offset?.x || 0),
                 top: mousePos.y + (image.offset?.y || 0),

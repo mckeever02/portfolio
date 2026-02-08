@@ -896,7 +896,7 @@ function WorkingIndicator({ text }: { text: string }) {
 
 // Logo URLs from logo.dev
 const LOGO_URLS = {
-  onePassword: "/images/1password-app-icon.png",
+  onePassword: "/images/1password-app-icon-2.png",
   browserbase: "/images/logo-browserbase.png",
   stripe: "/images/logo-stripe.png",
   github: "/images/logos/github-copilot.png",
