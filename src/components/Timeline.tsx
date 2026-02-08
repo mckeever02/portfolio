@@ -51,7 +51,7 @@ export function Timeline() {
   return (
     <div className="flex flex-col gap-6">
       <h3 className="text-base font-bold tracking-[1.6px] uppercase text-[var(--foreground-secondary)] font-[var(--font-era)]">
-        Timeline
+        What I've been up to
       </h3>
 
       <div className="flex flex-col gap-0">
