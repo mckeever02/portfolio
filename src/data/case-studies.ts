@@ -142,7 +142,7 @@ export function getAllCaseStudySlugs(): string[] {
 }
 
 // Define explicit order for navigation
-const caseStudyOrder = ["pilgrim", "sentinel", "agentic-autofill", "item-creation", "verifier"];
+const caseStudyOrder = ["pilgrim", "sentinel", "agentic-autofill", "verifier"];
 
 export function getAdjacentCaseStudies(currentSlug: string): {
   prev: CaseStudy | null;

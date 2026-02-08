@@ -1476,7 +1476,7 @@ export function SentinelContent({ caseStudy }: { caseStudy: CaseStudy }) {
       {/* The End-User Section */}
       <NarrowContent id="end-user">
           <SkewedTag as="h2" className="text-lg lg:text-xl">Agentic Search</SkewedTag>
-          <LargeText as="h3">Helping employees find the apps and tools for their organisation using intelligent search.</LargeText>
+          <LargeText as="h3">Utilising agentic intelligence to help point employees in the right direction.</LargeText>
           <BodyText>
             Sentinel is about solving pain points for the admin experience. However a common pain point for the employees using 1Password within organisations is often not knowing the software they have access to. How do I book time off? Where do I find those analytics again? Where do I file bug reports? SaaS sprawl across organisations means that employees often struggle to find what they're looking for.
           </BodyText>
