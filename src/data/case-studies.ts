@@ -90,6 +90,19 @@ export const caseStudies: Record<string, CaseStudy> = {
       { id: "research", title: "Research Insights" },
     ],
   },
+  "item-creation": {
+    slug: "item-creation",
+    title: "Item Creation",
+    company: "1Password",
+    subtitle: "A success and failure in improving Item Creation",
+    description: "",
+    heroColor: "#000000",
+    timeline: "Q1 2024",
+    role: "Lead Designer",
+    team: [],
+    sections: [],
+    protected: true,
+  },
   verifier: {
     slug: "verifier",
     title: "1Password Verifier",
@@ -129,7 +142,7 @@ export function getAllCaseStudySlugs(): string[] {
 }
 
 // Define explicit order for navigation
-const caseStudyOrder = ["pilgrim", "sentinel", "agentic-autofill", "verifier"];
+const caseStudyOrder = ["pilgrim", "sentinel", "agentic-autofill", "item-creation", "verifier"];
 
 export function getAdjacentCaseStudies(currentSlug: string): {
   prev: CaseStudy | null;
